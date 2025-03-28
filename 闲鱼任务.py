@@ -7,6 +7,8 @@ from utils import get_current_app, fish_not_click, find_button, majority_chinese
 import ddddocr
 
 d = u2.connect()
+origin_timeout = d.shell("settings get system screen_off_timeout").output
+d.shell("settings put system screen_off_timeout 86400000")
 d.app_start("com.taobao.idlefish", stop=True, use_monkey=True)
 screen_width, screen_height = d.window_size()
 ctx = d.watch_context()
@@ -270,7 +272,7 @@ while True:
 time.sleep(10)
 check_popup()
 click_earn()
-swipe_count = True
+swipe_count = 0
 find_count = 0
 while True:
     try:
@@ -322,7 +324,7 @@ while True:
                 time.sleep(8 if "视频" in task_name else 3)
                 operate_task()
             else:
-                print("未找到可点击按钮", error_count)
+                print(f"未找到可点击按钮。error_count={error_count},swipe_count={swipe_count},find_count={find_count}")
                 if swipe_count > 10:
                     break
                 if (swipe_count > 0 and find_count > 5) or swipe_count == 0:
@@ -424,4 +426,5 @@ while True:
         break
     time.sleep(2)
 print("任务完成。。。")
+d.shell(f"settings put system screen_off_timeout {origin_timeout}")
 ctx.stop()

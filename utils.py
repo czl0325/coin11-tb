@@ -81,6 +81,7 @@ def majority_chinese(text):
     chinese_count = sum(1 for char in text if is_chinese(char))
     return chinese_count > len(text) / 2
 
+
 # img = cv2.imread("./img/screenshot.png")
 # pt = find_button(img, "./img/fish_back.png", (0, 0, 300, 500))
 # print(pt)

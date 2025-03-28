@@ -66,7 +66,7 @@ while True:
             for index, view in enumerate(to_btn):
                 text_div = view.left(className="android.widget.TextView")
                 if text_div.exists:
-                    if check_chars_exist(text_div.get_text()):
+                    if check_chars_exist(text_div.get_text(), ["5次", "购买", "分享", "今日头条"]):
                         if view not in unclick_btn:
                             unclick_btn.append(view)
                         continue
@@ -79,9 +79,15 @@ while True:
                 need_click_view.click()
                 time.sleep(2)
                 search_view = d(className="android.view.View", text="搜索有福利")
+                search_edit = d(resourceId="com.taobao.taobao:id/searchEdit")
+                search_btn = d(resourceId="com.taobao.taobao:id/searchbtn")
                 if search_view.exists:
                     d(className="android.widget.EditText", instance=0).send_keys("笔记本电脑")
                     d(className="android.widget.Button", text="搜索").click()
+                    time.sleep(2)
+                elif search_edit.exists and search_btn.exists:
+                    search_edit.send_keys("笔记本电脑")
+                    search_btn.click()
                     time.sleep(2)
                 operate_task()
             else:

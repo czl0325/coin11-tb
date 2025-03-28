@@ -189,9 +189,6 @@ while True:
                     search_edit.send_keys("笔记本电脑")
                     search_btn.click()
                     time.sleep(2)
-                # web_view = d(className="android.webkit.WebView")
-                # live_view = d(resourceId="com.taobao.taobao:id/layermanager_penetrate_webview_container_id")
-                # if web_view.exists(timeout=5) or live_view.exists(timeout=5):
                 operate_task()
             else:
                 error_count += 1
