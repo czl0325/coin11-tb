@@ -23,7 +23,7 @@ time.sleep(5)
 
 def check_in_task():
     package_name, _ = get_current_app(d)
-    if d(className="android.webkit.WebView", text="芭芭农场").exists and package_name == "com.taobao.taobao":
+    if d(resourceId="ice-container", className="android.view.View").exists and package_name == "com.taobao.taobao":
         return True
     return False
 
