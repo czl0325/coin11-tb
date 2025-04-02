@@ -7,8 +7,8 @@ from utils import get_current_app, fish_not_click, find_button, majority_chinese
 import ddddocr
 
 d = u2.connect()
-origin_timeout = d.shell("settings get system screen_off_timeout").output
-d.shell("settings put system screen_off_timeout 86400000")
+# origin_timeout = d.shell("settings get system screen_off_timeout").output
+# d.shell("settings put system screen_off_timeout 86400000")
 d.app_start("com.taobao.idlefish", stop=True, use_monkey=True)
 screen_width, screen_height = d.window_size()
 ctx = d.watch_context()
@@ -426,5 +426,7 @@ while True:
         break
     time.sleep(2)
 print("任务完成。。。")
-d.shell(f"settings put system screen_off_timeout {origin_timeout}")
+# d.shell(f"settings put system screen_off_timeout {origin_timeout}")
 ctx.stop()
+d.shell("settings put system accelerometer_rotation 0")
+print("关闭手机自动旋转")
