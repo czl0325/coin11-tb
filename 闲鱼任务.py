@@ -274,6 +274,7 @@ check_popup()
 click_earn()
 swipe_count = 0
 find_count = 0
+no_button = 0
 while True:
     try:
         print("正在查找按钮...")
@@ -293,6 +294,7 @@ while True:
             continue
         to_btn = d(className="android.widget.TextView", text="去完成", )
         if to_btn.exists:
+            no_button = 0
             need_click_view = None
             task_name = None
             if finish_count > 5:
@@ -335,7 +337,10 @@ while True:
                     time.sleep(5)
                 find_count += 1
         else:
-            break
+            no_button += 1
+            if no_button > 2:
+                print("未找到去完成按钮，退出循环")
+                break
     except Exception as e:
         print("报错", e)
         continue
@@ -428,5 +433,3 @@ while True:
 print("任务完成。。。")
 # d.shell(f"settings put system screen_off_timeout {origin_timeout}")
 ctx.stop()
-d.shell("settings put system accelerometer_rotation 0")
-print("关闭手机自动旋转")

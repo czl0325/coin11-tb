@@ -103,7 +103,7 @@ def find_coin_btn():
 
 ctx.wait_stable()
 close_btn = d(className="android.widget.ImageView", description="关闭按钮")
-if close_btn.exists:
+if close_btn and close_btn.exists:
     close_btn.click()
     time.sleep(3)
 find_coin_btn()
