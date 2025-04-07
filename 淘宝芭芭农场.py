@@ -25,7 +25,7 @@ def check_in_task():
     package_name, _ = get_current_app(d)
     if package_name != "com.taobao.taobao":
         return False
-    if d(resourceId="ice-container", className="android.view.View").exists and package_name == "com.taobao.taobao":
+    if d(resourceId="ice-container", className="android.view.View").exists and package_name == "com.taobao.taobao" and d(className="android.widget.TextView", text="肥料明细").exists:
         return True
     return False
 
