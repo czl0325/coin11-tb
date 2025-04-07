@@ -23,6 +23,8 @@ time.sleep(5)
 
 def check_in_task():
     package_name, _ = get_current_app(d)
+    if package_name != "com.taobao.taobao":
+        return False
     if d(resourceId="ice-container", className="android.view.View").exists and package_name == "com.taobao.taobao":
         return True
     return False
