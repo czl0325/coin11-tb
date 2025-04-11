@@ -137,7 +137,7 @@ d.watcher.when(xpath="//android.widget.FrameLayout[@resource-id='com.taobao.taob
 # d.watcher.when(xpath="//android.widget.TextView[@package='com.eg.android.AlipayGphone']").click()
 d.watcher.when("O1CN01sORayC1hBVsDQRZoO_!!6000000004239-2-tps-426-128.png_").click()
 d.watcher.when("点击刷新").click()
-d.watcher.when("关闭").click()
+# d.watcher.when("关闭").click()
 d.watcher.start()
 find_farm_btn()
 find_fertilizer_btn()
