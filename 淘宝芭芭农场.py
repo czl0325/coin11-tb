@@ -26,7 +26,7 @@ def check_in_task():
     package_name, _ = get_current_app(d)
     if package_name != "com.taobao.taobao":
         return False
-    if d(resourceId="ice-container", className="android.view.View").exists and package_name == "com.taobao.taobao" and d(className="android.widget.TextView", text="肥料明细").exists:
+    if d(className="android.webkit.WebView", text="芭芭农场").exists:
         return True
     return False
 
@@ -73,7 +73,7 @@ def operate_task():
                     d.app_start("com.taobao.taobao", stop=False)
                     time.sleep(10)
                 break
-    check_error_page()
+    # check_error_page()
 
 
 # 查找芭芭农场按钮
@@ -182,7 +182,8 @@ while True:
                 time.sleep(2)
                 search_view = d(className="android.view.View", text="搜索有福利")
                 if search_view.exists:
-                    d(className="android.widget.EditText", instance=0).send_keys("笔记本电脑")
+                    d(className="android.widget.EditText").send_keys("笔记本电脑")
+                    time.sleep(2)
                     d(className="android.widget.Button", text="搜索").click()
                     time.sleep(2)
                 operate_task()
