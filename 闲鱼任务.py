@@ -24,12 +24,15 @@ finish_count = 0
 
 def click_earn():
     while True:
+        print("开始查找去赚钱按钮")
         if d(className="android.view.View", resourceId="taskWrap").exists:
             break
         throw_btn1 = d(className="android.view.View", resourceId="mapDiceBtn")
         if throw_btn1.exists:
             d.click(throw_btn1.bounds()[2] + 50, throw_btn1.center()[1] + 30)
             time.sleep(5)
+        else:
+            d(scrollable=True).fling.vert.toBeginning(max_swipes=1000)
         time.sleep(2)
 
 
