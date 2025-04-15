@@ -24,12 +24,15 @@ finish_count = 0
 
 def click_earn():
     while True:
+        print("开始查找去赚钱按钮")
         if d(className="android.view.View", resourceId="taskWrap").exists:
             break
         throw_btn1 = d(className="android.view.View", resourceId="mapDiceBtn")
         if throw_btn1.exists:
             d.click(throw_btn1.bounds()[2] + 50, throw_btn1.center()[1] + 30)
             time.sleep(5)
+        else:
+            d(scrollable=True).fling.vert.toBeginning(max_swipes=1000)
         time.sleep(2)
 
 
@@ -53,13 +56,13 @@ def back_to_task(to_treasure=False):
             print("当前是我的夺宝页面，不能继续返回")
             break
         else:
-            pt = find_button(d.screenshot(format='opencv'), "./img/fish_back.png", (0, 0, 300, 500))
-            if pt and try_count <= 2:
-                print("点击后退按钮, ", int(pt[0]) + 15, int(pt[1]) + 25)
-                d.click(int(pt[0]) + 15, int(pt[1]) + 25)
-                try_count += 1
-            else:
-                d.press("back")
+            d.press("back")
+            try_count += 1
+            if try_count > 5:
+                pt = find_button(d.screenshot(format='opencv'), "./img/fish_back.png", (0, 0, 300, 500))
+                if pt:
+                    print("点击后退按钮, ", int(pt[0]) + 15, int(pt[1]) + 25)
+                    d.click(int(pt[0]) + 15, int(pt[1]) + 25)
             time.sleep(0.1)
 
 

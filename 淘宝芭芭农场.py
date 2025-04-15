@@ -17,6 +17,7 @@ time.sleep(5)
 # d.app_clear('com.taobao.taobao')
 # time.sleep(2)
 d.app_start("com.taobao.taobao", stop=True, use_monkey=True)
+screen_width, screen_height = d.window_size()
 time.sleep(5)
 # https://dl.ncat1.app/
 
@@ -25,7 +26,7 @@ def check_in_task():
     package_name, _ = get_current_app(d)
     if package_name != "com.taobao.taobao":
         return False
-    if d(resourceId="ice-container", className="android.view.View").exists and package_name == "com.taobao.taobao" and d(className="android.widget.TextView", text="肥料明细").exists:
+    if d(className="android.webkit.WebView", text="芭芭农场").exists:
         return True
     return False
 
@@ -59,11 +60,11 @@ def operate_task():
             # if package_name == "com.miui.home":
             #     d.app_start("com.taobao.taobao")
             #     break
-            if package_name == "com.taobao.taobao":
-                if activity_name == "com.taobao.tao.welcome.Welcome":
-                    find_farm_btn()
-                    find_fertilizer_btn()
-                    break
+            # if package_name == "com.taobao.taobao":
+            #     if activity_name == "com.taobao.tao.welcome.Welcome":
+            #         find_farm_btn()
+            #         find_fertilizer_btn()
+            #         break
             d.press("back")
             try_count += 1
             time.sleep(0.2)
@@ -72,7 +73,7 @@ def operate_task():
                     d.app_start("com.taobao.taobao", stop=False)
                     time.sleep(10)
                 break
-    check_error_page()
+    # check_error_page()
 
 
 # 查找芭芭农场按钮
@@ -83,17 +84,11 @@ def find_farm_btn():
         farm_btn = d(className="android.widget.FrameLayout", description="芭芭农场")
         if farm_btn.exists(timeout=5):
             farm_btn.click()
-            time.sleep(5)
-            temp_btn = d(className="android.widget.Button", textContains="集肥料")
-            if temp_btn.exists:
-                break
-        else:
-            no_found_count += 1
-            time.sleep(3)
-            if no_found_count > 3:
-                d.app_start("com.taobao.taobao", stop=True, use_monkey=True)
-                time.sleep(5)
-                find_farm_btn()
+            time.sleep(8)
+        temp_btn = d(className="android.widget.Button", textContains="集肥料")
+        new_ui = d(resourceId="game-canvas-fuguo", className="android.widget.Image")
+        if temp_btn.exists or new_ui.exists:
+            break
 
 
 # 查找集肥料按钮
@@ -103,10 +98,16 @@ def find_fertilizer_btn():
         fertilize_btn = d(className="android.widget.Button", textContains="集肥料")
         if fertilize_btn.click_exists(timeout=2):
             print("点击集肥料按钮")
-            time.sleep(5)
-            if d(text="肥料明细").exists:
-                print("进入任务页面")
+            time.sleep(8)
+            break
+        else:
+            new_ui = d(resourceId="game-canvas-fuguo", className="android.widget.Image")
+            if new_ui.exists:
+                print(f"点击靠近的集肥料按钮, {screen_width * 0.7}, {new_ui.bounds()[3] - 50}")
+                d.click(screen_width * 0.7, new_ui.bounds()[3] - 50)
+                time.sleep(8)
                 break
+    print("进入任务页面")
 
 
 # 任务完成后检查
@@ -136,6 +137,7 @@ d.watcher.when(xpath="//android.widget.FrameLayout[@resource-id='com.taobao.taob
 # d.watcher.when(xpath="//android.widget.TextView[@package='com.eg.android.AlipayGphone']").click()
 d.watcher.when("O1CN01sORayC1hBVsDQRZoO_!!6000000004239-2-tps-426-128.png_").click()
 d.watcher.when("点击刷新").click()
+# d.watcher.when("关闭").click()
 d.watcher.start()
 find_farm_btn()
 find_fertilizer_btn()
@@ -180,7 +182,8 @@ while True:
                 time.sleep(2)
                 search_view = d(className="android.view.View", text="搜索有福利")
                 if search_view.exists:
-                    d(className="android.widget.EditText", instance=0).send_keys("笔记本电脑")
+                    d(className="android.widget.EditText").send_keys("笔记本电脑")
+                    time.sleep(2)
                     d(className="android.widget.Button", text="搜索").click()
                     time.sleep(2)
                 operate_task()
