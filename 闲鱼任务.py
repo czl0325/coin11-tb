@@ -56,13 +56,13 @@ def back_to_task(to_treasure=False):
             print("当前是我的夺宝页面，不能继续返回")
             break
         else:
-            pt = find_button(d.screenshot(format='opencv'), "./img/fish_back.png", (0, 0, 300, 500))
-            if pt and try_count <= 2:
-                print("点击后退按钮, ", int(pt[0]) + 15, int(pt[1]) + 25)
-                d.click(int(pt[0]) + 15, int(pt[1]) + 25)
-                try_count += 1
-            else:
-                d.press("back")
+            d.press("back")
+            try_count += 1
+            if try_count > 5:
+                pt = find_button(d.screenshot(format='opencv'), "./img/fish_back.png", (0, 0, 300, 500))
+                if pt:
+                    print("点击后退按钮, ", int(pt[0]) + 15, int(pt[1]) + 25)
+                    d.click(int(pt[0]) + 15, int(pt[1]) + 25)
             time.sleep(0.1)
 
 
