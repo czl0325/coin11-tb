@@ -188,9 +188,9 @@ while True:
                     time.sleep(2)
                 operate_task()
                 finish_count = finish_count + 1
-                if finish_count % 20 == 0:
-                    d.swipe_ext("up", scale=0.2)
-                    time.sleep(4)
+                # if finish_count % 20 == 0:
+                #     d.swipe_ext("up", scale=0.2)
+                #     time.sleep(4)
             else:
                 error_count += 1
                 print("未找到可点击按钮", error_count)

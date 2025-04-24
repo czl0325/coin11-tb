@@ -32,7 +32,7 @@ def click_earn():
             d.click(throw_btn1.bounds()[2] + 50, throw_btn1.center()[1] + 30)
             time.sleep(5)
         else:
-            d(scrollable=True).fling.vert.toBeginning(max_swipes=1000)
+            d.swipe_ext(u2.Direction.BACKWARD)
         time.sleep(2)
 
 
