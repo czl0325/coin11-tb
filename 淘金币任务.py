@@ -138,10 +138,10 @@ while True:
             get_btn.click()
             print("点击领取奖励")
             time.sleep(2)
-            finish_count = finish_count + 1
-            if finish_count % 20 == 0:
-                d.swipe_ext("up", scale=0.2)
-                time.sleep(4)
+            # finish_count = finish_count + 1
+            # if finish_count % 20 == 0:
+            #     d.swipe_ext("up", scale=0.2)
+            #     time.sleep(4)
             continue
         de_btn = d(className="android.widget.Button", text="点击得")
         if de_btn.exists:
