@@ -203,7 +203,7 @@ while True:
         count_text = jump_btn.get_text()
         print(count_text)
         jump_count = int(re.findall(r"\d+", count_text)[0])
-        if jump_count <= 0:
+        if jump_count < 10:
             break
         jump_btn.click()
         print("点击跳一跳")
