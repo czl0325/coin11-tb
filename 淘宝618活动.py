@@ -107,6 +107,7 @@ if close_btn.exists:
     time.sleep(3)
 find_coin_btn()
 
+
 def do_task():
     error_count = 0
     global in_other_app
@@ -181,10 +182,11 @@ def do_task():
             print(e)
             continue
 
+
 finish_count = 0
 for i in range(2):
     jump_btn = d(className="android.widget.Button", textMatches="剩余.*体力")
-    if jump_btn.exists(timeout=4):
+    if jump_btn.exists:
         if i == 0:
             d.click(jump_btn[0].bounds()[2] + 50, jump_btn[0].center()[1])
             print("点击开始赚体力")
@@ -196,9 +198,26 @@ for i in range(2):
         do_task()
         d.click(400, 250)
         time.sleep(3)
+    else:
+        image_wrap = d(className="android.widget.Image", resourceId="eva-canvas")
+        if image_wrap.exists:
+            if i == 0:
+                d.click(image_wrap[0].bounds()[2] - 100, image_wrap[0].bounds()[3] - 50)
+                print("点击开始赚体力")
+                time.sleep(5)
+            else:
+                d.click(image_wrap[0].bounds()[0] + 100, image_wrap[0].bounds()[1] - 50)
+                print("点击开始赚金币")
+                time.sleep(5)
+            do_task()
+            d.click(400, 250)
+            time.sleep(3)
 print("开始点击跳一跳按钮")
 while True:
+    if check_in_task():
+        break
     jump_btn = d(className="android.widget.Button", textMatches="剩余.*体力")
+    image_wrap = d(className="android.widget.Image", resourceId="eva-canvas")
     if jump_btn.exists:
         count_text = jump_btn.get_text()
         print(count_text)
@@ -206,7 +225,11 @@ while True:
         if jump_count < 10:
             break
         jump_btn.click()
-        print("点击跳一跳")
+        print("点击跳一跳按钮")
+        time.sleep(3)
+    elif image_wrap.exists:
+        d.click(image_wrap[0].center()[0], image_wrap[0].bounds()[3] - 50)
+        print("根据坐标点击跳一跳")
         time.sleep(3)
     else:
         break
