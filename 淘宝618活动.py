@@ -206,10 +206,11 @@ for i in range(2):
                 print("点击开始赚体力")
                 time.sleep(5)
             else:
-                d.click(image_wrap[0].bounds()[0] + 100, image_wrap[0].bounds()[1] - 50)
+                d.click(image_wrap[0].bounds()[0] + 100, image_wrap[0].bounds()[3] - 50)
                 print("点击开始赚金币")
                 time.sleep(5)
             do_task()
+            print("点击关闭任务列表")
             d.click(400, 250)
             time.sleep(3)
 print("开始点击跳一跳按钮")
