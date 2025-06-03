@@ -3,7 +3,7 @@ import re
 
 import uiautomator2 as u2
 from uiautomator2 import Direction
-from utils import check_chars_exist, other_app, get_current_app
+from utils import check_chars_exist, other_app, get_current_app, task_loop
 
 unclick_btn = []
 have_clicked = dict()
@@ -172,7 +172,8 @@ def do_task():
                         search_edit.send_keys("笔记本电脑")
                         search_btn.click()
                         time.sleep(2)
-                    operate_task()
+                    # operate_task()
+                    task_loop(d, check_in_task)
                 else:
                     error_count += 1
                     print("未找到可点击按钮", error_count)

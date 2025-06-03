@@ -1,3 +1,5 @@
+import time
+import random
 import re
 import cv2
 import numpy as np
@@ -82,6 +84,44 @@ def majority_chinese(text):
     return chinese_count > len(text) / 2
 
 
+def task_loop(d, func):
+    screen_width, screen_height = d.window_size()
+    package_name, _ = get_current_app(d)
+    check_count = 3
+    while check_count >= 0:
+        if not func():
+            break
+        print(f"检查次数：{check_count}当前在任务页面，没有执行任务。。。")
+        check_count -= 1
+        if check_count <= 0:
+            return
+        time.sleep(2)
+    start_time = time.time()
+    while True:
+        if time.time() - start_time > 18:
+            break
+        if package_name == "com.taobao.taobao":
+            start_x = random.randint(screen_width // 6, screen_width // 2)
+            start_y = random.randint(screen_height // 2, screen_height - screen_width // 4)
+            end_x = random.randint(start_x - 100, start_x)
+            end_y = random.randint(start_y - 600, start_y - 200)
+            swipe_time = random.uniform(0.3, 0.5)
+            print("模拟滑动", start_x, start_y, end_x, end_y, swipe_time)
+            d.swipe(start_x, start_y, end_x, end_y, swipe_time)
+            time.sleep(random.uniform(2, 4))
+        else:
+            time.sleep(5)
+    try_count = 0
+    while True:
+        if func():
+            print("当前是任务列表画面，不能继续返回")
+            break
+        else:
+            d.press("back")
+            time.sleep(0.2)
+            try_count += 1
+            if try_count > 10:
+                break
 # img = cv2.imread("./img/screenshot.png")
 # pt = find_button(img, "./img/fish_back.png", (0, 0, 300, 500))
 # print(pt)

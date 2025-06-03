@@ -2,7 +2,7 @@ import time
 
 import uiautomator2 as u2
 from uiautomator2 import Direction
-from utils import check_chars_exist, other_app, get_current_app
+from utils import check_chars_exist, other_app, get_current_app, task_loop
 
 unclick_btn = []
 have_clicked = dict()
@@ -57,14 +57,6 @@ def operate_task():
             break
         else:
             package_name, activity_name = get_current_app(d)
-            # if package_name == "com.miui.home":
-            #     d.app_start("com.taobao.taobao")
-            #     break
-            # if package_name == "com.taobao.taobao":
-            #     if activity_name == "com.taobao.tao.welcome.Welcome":
-            #         find_farm_btn()
-            #         find_fertilizer_btn()
-            #         break
             d.press("back")
             try_count += 1
             time.sleep(0.2)
@@ -186,11 +178,8 @@ while True:
                     time.sleep(2)
                     d(className="android.widget.Button", text="搜索").click()
                     time.sleep(2)
-                operate_task()
+                task_loop(d, check_in_task)
                 finish_count = finish_count + 1
-                # if finish_count % 20 == 0:
-                #     d.swipe_ext("up", scale=0.2)
-                #     time.sleep(4)
             else:
                 error_count += 1
                 print("未找到可点击按钮", error_count)
