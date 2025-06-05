@@ -172,12 +172,6 @@ while True:
                     in_other_app = True
                 need_click_view.click()
                 time.sleep(2)
-                search_view = d(className="android.view.View", text="搜索有福利")
-                if search_view.exists:
-                    d(className="android.widget.EditText").send_keys("笔记本电脑")
-                    time.sleep(2)
-                    d(className="android.widget.Button", text="搜索").click()
-                    time.sleep(2)
                 task_loop(d, check_in_task)
                 finish_count = finish_count + 1
             else:

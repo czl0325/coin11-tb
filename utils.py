@@ -84,7 +84,24 @@ def majority_chinese(text):
     return chinese_count > len(text) / 2
 
 
+search_keys = ["华硕a豆air", "机械革命星耀14", "ipadmini7", "iphone16", "红米note13", "macbookairm4", "华硕灵耀14", "微星星影15"]
+
+
 def task_loop(d, func):
+    history_lst = d.xpath('(//android.widget.TextView[@text="历史搜索"]/following-sibling::android.widget.ListView)//android.view.View')
+    if history_lst.exists:
+        history_lst.click()
+        time.sleep(2)
+    else:
+        search_view = d(className="android.view.View", text="搜索有福利")
+        if search_view.exists:
+            search_edit = d.xpath("//android.widget.EditText")
+            if search_edit.exists:
+                search_edit.set_text(random.choice(search_keys))
+                search_btn = d(className="android.widget.Button", text="搜索")
+                if search_btn.exists:
+                    search_btn.click()
+                    time.sleep(2)
     screen_width, screen_height = d.window_size()
     package_name, _ = get_current_app(d)
     check_count = 3
@@ -105,7 +122,7 @@ def task_loop(d, func):
             start_y = random.randint(screen_height // 2, screen_height - screen_width // 4)
             end_x = random.randint(start_x - 100, start_x)
             end_y = random.randint(start_y - 600, start_y - 200)
-            swipe_time = random.uniform(0.3, 0.5)
+            swipe_time = random.uniform(0.1, 0.5)
             print("模拟滑动", start_x, start_y, end_x, end_y, swipe_time)
             d.swipe(start_x, start_y, end_x, end_y, swipe_time)
             time.sleep(random.uniform(2, 4))
