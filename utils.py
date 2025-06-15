@@ -90,7 +90,7 @@ search_keys = ["华硕a豆air", "机械革命星耀14", "ipadmini7", "iphone16",
 def task_loop(d, func):
     history_lst = d.xpath('(//android.widget.TextView[@text="历史搜索"]/following-sibling::android.widget.ListView)/android.view.View')
     if history_lst.exists:
-        history_lst.click()
+        random.choice(history_lst).click()
         time.sleep(2)
     else:
         search_view = d(className="android.view.View", text="搜索有福利")

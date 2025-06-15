@@ -91,14 +91,16 @@ def find_fertilizer_btn():
         if fertilize_btn.click_exists(timeout=2):
             print("点击集肥料按钮")
             time.sleep(8)
-            break
+            if check_in_task():
+                break
         else:
             new_ui = d(resourceId="game-canvas-fuguo", className="android.widget.Image")
             if new_ui.exists:
                 print(f"点击靠近的集肥料按钮, {screen_width * 0.7}, {new_ui.bounds()[3] - 50}")
                 d.click(screen_width * 0.7, new_ui.bounds()[3] - 50)
                 time.sleep(8)
-                break
+                if check_in_task():
+                    break
     print("进入任务页面")
 
 
