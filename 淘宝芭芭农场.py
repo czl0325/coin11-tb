@@ -76,7 +76,7 @@ def find_farm_btn():
         farm_btn = d(className="android.widget.FrameLayout", description="芭芭农场")
         if farm_btn.exists(timeout=5):
             farm_btn.click()
-            time.sleep(8)
+            time.sleep(12)
         temp_btn = d(className="android.widget.Button", textContains="集肥料")
         new_ui = d(resourceId="game-canvas-fuguo", className="android.widget.Image")
         if temp_btn.exists or new_ui.exists:
@@ -90,7 +90,7 @@ def find_fertilizer_btn():
         fertilize_btn = d(className="android.widget.Button", textContains="集肥料")
         if fertilize_btn.click_exists(timeout=2):
             print("点击集肥料按钮")
-            time.sleep(8)
+            time.sleep(12)
             if check_in_task():
                 break
         else:
@@ -98,7 +98,7 @@ def find_fertilizer_btn():
             if new_ui.exists:
                 print(f"点击靠近的集肥料按钮, {screen_width * 0.7}, {new_ui.bounds()[3] - 50}")
                 d.click(screen_width * 0.7, new_ui.bounds()[3] - 50)
-                time.sleep(8)
+                time.sleep(12)
                 if check_in_task():
                     break
     print("进入任务页面")
@@ -131,6 +131,7 @@ d.watcher.when(xpath="//android.widget.FrameLayout[@resource-id='com.taobao.taob
 # d.watcher.when(xpath="//android.widget.TextView[@package='com.eg.android.AlipayGphone']").click()
 d.watcher.when("O1CN01sORayC1hBVsDQRZoO_!!6000000004239-2-tps-426-128.png_").click()
 d.watcher.when("点击刷新").click()
+d.watcher.when("点击重试").click()
 # d.watcher.when("关闭").click()
 d.watcher.start()
 find_farm_btn()
