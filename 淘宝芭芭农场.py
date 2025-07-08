@@ -174,7 +174,7 @@ while True:
                 if check_chars_exist(task_name, other_app):
                     in_other_app = True
                 need_click_view.click()
-                time.sleep(3)
+                time.sleep(4)
                 task_loop(d, check_in_task)
                 finish_count = finish_count + 1
             else:
