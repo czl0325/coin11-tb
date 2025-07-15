@@ -126,7 +126,7 @@ def task_loop(d, func):
             swipe_time = random.uniform(0.4, 1) if end_y - start_y > 500 else random.uniform(0.2, 0.5)
             print("模拟滑动", start_x, start_y, end_x, end_y, swipe_time)
             d.swipe(start_x, start_y, end_x, end_y, swipe_time)
-            time.sleep(random.uniform(2, 4))
+            time.sleep(random.uniform(1, 3))
         else:
             time.sleep(5)
     try_count = 0
@@ -143,3 +143,10 @@ def task_loop(d, func):
 # img = cv2.imread("./img/screenshot.png")
 # pt = find_button(img, "./img/fish_back.png", (0, 0, 300, 500))
 # print(pt)
+
+
+def close_xy_dialog(d):
+    dialog_view1 = d.xpath('//android.webkit.WebView[@text="闲鱼币首页"]/android.view.View/android.view.View[2]//android.widget.Image[1]')
+    if dialog_view1.exists:
+        dialog_view1.click()
+        time.sleep(2)
