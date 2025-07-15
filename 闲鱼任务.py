@@ -150,7 +150,11 @@ while True:
                 time.sleep(5)
                 operate_task(task_name)
         else:
-            break
+            finish_view = d(className="android.widget.TextView", text="已完成")
+            if finish_view.exists:
+                break
+            else:
+                d.swipe_ext(u2.Direction.FORWARD)
     except Exception as e:
         print("报错", e)
         continue
