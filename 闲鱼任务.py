@@ -47,17 +47,20 @@ def click_earn():
 
 def back_to_task():
     print("开始返回到闲鱼币首页。")
+    try_count = 0
     while True:
         if check_in_xy():
             break
         else:
             back_btn = d.xpath('//android.view.View[@resource-id="root"]/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Image')
-            if back_btn.exists:
+            if back_btn.exists and try_count % 4 == 0:
+                print("点击后退按钮")
                 back_btn.click()
                 time.sleep(0.5)
             else:
                 d.press("back")
                 time.sleep(0.1)
+            try_count += 1
 
 
 def operate_task(task):
@@ -91,10 +94,10 @@ def operate_task(task):
         tap_index = 0
         while True:
             if tap_index % 4 == 0 and tap_index > 0:
-                d.swipe_ext("down", scale=0.3)
+                d.swipe_ext("down", scale=0.4)
             else:
-                d.swipe_ext("up", scale=0.3)
-            time.sleep(0.5)
+                d.swipe_ext("up", scale=0.4)
+            time.sleep(0.3)
             tap_index += 1
             if time.time() - start_time > 25:
                 break
@@ -160,11 +163,16 @@ while True:
         continue
 print(f"共自动化完成{finish_count}个任务")
 d.click(screen_width//2, 250)
-receive_btn2 = d(className="android.view.View", resourceId="dailyRewardBox")
-if receive_btn2.exists:
-    print("点击领取收益")
-    receive_btn2.click()
-    time.sleep(5)
+click_count = 2
+while click_count >= 0:
+    receive_btn2 = d(className="android.view.View", resourceId="dailyRewardBox")
+    if receive_btn2.exists:
+        print("点击领取收益")
+        receive_btn2.click()
+        time.sleep(3)
+    else:
+        break
+    click_count -= 1
 throw_btn = d(className="android.view.View", resourceId="mapDiceBtn")
 while True:
     print("开始摇骰子...")
