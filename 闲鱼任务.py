@@ -141,6 +141,14 @@ while True:
             continue
         task_view = d.xpath(f"//android.view.View[@resource-id='taskWrap']/android.view.View[last()]/android.view.View/android.widget.TextView[{' or '.join([f"@text='{text}'" for text in xy_task_name])}]")
         if task_view.exists:
+            task_container = d.xpath('//android.view.View[@resource-id="taskWrap"]/android.view.View[last()]')
+            top_position = None
+            if task_container.exists:
+                top_position = task_container.bounds[1]
+            if top_position and task_view.bounds[3] < top_position:
+                print("task_view超出范围了。等待后再试")
+                time.sleep(4)
+                continue
             task_name = task_view.get_text()
             print(f"查找任务:{task_name}")
             todo_btn = task_view.child("./following-sibling::android.widget.TextView[@text='去完成'][1]")
