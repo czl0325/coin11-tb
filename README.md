@@ -21,6 +21,7 @@ uiauto.dev
 adb命令，获取当前打开的app包名和类名
 ```shell
 adb shell dumpsys window | grep mCurrentFocus
+adb shell dumpsys window | findstr mCurrentFocus
 ```
 
 目前淘宝芭芭农场和淘金币任务相对完善，其他的还有问题。

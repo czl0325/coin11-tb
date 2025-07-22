@@ -150,6 +150,10 @@ while True:
                 time.sleep(4)
                 continue
             task_name = task_view.get_text()
+            if have_clicked.get(task_name) is not None and have_clicked.get(task_name) >= 2:
+                print(f"{task_name}已重试两次，移除出数组")
+                xy_task_name.remove(task_name)
+                continue
             print(f"查找任务:{task_name}")
             todo_btn = task_view.child("./following-sibling::android.widget.TextView[@text='去完成'][1]")
             if todo_btn.exists:
@@ -166,6 +170,7 @@ while True:
                 break
             else:
                 d.swipe_ext(u2.Direction.FORWARD)
+                print("上滑查找下一页")
     except Exception as e:
         print("报错", e)
         continue
