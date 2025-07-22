@@ -167,6 +167,7 @@ while True:
         else:
             finish_view = d(className="android.widget.TextView", text="已完成")
             if finish_view.exists:
+                print("已完成按钮存在，退出循环")
                 break
             else:
                 d.swipe_ext(u2.Direction.FORWARD)
