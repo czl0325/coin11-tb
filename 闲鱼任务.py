@@ -124,6 +124,10 @@ while True:
 time.sleep(10)
 close_xy_dialog(d)
 click_earn()
+bottom_pos = screen_height
+bottom_navigator = d(className="android.widget.FrameLayout",resourceId="com.android.systemui:id/navigation_bar_frame")
+if bottom_navigator.exists:
+    bottom_pos = bottom_navigator.bounds()[1]
 while True:
     try:
         print("正在查找按钮...")
@@ -145,11 +149,11 @@ while True:
             top_position = None
             if task_container.exists:
                 top_position = task_container.bounds[1]
+            task_name = task_view.get_text()
             if top_position and task_view.bounds[3] < top_position:
-                print("task_view超出范围了。等待后再试")
+                print(f"{task_name}超出范围了。等待后再试")
                 time.sleep(4)
                 continue
-            task_name = task_view.get_text()
             if have_clicked.get(task_name) is not None and have_clicked.get(task_name) >= 2:
                 print(f"{task_name}已重试两次，移除出数组")
                 xy_task_name.remove(task_name)
@@ -157,6 +161,11 @@ while True:
             print(f"查找任务:{task_name}")
             todo_btn = task_view.child("./following-sibling::android.widget.TextView[@text='去完成'][1]")
             if todo_btn.exists:
+                if todo_btn.bounds[3] >= bottom_pos + 10:
+                    d.swipe_ext(u2.Direction.FORWARD)
+                    print("去完成按钮偏下了，上滑一段距离。")
+                    time.sleep(4)
+                    continue
                 todo_btn.click()
                 if have_clicked.get(task_name) is None:
                     have_clicked[task_name] = 1
@@ -165,13 +174,18 @@ while True:
                 time.sleep(5)
                 operate_task(task_name)
         else:
-            finish_view = d(className="android.widget.TextView", text="已完成")
-            if finish_view.exists:
+            last_view = d.xpath('//android.view.View[@resource-id="taskWrap"]/android.view.View[last()]/android.view.View/android.widget.TextView[last()]')
+            if last_view.exists and last_view.get_text() == "已完成":
                 print("已完成按钮存在，退出循环")
                 break
             else:
-                d.swipe_ext(u2.Direction.FORWARD)
-                print("上滑查找下一页")
+                if not check_in_xy():
+                    d(scrollable=True).fling.vert.toBeginning(max_swipes=1000)
+                    click_earn()
+                else:
+                    d.swipe_ext(u2.Direction.FORWARD)
+                    print("上滑查找下一页")
+                    time.sleep(4)
     except Exception as e:
         print("报错", e)
         continue
