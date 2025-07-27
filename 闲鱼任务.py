@@ -143,7 +143,9 @@ while True:
             finish_count += 1
             time.sleep(2)
             continue
-        task_view = d.xpath(f"//android.view.View[@resource-id='taskWrap']/android.view.View[last()]/android.view.View/android.widget.TextView[{' or '.join([f"@text='{text}'" for text in xy_task_name])}]")
+        # task_view = d.xpath(f"//android.view.View[@resource-id='taskWrap']/android.view.View[last()]/android.view.View/android.widget.TextView[{' or '.join([f"@text='{text}'" for text in xy_task_name])}]")
+        condition = " or ".join([f'@text="{text}"' for text in xy_task_name])
+        task_view = d.xpath(f'//android.view.View[@resource-id="taskWrap"]/android.view.View[last()]/android.view.View/android.widget.TextView[{condition}]')
         if task_view.exists:
             task_container = d.xpath('//android.view.View[@resource-id="taskWrap"]/android.view.View[last()]')
             top_position = None
