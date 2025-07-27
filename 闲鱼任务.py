@@ -175,6 +175,8 @@ while True:
                     have_clicked[task_name] += 1
                 time.sleep(5)
                 operate_task(task_name)
+            else:
+                break
         else:
             last_view = d.xpath('//android.view.View[@resource-id="taskWrap"]/android.view.View[last()]/android.view.View/android.widget.TextView[last()]')
             if last_view.exists and last_view.get_text() == "已完成":
