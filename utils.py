@@ -116,7 +116,7 @@ def task_loop(d, func):
         time.sleep(2)
     start_time = time.time()
     while True:
-        if time.time() - start_time > 18:
+        if time.time() - start_time > 20:
             break
         if package_name == "com.taobao.taobao":
             start_x = random.randint(screen_width // 6, screen_width // 2)
