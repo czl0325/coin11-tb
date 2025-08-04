@@ -116,7 +116,7 @@ def task_loop(d, func):
         time.sleep(2)
     start_time = time.time()
     while True:
-        if time.time() - start_time > 20:
+        if time.time() - start_time > 22:
             break
         if package_name == "com.taobao.taobao":
             start_x = random.randint(screen_width // 6, screen_width // 2)
@@ -126,7 +126,7 @@ def task_loop(d, func):
             swipe_time = random.uniform(0.4, 1) if end_y - start_y > 500 else random.uniform(0.2, 0.5)
             print("模拟滑动", start_x, start_y, end_x, end_y, swipe_time)
             d.swipe(start_x, start_y, end_x, end_y, swipe_time)
-            time.sleep(random.uniform(1, 3))
+            time.sleep(random.uniform(1, 5))
         else:
             time.sleep(5)
     try_count = 0
