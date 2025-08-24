@@ -116,6 +116,13 @@ def task_loop(d, func):
         time.sleep(2)
     start_time = time.time()
     while True:
+        bt_open = d(resourceId="android:id/button1", text="浏览器打开")
+        if bt_open.exists:
+            bt_close = d(resourceId="android:id/button2", text="取消")
+            if bt_close.exists:
+                bt_close.click()
+                time.sleep(2)
+                break
         if time.time() - start_time > 22:
             break
         if package_name == "com.taobao.taobao":
