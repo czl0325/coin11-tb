@@ -137,6 +137,7 @@ def task_loop(d, func):
         else:
             time.sleep(5)
     try_count = 0
+    print("开始返回任务页面")
     while True:
         if func():
             print("当前是任务列表画面，不能继续返回")
@@ -144,11 +145,18 @@ def task_loop(d, func):
         else:
             close_applet = d(className="android.widget.TextView", resourceId="com.taobao.taobao:id/back_home_btn", description="返回首页")
             if close_applet.exists:
+                print("点击小程序关闭按钮")
                 close_applet.click()
                 time.sleep(3)
+            bt_close = d(resourceId="android:id/button2", text="取消")
+            if bt_close.exists:
+                bt_close.click()
+                time.sleep(2)
+                continue
             d.press("back")
             time.sleep(0.2)
             try_count += 1
+            print(f"点击后退，{try_count}次")
             if try_count > 10:
                 break
 # img = cv2.imread("./img/screenshot.png")
