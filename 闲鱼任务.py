@@ -52,6 +52,10 @@ def back_to_task():
         if check_in_xy():
             break
         else:
+            package_name, _ = get_current_app(d)
+            if package_name != "com.taobao.idlefish":
+                d.app_start("com.taobao.idlefish", stop=False)
+                time.sleep(2)
             back_btn = d.xpath('//android.view.View[@resource-id="root"]/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Image')
             if back_btn.exists and try_count % 4 == 0:
                 print("点击后退按钮")
