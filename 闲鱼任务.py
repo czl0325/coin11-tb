@@ -55,7 +55,13 @@ def back_to_task():
             package_name, _ = get_current_app(d)
             if package_name != "com.taobao.idlefish":
                 d.app_start("com.taobao.idlefish", stop=False)
-                time.sleep(2)
+                time.sleep(1)
+                bt_refresh = d(resourceId="com.taobao.idlefish:id/state_action", text="刷新")
+                if bt_refresh.exists:
+                    print("点击刷新按钮")
+                    bt_refresh.click()
+                    time.sleep(2)
+                continue
             back_btn = d.xpath('//android.view.View[@resource-id="root"]/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Image')
             if back_btn.exists and try_count % 4 == 0:
                 print("点击后退按钮")
