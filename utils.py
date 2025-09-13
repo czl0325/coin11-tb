@@ -148,6 +148,7 @@ def task_loop(d, func):
                 print("点击小程序关闭按钮")
                 close_applet.click()
                 time.sleep(3)
+                continue
             bt_close = d(resourceId="android:id/button2", text="取消")
             if bt_close.exists:
                 bt_close.click()
