@@ -32,6 +32,25 @@ def check_in_xy():
     return False
 
 
+def to_task():
+    while True:
+        sign_btn1 = d(resourceId="com.taobao.idlefish:id/icon_entry_lottie", className="android.widget.ImageView", clickable=True)
+        sign_btn2 = d(className="android.widget.ImageView", resourceId="com.taobao.idlefish:id/icon_entry")
+        print(f"查找签到按钮，存在:{sign_btn1.exists}, {sign_btn2.exists}")
+        if sign_btn1.exists:
+            d.click(sign_btn1.center()[0], sign_btn1.center()[1])
+            time.sleep(2)
+        elif sign_btn2.exists:
+            d.click(sign_btn2.center()[0], sign_btn2.center()[1])
+            time.sleep(2)
+        if d(className="android.webkit.WebView", text="闲鱼币首页").exists:
+            print("已经进入闲鱼页面")
+            break
+        time.sleep(1)
+    time.sleep(10)
+    close_xy_dialog(d)
+
+
 def click_earn():
     while True:
         print("开始查找去赚钱按钮")
@@ -52,19 +71,25 @@ def back_to_task():
         if check_in_xy():
             break
         else:
-            package_name, _ = get_current_app(d)
+            package_name, activity_name = get_current_app(d)
             if package_name != "com.taobao.idlefish":
                 d.app_start("com.taobao.idlefish", stop=False)
                 time.sleep(2)
-            back_btn = d.xpath('//android.view.View[@resource-id="root"]/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Image')
-            if back_btn.exists and try_count % 4 == 0:
-                print("点击后退按钮")
-                back_btn.click()
-                time.sleep(0.5)
             else:
-                d.press("back")
-                time.sleep(0.1)
-            try_count += 1
+                if activity_name == "com.taobao.idlefish.maincontainer.activity.MainActivity":
+                    to_task()
+                    click_earn()
+                    break
+                else:
+                    back_btn = d.xpath('//android.view.View[@resource-id="root"]/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Image')
+                    if back_btn.exists and try_count % 4 == 0:
+                        print("点击后退按钮")
+                        back_btn.click()
+                        time.sleep(0.5)
+                    else:
+                        d.press("back")
+                        time.sleep(0.1)
+                    try_count += 1
 
 
 def operate_task(task):
@@ -111,22 +136,7 @@ def operate_task(task):
 
 time.sleep(5)
 ctx.wait_stable()
-while True:
-    sign_btn1 = d(resourceId="com.taobao.idlefish:id/icon_entry_lottie", className="android.widget.ImageView", clickable=True)
-    sign_btn2 = d(className="android.widget.ImageView", resourceId="com.taobao.idlefish:id/icon_entry")
-    print(f"查找签到按钮，存在:{sign_btn1.exists}, {sign_btn2.exists}")
-    if sign_btn1.exists:
-        d.click(sign_btn1.center()[0], sign_btn1.center()[1])
-        time.sleep(2)
-    elif sign_btn2.exists:
-        d.click(sign_btn2.center()[0], sign_btn2.center()[1])
-        time.sleep(2)
-    if d(className="android.webkit.WebView", text="闲鱼币首页").exists:
-        print("已经进入闲鱼页面")
-        break
-    time.sleep(1)
-time.sleep(10)
-close_xy_dialog(d)
+to_task()
 click_earn()
 bottom_pos = screen_height
 bottom_navigator = d(className="android.widget.FrameLayout",resourceId="com.android.systemui:id/navigation_bar_frame")
