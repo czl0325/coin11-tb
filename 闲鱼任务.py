@@ -75,6 +75,11 @@ def back_to_task():
             if package_name != "com.taobao.idlefish":
                 d.app_start("com.taobao.idlefish", stop=False)
                 time.sleep(2)
+                # bt_refresh = d(resourceId="com.taobao.idlefish:id/state_action", text="刷新")
+                # if bt_refresh.exists:
+                #     print("点击刷新按钮")
+                #     bt_refresh.click()
+                #     time.sleep(2)
             else:
                 if activity_name == "com.taobao.idlefish.maincontainer.activity.MainActivity":
                     to_task()
