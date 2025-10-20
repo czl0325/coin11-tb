@@ -136,7 +136,7 @@ print(f"共自动化完成{finish_count}个任务")
 temp_btn = d(className="android.widget.TextView", text="做任务赚体力")
 if temp_btn.exists:
     print("点击缩回弹框")
-    temp_btn.right(className="android.widget.TextView").click()
+    temp_btn.right(className="android.widget.Button").click()
 time.sleep(4)
 while True:
     print("开始跳一跳。。。")
@@ -146,7 +146,7 @@ while True:
         match = re.search(r'剩余 (\d+) 体力', dump_text)
         if match:
             phy_num = int(match.group(1))
-            if phy_num <= 0:
+            if phy_num <= 9:
                 break
             print(f"当前剩余体力：{phy_num}")
             # d.shell(f"input touchscreen swipe {dump_btn.center()[0]} {dump_btn.center()[1]} {dump_btn.center()[0]} {dump_btn.center()[1]} 5000")
