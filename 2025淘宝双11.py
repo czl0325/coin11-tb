@@ -120,7 +120,8 @@ while True:
             print("点击按钮", task_name)
             if task_name not in have_clicked:
                 have_clicked.append(task_name)
-            need_click_view.click()
+            # need_click_view.click()
+            d.click(random.randint(need_click_view.bounds()[0] + 10, need_click_view.bounds()[2] - 10), random.randint(need_click_view.bounds()[1] + 10, need_click_view.bounds()[3] - 10))
             time.sleep(4)
             search_view = d(className="android.view.View", text="搜索有福利")
             if search_view.exists:
