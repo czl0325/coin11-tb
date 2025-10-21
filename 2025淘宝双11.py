@@ -141,6 +141,14 @@ if temp_btn.exists:
 time.sleep(4)
 while True:
     print("开始跳一跳。。。")
+    share_view = d(className="android.view.View", text="分享给好友立得体力")
+    if share_view.exists:
+        print("存在分享给好友立得体力弹框，关闭它")
+        close_btn = d.xpath('//android.view.View[@text="分享给好友立得体力"]/preceding-sibling::android.view.View[3]')
+        if close_btn.exists:
+            print("关闭按钮存在，关闭它")
+            close_btn.click()
+            time.sleep(3)
     dump_btn = d(className="android.widget.Button", textContains="跳一跳拿钱")
     if dump_btn.exists:
         dump_text = dump_btn.get_text()

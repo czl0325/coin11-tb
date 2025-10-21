@@ -1,4 +1,4 @@
-uiautodev==0.9.0
+uiautodev==0.12.0
 uiautomator2==3.3.4
 pytesseract==0.3.13
 opencv-python==4.11.0.86
