@@ -66,6 +66,8 @@ def operate_task():
             break
         else:
             temp_package, temp_activity = get_current_app(d)
+            if temp_package is None or temp_activity is None:
+                continue
             print(f"{temp_package}--{temp_activity}")
             if "com.taobao.taobao" not in temp_package:
                 print("回到淘宝APP")
