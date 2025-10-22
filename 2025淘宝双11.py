@@ -36,9 +36,31 @@ def check_in_task():
     temp_package, temp_activity = get_current_app(d)
     if temp_package == "com.taobao.taobao" and temp_activity == "com.taobao.themis.container.app.TMSActivity":
         phy_view = d(className="android.widget.TextView", text="做任务赚体力")
-        if phy_view.exists:
+        if phy_view.exists(timeout=5):
             return True
+    elif temp_package == "com.taobao.taobao" and temp_activity == "com.taobao.tao.welcome.Welcome":
+        to_11()
+        return True
     return False
+
+
+def to_11():
+    while True:
+        package_name, activity_name = get_current_app(d)
+        if package_name == "com.taobao.taobao" and activity_name != "com.taobao.tao.welcome.Welcome":
+            break
+        coin_btn = d(className="android.view.View", description="领淘金币")
+        if coin_btn.exists:
+            coin_btn.click()
+        else:
+            raise Exception("没有找到领淘金币按钮")
+        time.sleep(4)
+    time.sleep(10)
+    print("进入领淘金币按钮")
+    physical_btn = d(className="android.widget.Button", text="赚体力")
+    if physical_btn.exists:
+        physical_btn.click()
+        time.sleep(5)
 
 
 def operate_task():
@@ -58,7 +80,7 @@ def operate_task():
         swipe_time = random.uniform(0.4, 1) if end_y - start_y > 500 else random.uniform(0.2, 0.5)
         print("模拟滑动", start_x, start_y, end_x, end_y, swipe_time)
         d.swipe(start_x, start_y, end_x, end_y, swipe_time)
-        time.sleep(random.uniform(1, 5))
+        time.sleep(random.uniform(1, 3))
     print("开始返回界面")
     while True:
         if check_in_task():
@@ -78,22 +100,7 @@ def operate_task():
                 time.sleep(0.5)
 
 
-while True:
-    package_name, activity_name = get_current_app(d)
-    if package_name == "com.taobao.taobao" and activity_name != "com.taobao.tao.welcome.Welcome":
-        break
-    coin_btn = d(className="android.view.View", description="领淘金币")
-    if coin_btn.exists:
-        coin_btn.click()
-    else:
-        raise Exception("没有找到领淘金币按钮")
-    time.sleep(4)
-time.sleep(10)
-print("进入领淘金币按钮")
-physical_btn = d(className="android.widget.Button", text="赚体力")
-if physical_btn.exists:
-    physical_btn.click()
-    time.sleep(5)
+to_11()
 finish_count = 0
 time1 = time.time()
 while True:
@@ -143,7 +150,7 @@ if temp_btn.exists:
 time.sleep(4)
 while True:
     print("开始跳一跳。。。")
-    share_view = d(className="android.view.View", text="分享给好友立得体力")
+    share_view = d(className="android.view.View", textMatches=r"分享给好友立得体力|去抢频道额外优惠")
     if share_view.exists:
         print("存在分享给好友立得体力弹框，关闭它")
         close_btn = d.xpath('//android.view.View[@text="分享给好友立得体力"]/preceding-sibling::android.view.View[3]')
