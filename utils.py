@@ -143,26 +143,18 @@ def task_loop(d, func):
             print("当前是任务列表画面，不能继续返回")
             break
         else:
-            close_applet = d(className="android.widget.TextView", resourceId="com.taobao.taobao:id/back_home_btn", description="返回首页")
-            if close_applet.exists:
-                print("点击小程序关闭按钮")
-                close_applet.click()
+            temp_package, temp_activity = get_current_app(d)
+            if temp_package is None or temp_activity is None:
+                continue
+            print(f"{temp_package}--{temp_activity}")
+            if "com.taobao.taobao" not in temp_package:
+                print("回到淘宝APP")
+                d.app_start("com.taobao.taobao", stop=False)
                 time.sleep(3)
-                continue
-            bt_close = d(resourceId="android:id/button2", text="取消")
-            if bt_close.exists:
-                bt_close.click()
-                time.sleep(2)
-                continue
-            d.press("back")
-            time.sleep(0.2)
-            try_count += 1
-            print(f"点击后退，{try_count}次")
-            if try_count > 10:
-                break
-# img = cv2.imread("./img/screenshot.png")
-# pt = find_button(img, "./img/fish_back.png", (0, 0, 300, 500))
-# print(pt)
+            else:
+                print("点击后退")
+                d.press("back")
+                time.sleep(0.5)
 
 
 def close_xy_dialog(d):

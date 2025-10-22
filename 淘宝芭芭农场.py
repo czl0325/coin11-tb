@@ -45,21 +45,22 @@ def operate_task():
             time.sleep(3)
             d.swipe_ext(Direction.BACKWARD)
             time.sleep(3)
-    try_count = 0
     while True:
         if check_in_task():
             print("当前是任务列表画面，不能继续返回")
             break
         else:
-            package_name, activity_name = get_current_app(d)
-            d.press("back")
-            try_count += 1
-            time.sleep(0.2)
-            if try_count > 10:
-                if package_name != "com.taobao.taobao":
-                    d.app_start("com.taobao.taobao", stop=False)
-                    time.sleep(10)
-                break
+            temp_package, temp_activity = get_current_app(d)
+            if temp_package is None or temp_activity is None:
+                continue
+            print(f"{temp_package}--{temp_activity}")
+            if "com.taobao.taobao" not in temp_package:
+                print("回到淘宝APP")
+                d.app_start("com.taobao.taobao", stop=False)
+            else:
+                print("点击后退")
+                d.press("back")
+                time.sleep(0.5)
     # check_error_page()
 
 
@@ -125,6 +126,7 @@ d.watcher.when(xpath="//android.app.Dialog//android.widget.Button[@text='关闭'
 d.watcher.when(xpath="//android.widget.FrameLayout[@resource-id='com.taobao.taobao:id/poplayer_native_state_center_layout_frame_id']//android.widget.ImageView[@content-desc='关闭按钮']").click()
 # d.watcher.when(xpath="//android.widget.TextView[@package='com.eg.android.AlipayGphone']").click()
 d.watcher.when("O1CN01sORayC1hBVsDQRZoO_!!6000000004239-2-tps-426-128.png_").click()
+d.watcher.when("跳过").click()
 d.watcher.when("点击刷新").click()
 d.watcher.when("点击重试").click()
 # d.watcher.when("关闭").click()

@@ -94,6 +94,7 @@ def operate_task():
             if "com.taobao.taobao" not in temp_package:
                 print("回到淘宝APP")
                 d.app_start("com.taobao.taobao", stop=False)
+                time.sleep(2)
             else:
                 print("点击后退")
                 d.press("back")
@@ -168,8 +169,8 @@ while True:
                 break
             print(f"当前剩余体力：{phy_num}")
             # d.shell(f"input touchscreen swipe {dump_btn.center()[0]} {dump_btn.center()[1]} {dump_btn.center()[0]} {dump_btn.center()[1]} 5000")
-            dump_btn.long_click(duration=6)
-            time.sleep(8)
+            dump_btn.long_click(duration=5)
+            time.sleep(7)
         else:
             break
     else:
