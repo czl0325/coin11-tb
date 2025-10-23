@@ -154,7 +154,7 @@ while True:
     share_view = d(className="android.view.View", textMatches=r"分享给好友立得体力|去抢频道额外优惠")
     if share_view.exists:
         print("存在分享给好友立得体力弹框，关闭它")
-        close_btn = d.xpath('//android.view.View[@text="分享给好友立得体力"]/preceding-sibling::android.view.View[3]')
+        close_btn = d.xpath('//android.view.View[@text="分享给好友立得体力" or @text="去抢频道额外优惠"]/preceding-sibling::android.view.View[3]')
         if close_btn.exists:
             print("关闭按钮存在，关闭它")
             close_btn.click()
