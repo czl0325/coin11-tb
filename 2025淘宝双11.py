@@ -165,7 +165,7 @@ while True:
         match = re.search(r'剩余 (\d+) 体力', dump_text)
         if match:
             phy_num = int(match.group(1))
-            if phy_num <= 9:
+            if phy_num <= 10:
                 break
             print(f"当前剩余体力：{phy_num}")
             # d.shell(f"input touchscreen swipe {dump_btn.center()[0]} {dump_btn.center()[1]} {dump_btn.center()[0]} {dump_btn.center()[1]} 5000")
