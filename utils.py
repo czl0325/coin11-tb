@@ -136,25 +136,24 @@ def task_loop(d, func):
             time.sleep(random.uniform(1, 5))
         else:
             time.sleep(5)
-    try_count = 0
     print("开始返回任务页面")
     while True:
-        if func():
-            print("当前是任务列表画面，不能继续返回")
-            break
+        temp_package, temp_activity = get_current_app(d)
+        if temp_package is None or temp_activity is None:
+            continue
+        print(f"{temp_package}--{temp_activity}")
+        if "com.taobao.taobao" not in temp_package:
+            print("回到淘宝APP")
+            d.app_start("com.taobao.taobao", stop=False)
+            time.sleep(3)
         else:
-            temp_package, temp_activity = get_current_app(d)
-            if temp_package is None or temp_activity is None:
-                continue
-            print(f"{temp_package}--{temp_activity}")
-            if "com.taobao.taobao" not in temp_package:
-                print("回到淘宝APP")
-                d.app_start("com.taobao.taobao", stop=False)
-                time.sleep(3)
+            if func():
+                print("当前是任务列表画面，不能继续返回")
+                break
             else:
                 print("点击后退")
                 d.press("back")
-                time.sleep(0.5)
+                time.sleep(0.3)
 
 
 def close_xy_dialog(d):
