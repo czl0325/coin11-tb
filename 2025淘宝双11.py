@@ -150,7 +150,11 @@ print(f"共自动化完成{finish_count}个任务")
 temp_btn = d(className="android.widget.TextView", text="做任务赚体力")
 if temp_btn.exists:
     print("点击缩回弹框")
-    temp_btn.right(className="android.widget.Button").click()
+    close_btn = temp_btn.right(className="android.widget.Button")
+    if close_btn.exists:
+        close_btn.click()
+    else:
+        d.shell("input tap 500 300")
 time.sleep(4)
 while True:
     print("开始跳一跳。。。")
