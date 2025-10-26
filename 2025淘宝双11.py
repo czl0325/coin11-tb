@@ -134,6 +134,10 @@ while True:
                 # need_click_view.click()
                 d.click(random.randint(need_click_view.bounds()[0] + 10, need_click_view.bounds()[2] - 10), random.randint(need_click_view.bounds()[1] + 10, need_click_view.bounds()[3] - 10))
                 time.sleep(4)
+                open_btn = d(className="android.widget.Button", resourceIdMatches=r"android:id/.*", textMatches="打开|允许")
+                if open_btn.exists:
+                    open_btn.click()
+                    time.sleep(4)
                 search_view = d(className="android.view.View", text="搜索有福利")
                 if search_view.exists:
                     d(className="android.widget.EditText", instance=0).send_keys("笔记本电脑")
