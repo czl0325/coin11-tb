@@ -143,7 +143,7 @@ while True:
                 operate_task()
             else:
                 break
-        time.sleep(4)
+        time.sleep(5)
     except Exception as e:
         print("出现异常，继续下一轮", str(e))
 print(f"共自动化完成{finish_count}个任务")
@@ -162,6 +162,14 @@ while True:
     if share_view.exists:
         print("存在分享给好友立得体力弹框，关闭它")
         close_btn = d.xpath('//android.view.View[@text="分享给好友立得体力" or @text="去抢频道额外优惠"]/preceding-sibling::android.view.View[3]')
+        if close_btn.exists:
+            print("关闭按钮存在，关闭它")
+            close_btn.click()
+            time.sleep(3)
+    dialog_view2 = d(className="android.view.View", text="去赚体力")
+    if dialog_view2.exists:
+        print("存在去赚体力弹框，关闭它")
+        close_btn = d.xpath('//android.view.View[@text="去赚体力"]/preceding-sibling::android.view.View[5]')
         if close_btn.exists:
             print("关闭按钮存在，关闭它")
             close_btn.click()
