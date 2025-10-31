@@ -188,8 +188,11 @@ while True:
             if phy_num < 10:
                 break
             print(f"当前剩余体力：{phy_num}")
-            # d.shell(f"input touchscreen swipe {dump_btn.center()[0]} {dump_btn.center()[1]} {dump_btn.center()[0]} {dump_btn.center()[1]} 5000")
-            dump_btn.long_click(duration=5)
+            if phy_num < 50:
+                dump_btn.click()
+            else:
+                # d.shell(f"input touchscreen swipe {dump_btn.center()[0]} {dump_btn.center()[1]} {dump_btn.center()[0]} {dump_btn.center()[1]} 5000")
+                dump_btn.long_click(duration=5)
             time.sleep(7)
         else:
             break
