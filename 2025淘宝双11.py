@@ -74,9 +74,9 @@ def operate_task():
         if time.time() - start_time > 18:
             break
         start_x = random.randint(screen_width // 6, screen_width // 2)
-        start_y = random.randint(screen_height // 2, screen_height - screen_width // 4)
+        start_y = random.randint(screen_height // 2, screen_height + screen_height // 4)
         end_x = random.randint(start_x - 100, start_x)
-        end_y = random.randint(start_y - 1200, start_y - 300)
+        end_y = random.randint(start_y - 800, start_y - 300)
         swipe_time = random.uniform(0.4, 1) if end_y - start_y > 500 else random.uniform(0.2, 0.5)
         print("模拟滑动", start_x, start_y, end_x, end_y, swipe_time)
         d.swipe(start_x, start_y, end_x, end_y, swipe_time)
