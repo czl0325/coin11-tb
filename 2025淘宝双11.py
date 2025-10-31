@@ -179,6 +179,12 @@ while True:
             print("关闭按钮存在，关闭它")
             close_btn.click()
             time.sleep(3)
+    dialog_view3 = d(className="android.widget.TextView", text="去下单")
+    if dialog_view3.exists:
+        close_btn = d(className="android.widget.Image", text="关闭")
+        if close_btn.exists:
+            close_btn.click()
+            time.sleep(3)
     dump_btn = d(className="android.widget.Button", textContains="跳一跳拿钱")
     if dump_btn.exists:
         dump_text = dump_btn.get_text()
