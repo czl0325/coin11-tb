@@ -71,7 +71,7 @@ def operate_task():
         time.sleep(2)
         return
     while True:
-        if time.time() - start_time > 18:
+        if time.time() - start_time > 20:
             break
         start_x = random.randint(screen_width // 6, screen_width // 2)
         start_y = random.randint(screen_height // 2, screen_height + screen_height // 4)
