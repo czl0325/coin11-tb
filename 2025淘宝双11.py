@@ -13,7 +13,7 @@ screen_height = d.info['displayHeight']
 time.sleep(5)
 in_search = False
 in_other_app = False
-have_clicked = []
+have_clicked = {}
 
 ctx = d.watch_context()
 # ctx.when("O1CN012qVB9n1tvZ8ATEQGu_!!6000000005964-2-tps-144-144").click()
@@ -30,6 +30,28 @@ def close_all_dialog():
     if btn1.exists:
         btn1.right(className="android.widget.ImageView").click()
         time.sleep(2)
+    share_view = d(className="android.view.View", textMatches=r"分享给好友立得体力|去抢频道额外优惠")
+    if share_view.exists:
+        print("存在分享给好友立得体力弹框，关闭它")
+        close_btn1 = d.xpath('//android.view.View[@text="分享给好友立得体力" or @text="去抢频道额外优惠"]/preceding-sibling::android.view.View[3]')
+        if close_btn1.exists:
+            print("关闭按钮存在，关闭它")
+            close_btn1.click()
+            time.sleep(3)
+    dialog_view2 = d(className="android.view.View", text="去赚体力")
+    if dialog_view2.exists:
+        print("存在去赚体力弹框，关闭它")
+        close_btn1 = d.xpath('//android.view.View[@text="去赚体力"]/preceding-sibling::android.view.View[5]')
+        if close_btn1.exists:
+            print("关闭按钮存在，关闭它")
+            close_btn1.click()
+            time.sleep(3)
+    dialog_view3 = d(className="android.widget.TextView", text="去下单")
+    if dialog_view3.exists:
+        close_btn1 = d(className="android.widget.Image", text="关闭")
+        if close_btn1.exists:
+            close_btn1.click()
+            time.sleep(3)
 
 
 def check_in_task():
@@ -57,13 +79,14 @@ def to_11():
         time.sleep(4)
     time.sleep(10)
     print("进入领淘金币按钮")
+    close_all_dialog()
     physical_btn = d(className="android.widget.Button", text="赚体力")
     if physical_btn.exists:
         physical_btn.click()
         time.sleep(5)
 
 
-def operate_task():
+def operate_task(repeat=False):
     start_time = time.time()
     cancel_btn = d(resourceId="android:id/button2", text="取消")
     if cancel_btn.exists:
@@ -71,7 +94,7 @@ def operate_task():
         time.sleep(2)
         return
     while True:
-        if time.time() - start_time > 20:
+        if time.time() - start_time > 25 if repeat else 20:
             break
         start_x = random.randint(screen_width // 6, screen_width // 2)
         start_y = random.randint(screen_height // 2, screen_height + screen_height // 4)
@@ -122,7 +145,7 @@ while True:
                     if check_chars_exist(text_div.get_text()):
                         continue
                     task_name = text_div.get_text()
-                    if task_name in have_clicked:
+                    if task_name in have_clicked and have_clicked[task_name] > 1:
                         continue
                     need_click_index = index
                     need_click_view = view
@@ -130,7 +153,9 @@ while True:
             if need_click_view:
                 print("点击按钮", task_name)
                 if task_name not in have_clicked:
-                    have_clicked.append(task_name)
+                    have_clicked[task_name] = 1
+                else:
+                    have_clicked[task_name] += 1
                 # need_click_view.click()
                 d.click(random.randint(need_click_view.bounds()[0] + 10, need_click_view.bounds()[2] - 10), random.randint(need_click_view.bounds()[1] + 10, need_click_view.bounds()[3] - 10))
                 time.sleep(4)
@@ -144,7 +169,7 @@ while True:
                     d(className="android.widget.Button", text="搜索").click()
                     in_search = True
                     time.sleep(4)
-                operate_task()
+                operate_task(have_clicked[task_name]>1)
             else:
                 break
         time.sleep(5)
@@ -163,28 +188,7 @@ if temp_btn.exists:
 time.sleep(4)
 while True:
     print("开始跳一跳。。。")
-    share_view = d(className="android.view.View", textMatches=r"分享给好友立得体力|去抢频道额外优惠")
-    if share_view.exists:
-        print("存在分享给好友立得体力弹框，关闭它")
-        close_btn = d.xpath('//android.view.View[@text="分享给好友立得体力" or @text="去抢频道额外优惠"]/preceding-sibling::android.view.View[3]')
-        if close_btn.exists:
-            print("关闭按钮存在，关闭它")
-            close_btn.click()
-            time.sleep(3)
-    dialog_view2 = d(className="android.view.View", text="去赚体力")
-    if dialog_view2.exists:
-        print("存在去赚体力弹框，关闭它")
-        close_btn = d.xpath('//android.view.View[@text="去赚体力"]/preceding-sibling::android.view.View[5]')
-        if close_btn.exists:
-            print("关闭按钮存在，关闭它")
-            close_btn.click()
-            time.sleep(3)
-    dialog_view3 = d(className="android.widget.TextView", text="去下单")
-    if dialog_view3.exists:
-        close_btn = d(className="android.widget.Image", text="关闭")
-        if close_btn.exists:
-            close_btn.click()
-            time.sleep(3)
+    close_all_dialog()
     dump_btn = d(className="android.widget.Button", textContains="跳一跳拿钱")
     if dump_btn.exists:
         dump_text = dump_btn.get_text()
