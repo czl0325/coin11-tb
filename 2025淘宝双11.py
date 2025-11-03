@@ -78,12 +78,15 @@ def to_11():
             raise Exception("没有找到领淘金币按钮")
         time.sleep(4)
     time.sleep(10)
-    print("进入领淘金币按钮")
+    print("进入领淘金币页面")
     close_all_dialog()
-    physical_btn = d(className="android.widget.Button", text="赚体力")
-    if physical_btn.exists:
-        physical_btn.click()
-        time.sleep(5)
+    while True:
+        physical_btn = d(className="android.widget.Button", text="赚体力")
+        if physical_btn.exists:
+            physical_btn.click()
+            time.sleep(5)
+        if check_in_task():
+            break
 
 
 def operate_task(repeat=False):
@@ -170,6 +173,7 @@ while True:
                     in_search = True
                     time.sleep(4)
                 operate_task(have_clicked[task_name]>1)
+                finish_count += 1
             else:
                 break
         time.sleep(5)
