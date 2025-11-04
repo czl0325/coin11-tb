@@ -106,7 +106,7 @@ def operate_task(repeat=False):
         swipe_time = random.uniform(0.4, 1) if end_y - start_y > 500 else random.uniform(0.2, 0.5)
         print("模拟滑动", start_x, start_y, end_x, end_y, swipe_time)
         d.swipe(start_x, start_y, end_x, end_y, swipe_time)
-        time.sleep(random.uniform(1, 3))
+        time.sleep(random.uniform(1, 2.5))
     print("开始返回界面")
     while True:
         if check_in_task():
@@ -148,7 +148,7 @@ while True:
                     if check_chars_exist(text_div.get_text()):
                         continue
                     task_name = text_div.get_text()
-                    if task_name in have_clicked and have_clicked[task_name] > 1:
+                    if task_name in have_clicked and have_clicked[task_name] > 2:
                         continue
                     need_click_index = index
                     need_click_view = view
