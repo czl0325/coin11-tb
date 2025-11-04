@@ -109,6 +109,13 @@ if close_btn and close_btn.exists:
     close_btn.click()
     time.sleep(3)
 find_coin_btn()
+
+# 因2025双十一活动，需要回旧版本后继续任务
+earn_btn = d(className="android.widget.Button", textContains="回日常版")
+if earn_btn.exists(timeout=4):
+    earn_btn.click()
+    time.sleep(3)
+
 earn_btn = d(className="android.widget.TextView", textMatches="签到领金币|点击签到")
 if earn_btn.exists(timeout=4):
     earn_btn.click()
