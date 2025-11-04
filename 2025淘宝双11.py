@@ -97,7 +97,9 @@ def operate_task(repeat=False):
         time.sleep(2)
         return
     while True:
-        if time.time() - start_time > 25 if repeat else 20:
+        now_time = time.time()
+        print(f"{int(now_time)}------{int(start_time)}-----{int(now_time - start_time)}")
+        if now_time - start_time > (25 if repeat else 20):
             break
         start_x = random.randint(screen_width // 6, screen_width // 2)
         start_y = random.randint(screen_height // 2, screen_height - screen_height // 4)
