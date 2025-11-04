@@ -6,7 +6,70 @@ import uiautomator2 as u2
 from uiautomator2 import Direction
 from utils import check_chars_exist, other_app, get_current_app
 
-d = u2.connect()
+def get_connected_devices():
+    """通过ADB获取所有连接的安卓设备序列号"""
+    import subprocess
+    import re
+    try:
+        # 执行adb命令获取设备列表
+        result = subprocess.run(
+            ["adb", "devices"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        
+        # 解析输出，提取设备序列号
+        output = result.stdout
+        # 正则表达式匹配设备序列号（忽略第一行和离线设备）
+        pattern = re.compile(r'^([a-zA-Z0-9.:]+)\s+device$', re.MULTILINE)
+        devices = pattern.findall(output)
+        
+        return devices
+    except subprocess.CalledProcessError:
+        print("执行ADB命令失败，请确保ADB已正确安装并添加到环境变量")
+        return []
+    except FileNotFoundError:
+        print("未找到ADB命令，请确保ADB已正确安装并添加到环境变量")
+        return []
+
+# 获取所有连接的设备
+devices = get_connected_devices()
+
+if not devices:
+    raise Exception("未检测到任何连接的安卓设备")
+
+    # 根据设备数量进行处理
+if len(devices) == 1:
+    # 只有一个设备，直接连接
+    # d = u2.connect()
+    selected_device = devices[0]
+else:
+    # 多个设备，让用户选择
+    print("当前连接多个设备，请输入要执行的设备序号：")
+    for i, device in enumerate(devices, 1):
+        print(f"  {i}: {device}")
+    
+    # 获取用户输入并验证
+    while True:
+        try:
+            choice = input("请输入设备序号：")
+            index = int(choice) - 1  # 转换为列表索引
+            
+            if 0 <= index < len(devices):
+                # 连接选中的设备
+                # d = u2.connect(devices[index])
+                selected_device = devices[index]
+                break
+            else:
+                print(f"输入错误，请重新输入序号（1-{len(devices)}）")
+        except ValueError:
+            print(f"输入错误，请重新输入序号（1-{len(devices)}）")
+
+
+d = u2.connect(selected_device)
+print(f"已成功连接设备：{selected_device}")
+
 d.app_start("com.taobao.taobao", stop=True, use_monkey=True)
 screen_width = d.info['displayWidth']
 screen_height = d.info['displayHeight']
