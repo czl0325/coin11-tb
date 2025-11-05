@@ -4,9 +4,12 @@ import re
 
 import uiautomator2 as u2
 from uiautomator2 import Direction
-from utils import check_chars_exist, other_app, get_current_app
+from utils import check_chars_exist, other_app, get_current_app, select_device
 
-d = u2.connect()
+selected_device = select_device()
+d = u2.connect(selected_device)
+print(f"已成功连接设备：{selected_device}")
+
 d.app_start("com.taobao.taobao", stop=True, use_monkey=True)
 screen_width = d.info['displayWidth']
 screen_height = d.info['displayHeight']

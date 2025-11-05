@@ -2,7 +2,7 @@ import time
 
 import uiautomator2 as u2
 from uiautomator2 import Direction
-from utils import check_chars_exist, other_app, get_current_app
+from utils import check_chars_exist, other_app, get_current_app, select_device
 
 unclick_btn = []
 have_clicked = dict()
@@ -10,7 +10,9 @@ is_end = False
 error_count = 0
 in_other_app = False
 time1 = time.time()
-d = u2.connect()
+selected_device = select_device()
+d = u2.connect(selected_device)
+print(f"已成功连接设备：{selected_device}")
 d.shell("adb kill-server && adb start-server")
 time.sleep(5)
 # d.app_stop("com.taobao.taobao")
@@ -107,6 +109,13 @@ if close_btn and close_btn.exists:
     close_btn.click()
     time.sleep(3)
 find_coin_btn()
+
+# 因2025双十一活动，需要回旧版本后继续任务
+earn_btn = d(className="android.widget.Button", textContains="回日常版")
+if earn_btn.exists(timeout=4):
+    earn_btn.click()
+    time.sleep(3)
+
 earn_btn = d(className="android.widget.TextView", textMatches="签到领金币|点击签到")
 if earn_btn.exists(timeout=4):
     earn_btn.click()

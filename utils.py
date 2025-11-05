@@ -4,6 +4,7 @@ import re
 import cv2
 import numpy as np
 import ddddocr
+import subprocess
 
 
 def check_chars_exist(text, chars=None):
@@ -161,3 +162,61 @@ def close_xy_dialog(d):
     if dialog_view1.exists:
         dialog_view1.click()
         time.sleep(2)
+
+def get_connected_devices():
+    """通过ADB获取所有连接的安卓设备序列号"""
+    try:
+        # 执行adb命令获取设备列表
+        result = subprocess.run(
+            ["adb", "devices"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+
+        # 解析输出，提取设备序列号
+        output = result.stdout
+        # 正则表达式匹配设备序列号（忽略第一行和离线设备）
+        pattern = re.compile(r'^([a-zA-Z0-9.:]+)\s+device$', re.MULTILINE)
+        devices = pattern.findall(output)
+
+        return devices
+    except subprocess.CalledProcessError:
+        print("执行ADB命令失败，请确保ADB已正确安装并添加到环境变量")
+        return []
+    except FileNotFoundError:
+        print("未找到ADB命令，请确保ADB已正确安装并添加到环境变量")
+        return []
+
+# 从已连接的设备中，返回用户选中的设备序列号
+def select_device():
+    # 获取所有连接的设备
+    devices = get_connected_devices()
+
+    if not devices:
+        raise Exception("未检测到任何连接的安卓设备")
+
+        # 根据设备数量进行处理
+    if len(devices) == 1:
+        # 只有一个设备，直接返回
+        return devices[0]
+    else:
+        # 多个设备，让用户选择
+        print("当前连接多个设备，请输入要执行的设备序号：")
+        for i, device in enumerate(devices, 1):
+            print(f"  {i}: {device}")
+
+        # 获取用户输入并验证
+        while True:
+            try:
+                choice = input("请输入设备序号：")
+                index = int(choice) - 1  # 转换为列表索引
+
+                if 0 <= index < len(devices):
+                    # 选中的设备
+                    return devices[index]
+                    break
+                else:
+                    print(f"输入错误，请重新输入序号（1-{len(devices)}）")
+            except ValueError:
+                print(f"输入错误，请重新输入序号（1-{len(devices)}）")
