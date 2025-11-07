@@ -9,7 +9,11 @@ import subprocess
 
 def check_chars_exist(text, chars=None):
     if chars is None:
-        chars = ["拉好友", "抢红包", "搜索兴趣商品下单", "买精选商品", "全场3元3件", "固定入口", "农场小游戏", "砸蛋", "大众点评", "蚂蚁新村", "消消乐", "玩一玩", "3元抢3件包邮到家", "拍一拍", "1元抢爆款好货", "拉1人助力", "玩消消乐", "下单即得", "添加签到神器", "下单得肥料", "88VIP", "邀请好友", "好货限时直降", "连连消", "下单即得", "拍立淘", "玩任意游戏", "首页回访", "百亿外卖", "玩趣味游戏得大额体力", "天猫积分换体力", "头条刷热点", "一淘签到", "每拉", "闪购拿大额补贴"]
+        chars = ["拉好友", "抢红包", "搜索兴趣商品下单", "买精选商品", "全场3元3件", "固定入口", "农场小游戏", "砸蛋",
+                 "大众点评", "蚂蚁新村", "消消乐", "玩一玩", "3元抢3件包邮到家", "拍一拍", "1元抢爆款好货", "拉1人助力",
+                 "玩消消乐", "下单即得", "添加签到神器", "下单得肥料", "88VIP", "邀请好友", "好货限时直降", "连连消",
+                 "下单即得", "拍立淘", "玩任意游戏", "首页回访", "百亿外卖", "玩趣味游戏得大额体力", "天猫积分换体力",
+                 "头条刷热点", "一淘签到", "每拉", "闪购拿大额补贴"]
     for char in chars:
         if char in text:
             return True
@@ -26,7 +30,8 @@ def get_current_app(d):
     return None, None
 
 
-other_app = ["蚂蚁森林", "农场", "百度", "支付宝", "芝麻信用", "蚂蚁庄园", "闲鱼", "神奇海洋", "淘宝特价版", "点淘", "饿了么", "微博", "直播", "领肥料礼包", "福气提现金", "看小说", "菜鸟", "斗地主", "领肥料礼包"]
+other_app = ["蚂蚁森林", "农场", "百度", "支付宝", "芝麻信用", "蚂蚁庄园", "闲鱼", "神奇海洋", "淘宝特价版", "点淘",
+             "饿了么", "微博", "直播", "领肥料礼包", "福气提现金", "看小说", "菜鸟", "斗地主", "领肥料礼包"]
 
 
 def fish_not_click(text, chars=None):
@@ -85,11 +90,13 @@ def majority_chinese(text):
     return chinese_count > len(text) / 2
 
 
-search_keys = ["华硕a豆air", "机械革命星耀14", "ipadmini7", "iphone16", "红米note13", "macbookairm4", "华硕灵耀14", "微星星影15"]
+search_keys = ["华硕a豆air", "机械革命星耀14", "ipadmini7", "iphone16", "红米note13", "macbookairm4", "华硕灵耀14",
+               "微星星影15"]
 
 
 def task_loop(d, func):
-    history_lst = d.xpath('(//android.widget.TextView[@text="历史搜索"]/following-sibling::android.widget.ListView)/android.view.View[1]')
+    history_lst = d.xpath(
+        '(//android.widget.TextView[@text="历史搜索"]/following-sibling::android.widget.ListView)/android.view.View[1]')
     if history_lst.exists:
         print("查找到搜索关键字", history_lst)
         history_lst.click()
@@ -130,11 +137,11 @@ def task_loop(d, func):
             start_x = random.randint(screen_width // 6, screen_width // 2)
             start_y = random.randint(screen_height // 2, screen_height - screen_width // 4)
             end_x = random.randint(start_x - 100, start_x)
-            end_y = random.randint(start_y - 1200, start_y - 300)
+            end_y = random.randint(200 , start_y - 300)
             swipe_time = random.uniform(0.4, 1) if end_y - start_y > 500 else random.uniform(0.2, 0.5)
             print("模拟滑动", start_x, start_y, end_x, end_y, swipe_time)
             d.swipe(start_x, start_y, end_x, end_y, swipe_time)
-            time.sleep(random.uniform(1, 5))
+            time.sleep(random.uniform(1, 2.5))
         else:
             time.sleep(5)
     print("开始返回任务页面")
@@ -158,10 +165,12 @@ def task_loop(d, func):
 
 
 def close_xy_dialog(d):
-    dialog_view1 = d.xpath('//android.webkit.WebView[@text="闲鱼币首页"]/android.view.View/android.view.View[2]//android.widget.Image[1]')
+    dialog_view1 = d.xpath(
+        '//android.webkit.WebView[@text="闲鱼币首页"]/android.view.View/android.view.View[2]//android.widget.Image[1]')
     if dialog_view1.exists:
         dialog_view1.click()
         time.sleep(2)
+
 
 def get_connected_devices():
     """通过ADB获取所有连接的安卓设备序列号"""
@@ -187,6 +196,7 @@ def get_connected_devices():
     except FileNotFoundError:
         print("未找到ADB命令，请确保ADB已正确安装并添加到环境变量")
         return []
+
 
 # 从已连接的设备中，返回用户选中的设备序列号
 def select_device():
@@ -215,7 +225,6 @@ def select_device():
                 if 0 <= index < len(devices):
                     # 选中的设备
                     return devices[index]
-                    break
                 else:
                     print(f"输入错误，请重新输入序号（1-{len(devices)}）")
             except ValueError:

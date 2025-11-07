@@ -2,7 +2,7 @@ import time
 
 import uiautomator2 as u2
 from uiautomator2 import Direction
-from utils import check_chars_exist, other_app, get_current_app, task_loop
+from utils import check_chars_exist, other_app, get_current_app, task_loop, select_device
 
 unclick_btn = []
 have_clicked = dict()
@@ -10,7 +10,9 @@ is_end = False
 error_count = 0
 in_other_app = False
 time1 = time.time()
-d = u2.connect()
+selected_device = select_device()
+d = u2.connect(selected_device)
+print(f"已成功连接设备：{selected_device}")
 d.app_start("com.taobao.taobao", stop=True, use_monkey=True)
 screen_width, screen_height = d.window_size()
 time.sleep(5)
