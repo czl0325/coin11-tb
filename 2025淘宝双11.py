@@ -138,6 +138,11 @@ time1 = time.time()
 while True:
     try:
         print("开始查找任务。。。")
+        if not check_in_task():
+            physical_btn = d(className="android.widget.Button", text="赚体力")
+            if physical_btn.exists:
+                physical_btn.click()
+                time.sleep(5)
         get_btn = d(className="android.widget.Button", text="立即领取")
         if get_btn.exists:
             get_btn.click()
