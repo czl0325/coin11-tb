@@ -2,7 +2,7 @@ import time
 
 import uiautomator2 as u2
 from uiautomator2 import Direction
-from utils import check_chars_exist, other_app, get_current_app, select_device
+from utils import check_chars_exist, other_app, get_current_app, select_device, task_loop
 
 unclick_btn = []
 have_clicked = dict()
@@ -115,7 +115,6 @@ earn_btn = d(className="android.widget.Button", textContains="回日常版")
 if earn_btn.exists(timeout=4):
     earn_btn.click()
     time.sleep(3)
-
 earn_btn = d(className="android.widget.TextView", textMatches="签到领金币|点击签到")
 if earn_btn.exists(timeout=4):
     earn_btn.click()
@@ -187,18 +186,7 @@ while True:
                     in_other_app = True
                 need_click_view.click()
                 time.sleep(3.5)
-                search_view = d(className="android.view.View", text="搜索有福利")
-                search_edit = d(resourceId="com.taobao.taobao:id/searchEdit")
-                search_btn = d(resourceId="com.taobao.taobao:id/searchbtn")
-                if search_view.exists:
-                    d(className="android.widget.EditText", instance=0).send_keys("笔记本电脑")
-                    d(className="android.widget.Button", text="搜索").click()
-                    time.sleep(2)
-                elif search_edit.exists and search_btn.exists:
-                    search_edit.send_keys("笔记本电脑")
-                    search_btn.click()
-                    time.sleep(2)
-                operate_task()
+                task_loop(d, check_in_task)
             else:
                 error_count += 1
                 print("未找到可点击按钮", error_count)
@@ -207,7 +195,6 @@ while True:
     except Exception as e:
         print(e)
         continue
-d(scrollable=True).scroll.toBeginning()
 ctx.close()
 print(f"共自动化完成{finish_count}个任务")
 d.shell("settings put system accelerometer_rotation 0")
