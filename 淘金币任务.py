@@ -41,55 +41,6 @@ def check_in_task():
     return False
 
 
-def operate_task():
-    check_count = 3
-    while check_count >= 0:
-        if not check_in_task():
-            break
-        print(f"检查次数：{check_count}当前在任务页面，没有执行任务。。。")
-        check_count -= 1
-        if check_count <= 0:
-            return
-        time.sleep(2)
-    start_time = time.time()
-    while True:
-        if time.time() - start_time > 18:
-            break
-        if not in_other_app:
-            d.swipe_ext(Direction.FORWARD)
-            time.sleep(3)
-            d.swipe_ext(Direction.BACKWARD)
-            time.sleep(3)
-    try_count = 0
-    while True:
-        if check_in_task():
-            print("当前是任务列表画面，不能继续返回")
-            # d.swipe_ext(Direction.FORWARD)
-            break
-        else:
-            d.press("back")
-            time.sleep(0.2)
-            try_count += 1
-            if try_count > 10:
-                break
-    check_error_page()
-
-
-def check_error_page():
-    while True:
-        time.sleep(3)
-        if check_in_task():
-            break
-        package, activity = get_current_app(d)
-        if package != "com.taobao.taobao":
-            d.app_start("com.taobao.taobao", stop=False)
-        else:
-            if activity == "com.taobao.tao.welcome.Welcome":
-                find_coin_btn()
-            else:
-                d.press("back")
-
-
 def find_coin_btn():
     coin_btn = d(className="android.widget.FrameLayout", description="领淘金币", clickable=True)
     if coin_btn.exists:

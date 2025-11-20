@@ -185,10 +185,14 @@ def get_connected_devices():
 
         # 解析输出，提取设备序列号
         output = result.stdout
-        # 正则表达式匹配设备序列号（忽略第一行和离线设备）
-        pattern = re.compile(r'^([a-zA-Z0-9.:]+)\s+device$', re.MULTILINE)
-        devices = pattern.findall(output)
-
+        devices = []
+        for line in output.splitlines():
+            # 跳过标题行和空行
+            if line.strip() == "" or line.startswith("List of devices attached"):
+                continue
+            match = re.match(r"^([^\s]+)\s+device$", line)
+            if match:
+                devices.append(match.group(1))
         return devices
     except subprocess.CalledProcessError:
         print("执行ADB命令失败，请确保ADB已正确安装并添加到环境变量")
