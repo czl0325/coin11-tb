@@ -6,6 +6,9 @@ import numpy as np
 import ddddocr
 import subprocess
 
+TB_APP = "com.taobao.taobao"
+ALIPAY_APP = "com.eg.android.AlipayGphone"
+
 
 def check_chars_exist(text, chars=None):
     if chars is None:
@@ -13,7 +16,7 @@ def check_chars_exist(text, chars=None):
                  "大众点评", "蚂蚁新村", "消消乐", "玩一玩", "3元抢3件包邮到家", "拍一拍", "1元抢爆款好货", "拉1人助力",
                  "玩消消乐", "下单即得", "添加签到神器", "下单得肥料", "88VIP", "邀请好友", "好货限时直降", "连连消",
                  "下单即得", "拍立淘", "玩任意游戏", "首页回访", "百亿外卖", "玩趣味游戏得大额体力", "天猫积分换体力",
-                 "头条刷热点", "一淘签到", "每拉", "闪购拿大额补贴"]
+                 "头条刷热点", "一淘签到", "每拉", "闪购拿大额补贴", "开心消消乐过1关", "通关", "购买商品"]
     for char in chars:
         if char in text:
             return True
@@ -94,7 +97,7 @@ search_keys = ["华硕a豆air", "机械革命星耀14", "ipadmini7", "iphone16",
                "微星星影15"]
 
 
-def task_loop(d, func):
+def task_loop(d, func, origin_app=TB_APP):
     history_lst = d.xpath(
         '(//android.widget.TextView[@text="历史搜索"]/following-sibling::android.widget.ListView)/android.view.View[1]')
     if history_lst.exists:
@@ -133,11 +136,18 @@ def task_loop(d, func):
                 break
         if time.time() - start_time > 22:
             break
-        if package_name == "com.taobao.taobao":
+        if package_name == origin_app:
+            if package_name == ALIPAY_APP:
+                screen_image = d.screenshot(format='opencv')
+                pt1 = find_button(screen_image, "./img/alipay_get.png")
+                if pt1:
+                    print("检测到立即领取的弹框，点击立即领取")
+                    d.click(int(pt1[0]) + 50, int(pt1[1]) + 20)
+                    time.sleep(1)
             start_x = random.randint(screen_width // 6, screen_width // 2)
             start_y = random.randint(screen_height // 2, screen_height - screen_width // 4)
             end_x = random.randint(start_x - 100, start_x)
-            end_y = random.randint(200 , start_y - 300)
+            end_y = random.randint(200, start_y - 300)
             swipe_time = random.uniform(0.4, 1) if end_y - start_y > 500 else random.uniform(0.2, 0.5)
             print("模拟滑动", start_x, start_y, end_x, end_y, swipe_time)
             d.swipe(start_x, start_y, end_x, end_y, swipe_time)
@@ -150,9 +160,9 @@ def task_loop(d, func):
         if temp_package is None or temp_activity is None:
             continue
         print(f"{temp_package}--{temp_activity}")
-        if "com.taobao.taobao" not in temp_package:
+        if origin_app not in temp_package:
             print("回到淘宝APP")
-            d.app_start("com.taobao.taobao", stop=False)
+            d.app_start(origin_app, stop=False)
             time.sleep(3)
         else:
             if func():
@@ -233,3 +243,7 @@ def select_device():
                     print(f"输入错误，请重新输入序号（1-{len(devices)}）")
             except ValueError:
                 print(f"输入错误，请重新输入序号（1-{len(devices)}）")
+
+
+# pt = find_button(cv2.imread("screenshot.png"), "img/alipay_get.png")
+# print(pt)
