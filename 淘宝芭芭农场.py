@@ -28,44 +28,6 @@ def check_in_task():
     return False
 
 
-def operate_task():
-    check_count = 3
-    while check_count >= 0:
-        if not check_in_task():
-            break
-        print(f"检查次数：{check_count}当前在任务页面，没有执行任务。。。")
-        check_count -= 1
-        if check_count <= 0:
-            return
-        time.sleep(2)
-    start_time = time.time()
-    while True:
-        if time.time() - start_time > 18:
-            break
-        if not in_other_app:
-            d.swipe_ext(Direction.FORWARD)
-            time.sleep(3)
-            d.swipe_ext(Direction.BACKWARD)
-            time.sleep(3)
-    while True:
-        if check_in_task():
-            print("当前是任务列表画面，不能继续返回")
-            break
-        else:
-            temp_package, temp_activity = get_current_app(d)
-            if temp_package is None or temp_activity is None:
-                continue
-            print(f"{temp_package}--{temp_activity}")
-            if "com.taobao.taobao" not in temp_package:
-                print("回到淘宝APP")
-                d.app_start("com.taobao.taobao", stop=False)
-            else:
-                print("点击后退")
-                d.press("back")
-                time.sleep(0.5)
-    # check_error_page()
-
-
 # 查找芭芭农场按钮
 def find_farm_btn():
     print("开始查找芭芭农场按钮")
@@ -100,26 +62,6 @@ def find_fertilizer_btn():
                 if check_in_task():
                     break
     print("进入任务页面")
-
-
-# 任务完成后检查
-def check_error_page():
-    while True:
-        time.sleep(3)
-        if d(text="肥料明细").exists:
-            break
-        package, activity = get_current_app(d)
-        if package != "com.taobao.taobao":
-            d.app_start("com.taobao.taobao", stop=False)
-        else:
-            if "com.taobao.tao.welcome.Welcome" in activity:
-                find_farm_btn()
-                find_fertilizer_btn()
-            elif "com.taobao.themis.container.app.TMSActivity" in activity and d(className="android.widget.Button", textMatches=r"施肥，肥料\d+，可施肥\d+次").exists:
-                try:
-                    find_fertilizer_btn()
-                except Exception as e:
-                    print(e)
 
 
 d.watcher.when("O1CN012qVB9n1tvZ8ATEQGu_!!6000000005964-2-tps-144-144").click()

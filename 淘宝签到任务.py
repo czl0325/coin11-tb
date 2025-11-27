@@ -188,17 +188,20 @@ while True:
                     in_other_app = True
                 need_click_view.click()
                 time.sleep(3.5)
-                search_view = d(className="android.view.View", text="搜索有福利")
-                search_edit = d(resourceId="com.taobao.taobao:id/searchEdit")
-                search_btn = d(resourceId="com.taobao.taobao:id/searchbtn")
-                if search_view.exists:
-                    d(className="android.widget.EditText", instance=0).send_keys("笔记本电脑")
-                    d(className="android.widget.Button", text="搜索").click()
-                    time.sleep(2)
-                elif search_edit.exists and search_btn.exists:
-                    search_edit.send_keys("笔记本电脑")
-                    search_btn.click()
-                    time.sleep(2)
+                if "微博" in task_name:
+                    time.sleep(8)
+                else:
+                    search_view = d(className="android.view.View", text="搜索有福利")
+                    search_edit = d(resourceId="com.taobao.taobao:id/searchEdit")
+                    search_btn = d(resourceId="com.taobao.taobao:id/searchbtn")
+                    if search_view.exists:
+                        d(className="android.widget.EditText", instance=0).send_keys("笔记本电脑")
+                        d(className="android.widget.Button", text="搜索").click()
+                        time.sleep(2)
+                    elif search_edit.exists and search_btn.exists:
+                        search_edit.send_keys("笔记本电脑")
+                        search_btn.click()
+                        time.sleep(2)
                 operate_task()
             else:
                 error_count += 1

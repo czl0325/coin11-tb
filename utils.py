@@ -127,32 +127,35 @@ def task_loop(d, func, origin_app=TB_APP):
         time.sleep(2)
     start_time = time.time()
     while True:
-        bt_open = d(resourceId="android:id/button1", text="浏览器打开")
-        if bt_open.exists:
-            bt_close = d(resourceId="android:id/button2", text="取消")
-            if bt_close.exists:
-                bt_close.click()
-                time.sleep(2)
+        try:
+            bt_open = d(resourceId="android:id/button1", text="浏览器打开")
+            if bt_open.exists:
+                bt_close = d(resourceId="android:id/button2", text="取消")
+                if bt_close.exists:
+                    bt_close.click()
+                    time.sleep(2)
+                    break
+            if time.time() - start_time > 22:
                 break
-        if time.time() - start_time > 22:
-            break
-        if package_name == origin_app:
-            if package_name == ALIPAY_APP:
-                screen_image = d.screenshot(format='opencv')
-                pt1 = find_button(screen_image, "./img/alipay_get.png")
-                if pt1:
-                    print("检测到立即领取的弹框，点击立即领取")
-                    d.click(int(pt1[0]) + 50, int(pt1[1]) + 20)
-                    time.sleep(1)
-            start_x = random.randint(screen_width // 6, screen_width // 2)
-            start_y = random.randint(screen_height // 2, screen_height - screen_width // 4)
-            end_x = random.randint(start_x - 100, start_x)
-            end_y = random.randint(200, start_y - 300)
-            swipe_time = random.uniform(0.4, 1) if end_y - start_y > 500 else random.uniform(0.2, 0.5)
-            print("模拟滑动", start_x, start_y, end_x, end_y, swipe_time)
-            d.swipe(start_x, start_y, end_x, end_y, swipe_time)
-            time.sleep(random.uniform(1, 2.5))
-        else:
+            if package_name == origin_app:
+                if package_name == ALIPAY_APP:
+                    screen_image = d.screenshot(format='opencv')
+                    pt1 = find_button(screen_image, "./img/alipay_get.png")
+                    if pt1:
+                        print("检测到立即领取的弹框，点击立即领取")
+                        d.click(int(pt1[0]) + 50, int(pt1[1]) + 20)
+                        time.sleep(1)
+                start_x = random.randint(screen_width // 6, screen_width // 2)
+                start_y = random.randint(screen_height // 2, screen_height - screen_width // 4)
+                end_x = random.randint(start_x - 100, start_x)
+                end_y = random.randint(200, start_y - 300)
+                swipe_time = random.uniform(0.4, 1) if end_y - start_y > 500 else random.uniform(0.2, 0.5)
+                print("模拟滑动", start_x, start_y, end_x, end_y, swipe_time)
+                d.swipe(start_x, start_y, end_x, end_y, swipe_time)
+                time.sleep(random.uniform(1, 2.5))
+            else:
+                time.sleep(5)
+        except Exception as e:
             time.sleep(5)
     print("开始返回任务页面")
     while True:

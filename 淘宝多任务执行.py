@@ -30,9 +30,9 @@ def run_scripts(script_paths):
 
 if __name__ == "__main__":
     scripts_to_run = [
+        "淘宝芭芭农场.py",
         "淘金币任务.py",
         # "闲鱼任务.py",
-        "淘宝芭芭农场.py",
     ]
 
     run_scripts(scripts_to_run)
