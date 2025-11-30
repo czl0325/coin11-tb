@@ -24,7 +24,6 @@ def check_in_task():
     return False
 
 
-
 d.watcher.when("O1CN012qVB9n1tvZ8ATEQGu_!!6000000005964-2-tps-144-144").click()
 d.watcher.when(xpath="//android.app.Dialog//android.widget.Button[@text='关闭']").click()
 d.watcher.start()
