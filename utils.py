@@ -172,9 +172,15 @@ def task_loop(d, func, origin_app=TB_APP):
                 print("当前是任务列表画面，不能继续返回")
                 break
             else:
-                print("点击后退")
-                d.press("back")
-                time.sleep(0.3)
+                close_btn = d.xpath("//android.widget.FrameLayout[@resource-id='com.alipay.multiplatform.phone.xriver_integration:id/frameLayout_rightButton1']/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.FrameLayout[2]")
+                if close_btn.exists:
+                    print("点击关闭小程序按钮")
+                    close_btn.click()
+                    time.sleep(1)
+                else:
+                    print("点击后退")
+                    d.press("back")
+                    time.sleep(0.3)
 
 
 def close_xy_dialog(d):
