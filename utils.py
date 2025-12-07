@@ -8,6 +8,7 @@ import subprocess
 
 TB_APP = "com.taobao.taobao"
 ALIPAY_APP = "com.eg.android.AlipayGphone"
+FISH_APP = "com.taobao.idlefish"
 
 
 def check_chars_exist(text, chars=None):
@@ -97,7 +98,7 @@ search_keys = ["华硕a豆air", "机械革命星耀14", "ipadmini7", "iphone16",
                "微星星影15"]
 
 
-def task_loop(d, func, origin_app=TB_APP):
+def task_loop(d, func, origin_app=TB_APP, is_fish=False):
     history_lst = d.xpath(
         '(//android.widget.TextView[@text="历史搜索"]/following-sibling::android.widget.ListView)/android.view.View[1]')
     if history_lst.exists:
@@ -145,14 +146,28 @@ def task_loop(d, func, origin_app=TB_APP):
                         print("检测到立即领取的弹框，点击立即领取")
                         d.click(int(pt1[0]) + 50, int(pt1[1]) + 20)
                         time.sleep(1)
-                start_x = random.randint(screen_width // 6, screen_width // 2)
-                start_y = random.randint(screen_height // 2, screen_height - screen_width // 4)
-                end_x = random.randint(start_x - 100, start_x)
-                end_y = random.randint(200, start_y - 300)
-                swipe_time = random.uniform(0.4, 1) if end_y - start_y > 500 else random.uniform(0.2, 0.5)
-                print("模拟滑动", start_x, start_y, end_x, end_y, swipe_time)
-                d.swipe(start_x, start_y, end_x, end_y, swipe_time)
-                time.sleep(random.uniform(1, 2.5))
+                if is_fish:
+                    print("开始查找闲鱼商品")
+                    time.sleep(4)
+                    commodity_view1 = d.xpath("//android.widget.ListView/android.view.View[1]")
+                    if commodity_view1.exists:
+                        commodity_view1.click()
+                        time.sleep(18)
+                        break
+                    commodity_view2 = d(className="android.view.View", resourceId="feedsContainer")
+                    if commodity_view2.exists:
+                        d.click(100, commodity_view2.center()[1])
+                        time.sleep(18)
+                        break
+                else:
+                    start_x = random.randint(screen_width // 6, screen_width // 2)
+                    start_y = random.randint(screen_height // 2, screen_height - screen_width // 4)
+                    end_x = random.randint(start_x - 100, start_x)
+                    end_y = random.randint(200, start_y - 300)
+                    swipe_time = random.uniform(0.4, 1) if end_y - start_y > 500 else random.uniform(0.2, 0.5)
+                    print("模拟滑动", start_x, start_y, end_x, end_y, swipe_time)
+                    d.swipe(start_x, start_y, end_x, end_y, swipe_time)
+                    time.sleep(random.uniform(1, 2.5))
             else:
                 time.sleep(5)
         except Exception as e:
@@ -172,6 +187,18 @@ def task_loop(d, func, origin_app=TB_APP):
                 print("当前是任务列表画面，不能继续返回")
                 break
             else:
+                close_btn1 = d.xpath("//android.widget.FrameLayout[@resource-id='com.alipay.multiplatform.phone.xriver_integration:id/frameLayout_rightButton1']/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.FrameLayout[2]")
+                if close_btn1.exists:
+                    print("点击关闭小程序按钮")
+                    close_btn1.click()
+                    time.sleep(1)
+                    continue
+                close_btn2 = d.xpath("//android.view.View[@resource-id='root']/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Image")
+                if close_btn2.exists:
+                    print("后退按钮存在，点击后退按钮")
+                    close_btn2.click()
+                    time.sleep(1)
+                    continue
                 print("点击后退")
                 d.press("back")
                 time.sleep(0.3)

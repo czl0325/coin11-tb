@@ -4,7 +4,7 @@ import re
 import ddddocr
 import uiautomator2 as u2
 
-from utils import get_current_app, find_button, close_xy_dialog
+from utils import get_current_app, find_button, close_xy_dialog, task_loop, FISH_APP
 
 d = u2.connect()
 # origin_timeout = d.shell("settings get system screen_off_timeout").output
@@ -185,12 +185,10 @@ while True:
                 xy_task_name.remove(task_name)
                 continue
             print(f"查找任务:{task_name}")
-            todo_btn = task_view.child("./following-sibling::android.widget.TextView[@text='去完成'][1]")
+            todo_btn = task_view.child("./following-sibling::android.view.View[1]/android.widget.TextView")
             if todo_btn.exists:
-                if todo_btn.bounds[3] >= bottom_pos + 10:
-                    d.swipe_ext(u2.Direction.FORWARD)
-                    print("去完成按钮偏下了，上滑一段距离。")
-                    time.sleep(4)
+                todo_text = todo_btn.get_text()
+                if todo_text != "去完成":
                     continue
                 todo_btn.click()
                 if have_clicked.get(task_name) is None:
@@ -198,7 +196,7 @@ while True:
                 else:
                     have_clicked[task_name] += 1
                 time.sleep(5)
-                operate_task(task_name)
+                task_loop(d, check_in_xy, origin_app=FISH_APP, is_fish=True)
             else:
                 break
         else:
