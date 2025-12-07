@@ -2,7 +2,7 @@ import time
 
 import uiautomator2 as u2
 from uiautomator2 import Direction
-from utils import check_chars_exist, other_app, get_current_app, task_loop, select_device
+from utils import check_chars_exist, other_app, get_current_app, task_loop, select_device, check_verify
 
 unclick_btn = []
 have_clicked = dict()
@@ -81,6 +81,7 @@ finish_count = 0
 while True:
     try:
         print("开始查找按钮")
+        check_verify(d)
         time.sleep(4)
         in_other_app = False
         sign_btn = d(className="android.widget.Button", text="去签到")

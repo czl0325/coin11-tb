@@ -248,5 +248,14 @@ def select_device():
                 print(f"输入错误，请重新输入序号（1-{len(devices)}）")
 
 
+def check_verify(d):
+    verify_code = d(className="android.widget.TextView", text="Z4ZBWI15bbOd5Qy2qsdGMA|aTRDyw|a3-ezg_0|BseQlA")
+    if verify_code.exists:
+        d.touch.down(150, verify_code.bounds()[1] - 300)
+        time.sleep(0.2)
+        d.touch.move(1180, verify_code.bounds()[1] - 300)
+        d.touch.up(1180, verify_code.bounds()[1] - 300)
+
+
 # pt = find_button(cv2.imread("screenshot.png"), "img/alipay_get.png")
 # print(pt)

@@ -1,8 +1,7 @@
 import time
 
 import uiautomator2 as u2
-from uiautomator2 import Direction
-from utils import check_chars_exist, other_app, get_current_app, select_device, task_loop
+from utils import check_chars_exist, other_app, get_current_app, select_device, task_loop, check_verify
 
 unclick_btn = []
 have_clicked = dict()
@@ -82,6 +81,7 @@ while True:
     try:
         in_other_app = False
         time.sleep(4)
+        check_verify(d)
         earn_btn = d(className="android.widget.TextView", text="赚更多金币")
         if earn_btn.exists and not d(className="android.widget.TextView", text="赚金币抵钱").exists:
             earn_btn.click()
