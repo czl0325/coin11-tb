@@ -193,12 +193,12 @@ def task_loop(d, func, origin_app=TB_APP, is_fish=False):
                     close_btn1.click()
                     time.sleep(1)
                     continue
-                close_btn2 = d.xpath("//android.view.View[@resource-id='root']/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Image")
-                if close_btn2.exists:
-                    print("后退按钮存在，点击后退按钮")
-                    close_btn2.click()
-                    time.sleep(1)
-                    continue
+                # close_btn2 = d.xpath("//android.view.View[@resource-id='root']/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Image")
+                # if close_btn2.exists:
+                #     print("后退按钮存在，点击后退按钮")
+                #     close_btn2.click()
+                #     time.sleep(1)
+                #     continue
                 print("点击后退")
                 d.press("back")
                 time.sleep(0.3)

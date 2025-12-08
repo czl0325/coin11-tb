@@ -20,7 +20,7 @@ have_clicked = dict()
 error_count = 0
 ocr = ddddocr.DdddOcr(show_ad=False)
 finish_count = 0
-xy_task_name = ["领至高20元外卖红包", "浏览指定频道好物", "搜一搜推荐商品", "去浏览全新好物", "浏览推荐的国补商品", "去支付宝领积分", "去淘宝签到领红包", "去蚂蚁庄园逛一逛", "去逛一逛芭芭农场", "去支付宝农场领水果", "去蚂蚁森林逛一逛", "去百度逛一逛", "去饿了么果园领水果", "褥羊毛赚话费", "去天猫拿红包", "逛一逛淘宝人生", "去淘特领好礼", "上夸克天天领现金", "去淘金币赢20亿"]
+xy_task_name = ["领至高20元外卖红包", "浏览指定频道好物", "搜一搜推荐商品", "去浏览全新好物", "浏览推荐的国补商品", "去支付宝领积分", "去淘宝签到领红包", "去蚂蚁庄园逛一逛", "去逛一逛芭芭农场", "去支付宝农场领水果", "去蚂蚁森林逛一逛", "去百度逛一逛", "去饿了么果园领水果", "褥羊毛赚话费", "去天猫拿红包", "逛一逛淘宝人生", "去淘特领好礼", "上夸克天天领现金", "去淘金币赢20亿", "快手极速版"]
 
 
 def check_in_xy():
@@ -139,6 +139,72 @@ def operate_task(task):
         back_to_task()
 
 
+def check_popup():
+    draw_btn = d(className="android.widget.TextView", text="开始抽奖")
+    if draw_btn.exists:
+        d.click(draw_btn.center()[0], draw_btn.center()[1])
+        time.sleep(10)
+        return
+    receive_btn3 = d(className="android.widget.TextView", text="领取奖励")
+    if receive_btn3.exists:
+        d.click(receive_btn3.center()[0], receive_btn3.center()[1])
+        time.sleep(3)
+        return
+    know_btn = d(className="android.widget.TextView", text="我知道了")
+    if know_btn.exists:
+        d.click(know_btn.center()[0], know_btn.center()[1])
+        time.sleep(3)
+        return
+    scratch_btn = d(className="android.widget.TextView", text="开始刮奖")
+    if scratch_btn.exists:
+        scratch_btn.click()
+        time.sleep(15)
+        return
+    in_btn = d(className="android.widget.TextView", text="收下礼物")
+    if in_btn.exists:
+        in_btn.click()
+        time.sleep(3)
+        return
+    continue_btn = d(className="android.widget.TextView", text="继续寻宝")
+    if continue_btn.exists:
+        continue_btn.click()
+        time.sleep(3)
+        return
+    throw_btn1 = d(className="android.widget.TextView", text="骰子×1")
+    if throw_btn1.exists:
+        throw_btn2 = d.xpath('//android.widget.TextView[@text="骰子×1"]/following-sibling::android.widget.TextView[1]')
+        if throw_btn2.exists:
+            throw_btn2.click()
+            time.sleep(3)
+            return
+    screen_image = d.screenshot(format='opencv')
+    pt1 = find_button(screen_image, "./img/fish_advance.png")
+    if pt1:
+        d.click(int(pt1[0]) + 50, int(pt1[1]) + 20)
+        time.sleep(3)
+        return
+    pt2 = find_button(screen_image, "./img/fish_continue.png")
+    if pt2:
+        d.click(int(pt2[0]) + 50, int(pt2[1]) + 20)
+        time.sleep(3)
+        return
+    pt3 = find_button(screen_image, "./img/fish_continue2.png")
+    if pt3:
+        d.click(int(pt3[0]) + 50, int(pt3[1]) + 20)
+        time.sleep(3)
+        return
+    pt4 = find_button(screen_image, "./img/fish_prize.png")
+    if pt4:
+        d.click(int(pt4[0]) + 100, int(pt4[1]) + 80)
+        time.sleep(3)
+        return
+    pt5 = find_button(screen_image, "./img/fish_swing.png")
+    if pt5:
+        d.click(int(pt5[0]) + 50, int(pt5[1]) + 50)
+        time.sleep(10)
+        return
+
+
 time.sleep(5)
 ctx.wait_stable()
 to_task()
@@ -240,62 +306,7 @@ while True:
         if count > 0:
             d.click(throw_btn.center()[0], throw_btn.center()[1])
             time.sleep(5)
-            draw_btn = d(className="android.widget.TextView", text="开始抽奖")
-            if draw_btn.exists:
-                d.click(draw_btn.center()[0], draw_btn.center()[1])
-                time.sleep(10)
-                continue
-            receive_btn3 = d(className="android.widget.TextView", text="领取奖励")
-            if receive_btn3.exists:
-                d.click(receive_btn3.center()[0], receive_btn3.center()[1])
-                time.sleep(3)
-                continue
-            know_btn = d(className="android.widget.TextView", text="我知道了")
-            if know_btn.exists:
-                d.click(know_btn.center()[0], know_btn.center()[1])
-                time.sleep(3)
-                continue
-            scratch_btn = d(className="android.widget.TextView", text="开始刮奖")
-            if scratch_btn.exists:
-                scratch_btn.click()
-                time.sleep(15)
-                continue
-            in_btn = d(className="android.widget.TextView", text="收下礼物")
-            if in_btn.exists:
-                in_btn.click()
-                time.sleep(3)
-                continue
-            continue_btn = d(className="android.widget.TextView", text="继续寻宝")
-            if continue_btn.exists:
-                continue_btn.click()
-                time.sleep(3)
-                continue
-            screen_image = d.screenshot(format='opencv')
-            pt1 = find_button(screen_image, "./img/fish_advance.png")
-            if pt1:
-                d.click(int(pt1[0]) + 50, int(pt1[1]) + 20)
-                time.sleep(3)
-                continue
-            pt2 = find_button(screen_image, "./img/fish_continue.png")
-            if pt2:
-                d.click(int(pt2[0]) + 50, int(pt2[1]) + 20)
-                time.sleep(3)
-                continue
-            pt3 = find_button(screen_image, "./img/fish_continue2.png")
-            if pt3:
-                d.click(int(pt3[0]) + 50, int(pt3[1]) + 20)
-                time.sleep(3)
-                continue
-            pt4 = find_button(screen_image, "./img/fish_prize.png")
-            if pt4:
-                d.click(int(pt4[0]) + 100, int(pt4[1]) + 80)
-                time.sleep(3)
-                continue
-            pt5 = find_button(screen_image, "./img/fish_swing.png")
-            if pt5:
-                d.click(int(pt5[0]) + 50, int(pt5[1]) + 50)
-                time.sleep(10)
-                continue
+            check_popup()
     else:
         break
     time.sleep(2)
