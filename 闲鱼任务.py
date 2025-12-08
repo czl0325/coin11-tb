@@ -254,6 +254,8 @@ while True:
             todo_btn = task_view.child("./following-sibling::android.view.View[1]/android.widget.TextView")
             if todo_btn.exists:
                 todo_text = todo_btn.get_text()
+                if todo_text == "已完成":
+                    break
                 if todo_text != "去完成":
                     continue
                 todo_btn.click()
