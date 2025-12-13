@@ -40,7 +40,7 @@ other_app = ["蚂蚁森林", "农场", "百度", "支付宝", "芝麻信用", "�
 
 def fish_not_click(text, chars=None):
     if chars is None:
-        chars = ["发布一件新宝贝", "买到或卖出", "快手", "中国移动", "视频", "下单", "点淘", "一淘", "收藏", "购买"]
+        chars = ["发布一件新宝贝", "买到或卖出", "中国移动", "视频", "下单", "点淘", "一淘", "收藏", "购买"]
     for char in chars:
         if char in text:
             return True
@@ -278,9 +278,17 @@ def select_device():
 def check_verify(d):
     verify_view = d(className="android.webkit.WebView", text="验证码拦截")
     if verify_view.exists:
-        print("存在验证码的情况")
-        d.shell("input swipe 150 1700 1180 1700 500")
-        time.sleep(3)
+        while True:
+            print("存在验证码的情况")
+            d.shell("input swipe 150 1700 1180 1700 500")
+            time.sleep(3)
+            verify_view = d(className="android.webkit.WebView", text="验证码拦截")
+            if verify_view.exists:
+                d.click(500, 1700)
+                time.sleep(3)
+            else:
+                print("验证码滑动成功")
+                break
 
 
 # pt = find_button(cv2.imread("screenshot.png"), "img/alipay_get.png")
