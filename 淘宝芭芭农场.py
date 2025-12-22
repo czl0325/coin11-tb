@@ -72,6 +72,7 @@ d.watcher.when(xpath="//android.widget.FrameLayout[@resource-id='com.taobao.taob
 d.watcher.when("O1CN01sORayC1hBVsDQRZoO_!!6000000004239-2-tps-426-128.png_").click()
 d.watcher.when("跳过").click()
 d.watcher.when("点击刷新").click()
+d.watcher.when("刷新").click()
 d.watcher.when("点击重试").click()
 # d.watcher.when("关闭").click()
 d.watcher.start()
