@@ -181,7 +181,11 @@ def task_loop(d, func, origin_app=TB_APP, is_fish=False):
         if origin_app not in temp_package:
             print("回到淘宝APP")
             d.app_start(origin_app, stop=False)
-            time.sleep(3)
+            time.sleep(2)
+            jump_btn = d(resourceId="com.taobao.taobao:id/tv_close", text="跳过")
+            if jump_btn.exists:
+                jump_btn.click()
+            time.sleep(2)
         else:
             if func():
                 print("当前是任务列表画面，不能继续返回")
