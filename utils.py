@@ -175,7 +175,7 @@ def task_loop(d, func, origin_app=TB_APP, is_fish=False):
     print("开始返回任务页面")
     while True:
         temp_package, temp_activity = get_current_app(d)
-        if temp_package is None or temp_activity is None:
+        if temp_package is None or temp_activity is None or "Ext2ContainerActivity" in temp_activity:
             continue
         print(f"{temp_package}--{temp_activity}")
         if origin_app not in temp_package:
@@ -185,7 +185,7 @@ def task_loop(d, func, origin_app=TB_APP, is_fish=False):
             jump_btn = d(resourceId="com.taobao.taobao:id/tv_close", text="跳过")
             if jump_btn.exists:
                 jump_btn.click()
-            time.sleep(2)
+                time.sleep(2)
         else:
             if func():
                 print("当前是任务列表画面，不能继续返回")
