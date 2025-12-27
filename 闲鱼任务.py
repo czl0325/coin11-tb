@@ -312,5 +312,15 @@ while True:
     else:
         break
     time.sleep(2)
+power_btn = d(className="android.widget.TextView", text="充能领奖")
+if power_btn.exists:
+    print("点击充能领奖")
+    power_btn.click()
+    time.sleep(3)
+    click_btn = d(className="android.widget.TextView", textContains="点击充能")
+    if click_btn.exists:
+        print("点击充能")
+        click_btn.click()
+        time.sleep(3)
 print("任务完成。。。")
 ctx.stop()
