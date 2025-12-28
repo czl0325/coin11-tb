@@ -20,11 +20,15 @@ time.sleep(5)
 
 
 def check_in_task():
-    package_name, _ = get_current_app(d)
+    package_name, activity_name = get_current_app(d)
     if package_name != "com.taobao.taobao":
         return False
-    if d(className="android.widget.TextView", text="肥料明细").exists:
-        return True
+    if "com.taobao.themis.container.app.TMSActivity" in activity_name:
+        if d(className="android.widget.TextView", text="肥料明细").exists:
+            return True
+        else:
+            find_fertilizer_btn()
+            return True
     return False
 
 
