@@ -134,6 +134,19 @@ def task_loop(d, func, origin_app=TB_APP, is_fish=False):
                     break
             if time.time() - start_time > 22:
                 break
+            if is_fish:
+                print("开始查找闲鱼商品")
+                time.sleep(4)
+                commodity_view1 = d.xpath("//android.widget.ListView/android.view.View[1]")
+                if commodity_view1.exists:
+                    commodity_view1.click()
+                    time.sleep(18)
+                    break
+                commodity_view2 = d(className="android.view.View", resourceId="feedsContainer")
+                if commodity_view2.exists:
+                    d.click(100, commodity_view2.center()[1])
+                    time.sleep(18)
+                    break
             if package_name == origin_app:
                 if package_name == ALIPAY_APP:
                     screen_image = d.screenshot(format='opencv')
@@ -142,19 +155,6 @@ def task_loop(d, func, origin_app=TB_APP, is_fish=False):
                         print("检测到立即领取的弹框，点击立即领取")
                         d.click(int(pt1[0]) + 50, int(pt1[1]) + 20)
                         time.sleep(1)
-                if is_fish:
-                    print("开始查找闲鱼商品")
-                    time.sleep(4)
-                    commodity_view1 = d.xpath("//android.widget.ListView/android.view.View[1]")
-                    if commodity_view1.exists:
-                        commodity_view1.click()
-                        time.sleep(18)
-                        break
-                    commodity_view2 = d(className="android.view.View", resourceId="feedsContainer")
-                    if commodity_view2.exists:
-                        d.click(100, commodity_view2.center()[1])
-                        time.sleep(18)
-                        break
                 else:
                     start_x = random.randint(screen_width // 6, screen_width // 2)
                     start_y = random.randint(screen_height // 2, screen_height - screen_width // 4)
@@ -175,7 +175,7 @@ def task_loop(d, func, origin_app=TB_APP, is_fish=False):
             continue
         print(f"{temp_package}--{temp_activity}")
         if origin_app not in temp_package:
-            print("回到淘宝APP")
+            print(f"回到原始APP,{origin_app}")
             d.app_start(origin_app, stop=False)
             time.sleep(2)
             jump_btn = d(resourceId="com.taobao.taobao:id/tv_close", text="跳过")

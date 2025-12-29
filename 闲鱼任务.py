@@ -20,7 +20,7 @@ have_clicked = dict()
 error_count = 0
 ocr = ddddocr.DdddOcr(show_ad=False)
 finish_count = 0
-xy_task_name = ["领至高20元外卖红包", "浏览指定频道好物", "搜一搜推荐商品", "去浏览全新好物", "浏览推荐的国补商品", "去支付宝领积分", "去淘宝签到领红包", "去蚂蚁庄园逛一逛", "去逛一逛芭芭农场", "去支付宝农场领水果", "去蚂蚁森林逛一逛", "去百度逛一逛", "去饿了么果园领水果", "褥羊毛赚话费", "去天猫拿红包", "逛一逛淘宝人生", "去淘特领好礼", "上夸克天天领现金", "去淘金币赢20亿", "快手极速版", "神奇鱼塘"]
+xy_task_name = ["领至高20元外卖红包", "浏览指定频道好物", "搜一搜推荐商品", "去浏览全新好物", "浏览推荐的国补商品", "去支付宝领积分", "去淘宝签到领红包", "去蚂蚁庄园逛一逛", "去逛一逛芭芭农场", "去支付宝农场领水果", "去蚂蚁森林逛一逛", "去百度逛一逛", "去饿了么果园领水果", "褥羊毛赚话费", "去天猫拿红包", "逛一逛淘宝人生", "去淘特领好礼", "上夸克天天领现金", "去淘金币赢20亿", "去快手极速版领红包", "去神奇鱼塘领能量"]
 
 
 def check_in_xy():
@@ -257,7 +257,9 @@ while True:
                 if todo_text == "已完成":
                     break
                 if todo_text != "去完成":
+                    print(f"不是去完成按钮，是{todo_text}")
                     continue
+                print(f"点击{todo_text},{task_name}位置:{task_view.bounds[1]},{todo_text}位置{todo_btn.bounds[1]}")
                 todo_btn.click()
                 if have_clicked.get(task_name) is None:
                     have_clicked[task_name] = 1
