@@ -113,16 +113,17 @@ def task_loop(d, func, origin_app=TB_APP, is_fish=False):
                     time.sleep(2)
     screen_width, screen_height = d.window_size()
     package_name, _ = get_current_app(d)
-    check_count = 3
-    while check_count >= 0:
-        if not func():
-            break
-        print(f"检查次数：{check_count}当前在任务页面，没有执行任务。。。")
-        check_count -= 1
-        if check_count <= 0:
-            return
-        time.sleep(2)
+    # check_count = 3
+    # while check_count >= 0:
+    #     if not func():
+    #         break
+    #     print(f"检查次数：{check_count}当前在任务页面，没有执行任务。。。")
+    #     check_count -= 1
+    #     if check_count <= 0:
+    #         return
+    #     time.sleep(2)
     start_time = time.time()
+    print("开始做任务。。。")
     while True:
         try:
             bt_open = d(resourceId="android:id/button1", text="浏览器打开")
