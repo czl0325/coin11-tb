@@ -56,7 +56,7 @@ def find_button(image, btn_path, region=None):
     w, h = template_gray.shape[::-1]
     # 使用模板匹配
     res = cv2.matchTemplate(screenshot_gray, template_gray, cv2.TM_CCOEFF_NORMED)
-    threshold = 0.8
+    threshold = 0.7
     loc = np.where(res >= threshold)
     for pt in zip(*loc[::-1]):
         return pt
@@ -155,15 +155,14 @@ def task_loop(d, func, origin_app=TB_APP, is_fish=False):
                         print("检测到立即领取的弹框，点击立即领取")
                         d.click(int(pt1[0]) + 50, int(pt1[1]) + 20)
                         time.sleep(1)
-                else:
-                    start_x = random.randint(screen_width // 6, screen_width // 2)
-                    start_y = random.randint(screen_height // 2, screen_height - screen_width // 4)
-                    end_x = random.randint(start_x - 100, start_x)
-                    end_y = random.randint(200, start_y - 300)
-                    swipe_time = random.uniform(0.4, 1) if end_y - start_y > 500 else random.uniform(0.2, 0.5)
-                    print("模拟滑动", start_x, start_y, end_x, end_y, swipe_time)
-                    d.swipe(start_x, start_y, end_x, end_y, swipe_time)
-                    time.sleep(random.uniform(1, 2.5))
+                start_x = random.randint(screen_width // 6, screen_width // 2)
+                start_y = random.randint(screen_height // 2, screen_height - screen_width // 4)
+                end_x = random.randint(start_x - 100, start_x)
+                end_y = random.randint(200, start_y - 300)
+                swipe_time = random.uniform(0.4, 1) if end_y - start_y > 500 else random.uniform(0.2, 0.5)
+                print("模拟滑动", start_x, start_y, end_x, end_y, swipe_time)
+                d.swipe(start_x, start_y, end_x, end_y, swipe_time)
+                time.sleep(random.uniform(1, 2.5))
             else:
                 time.sleep(5)
         except Exception as e:
