@@ -292,5 +292,5 @@ def check_verify(d):
                 break
 
 
-# pt = find_button(cv2.imread("screenshot.png"), "img/alipay_get.png")
+# pt = find_button(cv2.imread("screenshot.png"), "./img/alipay_get.png")
 # print(pt)
