@@ -310,4 +310,4 @@ def check_verify(d):
                 break
 
 
-find_button2(cv2.imread("screenshot.png"), "./img/alipay_get.png")
+# find_button2(cv2.imread("screenshot.png"), "./img/alipay_get.png")
