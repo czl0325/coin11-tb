@@ -63,6 +63,23 @@ def find_button(image, btn_path, region=None):
     return None
 
 
+def find_button2(image, btn_path):
+    template = cv2.imread(btn_path)
+    # 创建 ORB 检测器
+    orb = cv2.ORB_create()
+    # 检测关键点和描述符
+    kp1, des1 = orb.detectAndCompute(image, None)
+    kp2, des2 = orb.detectAndCompute(template, None)
+    # 创建匹配器
+    bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+    matches = bf.match(des1, des2)
+    # 按距离排序
+    matches = sorted(matches, key=lambda x: x.distance)
+    for match in matches:
+        x, y = kp2[match.trainIdx].pt
+        print(f"匹配距离: {match.distance},x = {x:.2f}, y = {y:.2f}")
+
+
 def find_text_position(image, text):
     ocr = ddddocr.DdddOcr(show_ad=False)
     ocr_result = ocr.classification(image)
@@ -293,5 +310,4 @@ def check_verify(d):
                 break
 
 
-# pt = find_button(cv2.imread("screenshot.png"), "./img/alipay_get.png")
-# print(pt)
+find_button2(cv2.imread("screenshot.png"), "./img/alipay_get.png")
