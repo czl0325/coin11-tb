@@ -24,7 +24,7 @@ xy_task_name = ["领至高20元外卖红包", "浏览指定频道好物", "搜�
 
 
 def check_in_xy():
-    home_view = d(className="android.webkit.WebView", text="闲鱼币首页")
+    home_view = d(className="android.webkit.WebView", textContains="闲鱼币首页")
     task_dialog = d(resourceId="taskWrap", className="android.view.View")
     if home_view.exists and task_dialog.exists:
         print("任务弹框存在")
@@ -34,6 +34,7 @@ def check_in_xy():
 
 def to_task():
     while True:
+        check_popup()
         sign_btn1 = d(resourceId="com.taobao.idlefish:id/icon_entry_lottie", className="android.widget.ImageView", clickable=True)
         sign_btn2 = d(className="android.widget.ImageView", resourceId="com.taobao.idlefish:id/icon_entry")
         print(f"查找签到按钮，存在:{sign_btn1.exists}, {sign_btn2.exists}")
@@ -43,7 +44,7 @@ def to_task():
         elif sign_btn2.exists:
             d.click(sign_btn2.center()[0], sign_btn2.center()[1])
             time.sleep(2)
-        if d(className="android.webkit.WebView", text="闲鱼币首页").exists:
+        if d(className="android.webkit.WebView", textContains="闲鱼币首页").exists:
             print("已经进入闲鱼页面")
             break
         time.sleep(1)
