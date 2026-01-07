@@ -56,11 +56,28 @@ def find_button(image, btn_path, region=None):
     w, h = template_gray.shape[::-1]
     # 使用模板匹配
     res = cv2.matchTemplate(screenshot_gray, template_gray, cv2.TM_CCOEFF_NORMED)
-    threshold = 0.8
+    threshold = 0.7
     loc = np.where(res >= threshold)
     for pt in zip(*loc[::-1]):
         return pt
     return None
+
+
+def find_button2(image, btn_path):
+    template = cv2.imread(btn_path)
+    # 创建 ORB 检测器
+    orb = cv2.ORB_create()
+    # 检测关键点和描述符
+    kp1, des1 = orb.detectAndCompute(image, None)
+    kp2, des2 = orb.detectAndCompute(template, None)
+    # 创建匹配器
+    bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+    matches = bf.match(des1, des2)
+    # 按距离排序
+    matches = sorted(matches, key=lambda x: x.distance)
+    for match in matches:
+        x, y = kp2[match.trainIdx].pt
+        print(f"匹配距离: {match.distance},x = {x:.2f}, y = {y:.2f}")
 
 
 def find_text_position(image, text):
@@ -113,16 +130,17 @@ def task_loop(d, func, origin_app=TB_APP, is_fish=False):
                     time.sleep(2)
     screen_width, screen_height = d.window_size()
     package_name, _ = get_current_app(d)
-    check_count = 3
-    while check_count >= 0:
-        if not func():
-            break
-        print(f"检查次数：{check_count}当前在任务页面，没有执行任务。。。")
-        check_count -= 1
-        if check_count <= 0:
-            return
-        time.sleep(2)
+    # check_count = 3
+    # while check_count >= 0:
+    #     if not func():
+    #         break
+    #     print(f"检查次数：{check_count}当前在任务页面，没有执行任务。。。")
+    #     check_count -= 1
+    #     if check_count <= 0:
+    #         return
+    #     time.sleep(2)
     start_time = time.time()
+    print("开始做任务。。。")
     while True:
         try:
             bt_open = d(resourceId="android:id/button1", text="浏览器打开")
@@ -155,15 +173,14 @@ def task_loop(d, func, origin_app=TB_APP, is_fish=False):
                         print("检测到立即领取的弹框，点击立即领取")
                         d.click(int(pt1[0]) + 50, int(pt1[1]) + 20)
                         time.sleep(1)
-                else:
-                    start_x = random.randint(screen_width // 6, screen_width // 2)
-                    start_y = random.randint(screen_height // 2, screen_height - screen_width // 4)
-                    end_x = random.randint(start_x - 100, start_x)
-                    end_y = random.randint(200, start_y - 300)
-                    swipe_time = random.uniform(0.4, 1) if end_y - start_y > 500 else random.uniform(0.2, 0.5)
-                    print("模拟滑动", start_x, start_y, end_x, end_y, swipe_time)
-                    d.swipe(start_x, start_y, end_x, end_y, swipe_time)
-                    time.sleep(random.uniform(1, 2.5))
+                start_x = random.randint(screen_width // 6, screen_width // 2)
+                start_y = random.randint(screen_height // 2, screen_height - screen_width // 4)
+                end_x = random.randint(start_x - 100, start_x)
+                end_y = random.randint(200, start_y - 300)
+                swipe_time = random.uniform(0.4, 1) if end_y - start_y > 500 else random.uniform(0.2, 0.5)
+                print("模拟滑动", start_x, start_y, end_x, end_y, swipe_time)
+                d.swipe(start_x, start_y, end_x, end_y, swipe_time)
+                time.sleep(random.uniform(1, 2.5))
             else:
                 time.sleep(5)
         except Exception as e:
@@ -293,5 +310,4 @@ def check_verify(d):
                 break
 
 
-# pt = find_button(cv2.imread("screenshot.png"), "img/alipay_get.png")
-# print(pt)
+# find_button2(cv2.imread("screenshot.png"), "./img/alipay_get.png")

@@ -24,11 +24,12 @@ def check_in_task():
     if package_name != "com.taobao.taobao":
         return False
     if "com.taobao.themis.container.app.TMSActivity" in activity_name:
-        if d(className="android.widget.TextView", text="肥料明细").exists:
-            return True
-        else:
-            find_fertilizer_btn()
-            return True
+        if d(className="android.webkit.WebView", text="芭芭农场").exists:
+            if d(className="android.widget.TextView", text="肥料明细").exists:
+                return True
+            else:
+                find_fertilizer_btn()
+                return True
     return False
 
 

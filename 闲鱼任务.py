@@ -204,6 +204,11 @@ def check_popup():
         d.click(int(pt5[0]) + 50, int(pt5[1]) + 50)
         time.sleep(10)
         return
+    pt6 = find_button(screen_image, "./img/fish_advance2.png")
+    if pt6:
+        d.click(int(pt6[0]) + 50, int(pt6[1]) + 20)
+        time.sleep(3)
+        return
 
 
 time.sleep(5)
