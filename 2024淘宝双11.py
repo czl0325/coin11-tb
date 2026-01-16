@@ -2,10 +2,10 @@ import time
 
 import uiautomator2 as u2
 from uiautomator2 import Direction
-from utils import check_chars_exist, other_app
+from utils import check_chars_exist, other_app, get_current_app, task_loop, start_app, TB_APP
 
 d = u2.connect()
-d.app_start("com.taobao.taobao", stop=True, use_monkey=True)
+start_app(d, TB_APP, init=True)
 # d.debug = True
 screen_width = d.info['displayWidth']
 screen_height = d.info['displayHeight']

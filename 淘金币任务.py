@@ -1,7 +1,7 @@
 import time
 
 import uiautomator2 as u2
-from utils import check_chars_exist, other_app, get_current_app, select_device, task_loop, check_verify
+from utils import check_chars_exist, other_app, get_current_app, select_device, task_loop, check_verify, start_app, TB_APP
 
 unclick_btn = []
 have_clicked = dict()
@@ -17,7 +17,7 @@ time.sleep(5)
 # d.app_stop("com.taobao.taobao")
 # d.app_clear('com.taobao.taobao')
 # time.sleep(2)
-d.app_start("com.taobao.taobao", stop=True, use_monkey=True)
+start_app(d, TB_APP, init=True)
 ctx = d.watch_context()
 ctx.when("O1CN012qVB9n1tvZ8ATEQGu_!!6000000005964-2-tps-144-144").click()
 ctx.when("O1CN01sORayC1hBVsDQRZoO_!!6000000004239-2-tps-426-128.png_").click()

@@ -4,13 +4,13 @@ import re
 
 import uiautomator2 as u2
 from uiautomator2 import Direction
-from utils import check_chars_exist, other_app, get_current_app, select_device
+from utils import check_chars_exist, other_app, get_current_app, task_loop, start_app, TB_APP, select_device
 
 selected_device = select_device()
 d = u2.connect(selected_device)
 print(f"已成功连接设备：{selected_device}")
 
-d.app_start("com.taobao.taobao", stop=True, use_monkey=True)
+start_app(d, TB_APP, init=True)
 screen_width = d.info['displayWidth']
 screen_height = d.info['displayHeight']
 time.sleep(5)
@@ -124,7 +124,7 @@ def operate_task(repeat=False):
             print(f"{temp_package}--{temp_activity}")
             if "com.taobao.taobao" not in temp_package:
                 print("回到淘宝APP")
-                d.app_start("com.taobao.taobao", stop=False)
+                start_app(d, TB_APP)
                 time.sleep(2)
             else:
                 print("点击后退")

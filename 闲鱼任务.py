@@ -4,12 +4,12 @@ import re
 import ddddocr
 import uiautomator2 as u2
 
-from utils import get_current_app, find_button, close_xy_dialog, task_loop, FISH_APP
+from utils import get_current_app, find_button, close_xy_dialog, task_loop, FISH_APP, start_app
 
 d = u2.connect()
 # origin_timeout = d.shell("settings get system screen_off_timeout").output
 # d.shell("settings put system screen_off_timeout 86400000")
-d.app_start("com.taobao.idlefish", stop=True, use_monkey=True)
+start_app(d, FISH_APP, init=True)
 screen_width, screen_height = d.window_size()
 ctx = d.watch_context()
 ctx.when("暂不升级").click()
@@ -80,7 +80,7 @@ def back_to_task():
         else:
             package_name, activity_name = get_current_app(d)
             if package_name != "com.taobao.idlefish":
-                d.app_start("com.taobao.idlefish", stop=False)
+                start_app(d, FISH_APP)
                 time.sleep(2)
                 # bt_refresh = d(resourceId="com.taobao.idlefish:id/state_action", text="刷新")
                 # if bt_refresh.exists:

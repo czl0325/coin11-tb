@@ -10,6 +10,12 @@ TB_APP = "com.taobao.taobao"
 ALIPAY_APP = "com.eg.android.AlipayGphone"
 FISH_APP = "com.taobao.idlefish"
 
+# 应用启动配置，键为包名，值为activity
+APP_START_CONFIG = {
+    TB_APP: "com.taobao.tao.welcome.Welcome",
+    FISH_APP: "com.taobao.fleamarket.home.activity.InitActivity",
+    ALIPAY_APP: None  # 默认配置，不指定activity
+}
 
 def check_chars_exist(text, chars=None):
     if chars is None:
@@ -193,7 +199,7 @@ def task_loop(d, func, origin_app=TB_APP, is_fish=False):
         print(f"{temp_package}--{temp_activity}")
         if origin_app not in temp_package:
             print(f"回到原始APP,{origin_app}")
-            d.app_start(origin_app, stop=False)
+            start_app(d, origin_app)
             time.sleep(2)
             jump_btn = d(resourceId="com.taobao.taobao:id/tv_close", text="跳过")
             if jump_btn.exists:
@@ -293,6 +299,52 @@ def select_device():
             except ValueError:
                 print(f"输入错误，请重新输入序号（1-{len(devices)}）")
 
+
+def start_app(d, package_name, init=False):
+    """根据包名启动应用，支持特定应用的activity配置
+    init参数控制启动模式：
+    - True: 初始化启动，使用stop=True, use_monkey=True
+    - False: 普通启动，使用stop=False, use_monkey=False
+    默认不使用activity启动，如果失败再尝试使用activity
+    activity启动时不使用use_monkey参数
+    启动后验证是否成功"""
+    # 根据init参数设置stop和use_monkey
+    stop = init
+    use_monkey = init
+    
+    # 获取配置的activity
+    activity = APP_START_CONFIG.get(package_name)
+    
+    try:
+        # 优先不使用activity启动
+        print(f"启动应用: {package_name}, stop: {stop}, use_monkey: {use_monkey}, 不使用activity")
+        d.app_start(package_name, stop=stop, use_monkey=use_monkey)
+        time.sleep(2)
+        # 验证应用是否启动成功
+        current_package, _ = get_current_app(d)
+        if current_package == package_name:
+            print(f"应用 {package_name} 启动成功")
+            return
+        else:
+            print(f"应用 {package_name} 未成功启动，当前应用: {current_package}")
+    except Exception as e:
+        print(f"不使用activity启动失败: {e}")
+        
+    # 如果失败且有配置activity，则尝试使用activity启动
+    if activity:
+        try:
+            print(f"使用activity启动应用: {package_name}, activity: {activity}, stop: {stop}")
+            d.app_start(package_name=package_name, activity=activity, stop=stop)
+            time.sleep(2)
+            # 验证应用是否启动成功
+            current_package, _ = get_current_app(d)
+            if current_package == package_name:
+                print(f"应用 {package_name} 启动成功")
+                return
+            else:
+                print(f"应用 {package_name} 未成功启动，当前应用: {current_package}")
+        except Exception as e:
+            print(f"使用activity启动也失败: {e}")
 
 def check_verify(d):
     verify_view = d(className="android.webkit.WebView", text="验证码拦截")
