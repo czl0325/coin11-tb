@@ -36,7 +36,7 @@ time.sleep(3)
 
 def check_in_task():
     package_name, activity_name = get_current_app(d)
-    if package_name == "com.taobao.taobao" and activity_name == "com.taobao.themis.container.app.TMSActivity":
+    if package_name == "com.taobao.taobao" and "com.taobao.themis.container.app.TMSActivity" in activity_name:
         coin_view = d(className="android.webkit.WebView", text="淘金币首页")
         if coin_view.exists:
             earn_btn1 = d(className="android.widget.TextView", text="赚金币抵钱")
