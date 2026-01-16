@@ -88,7 +88,7 @@ def back_to_task():
                 #     bt_refresh.click()
                 #     time.sleep(2)
             else:
-                if activity_name == "com.taobao.idlefish.maincontainer.activity.MainActivity":
+                if "com.taobao.idlefish.maincontainer.activity.MainActivity" in activity_name:
                     to_task()
                     click_earn()
                     break
