@@ -180,7 +180,7 @@ def task_loop(d, func, origin_app=TB_APP, is_fish=False):
                 swipe_time = random.uniform(0.4, 1) if end_y - start_y > 500 else random.uniform(0.2, 0.5)
                 print("模拟滑动", start_x, start_y, end_x, end_y, swipe_time)
                 d.swipe(start_x, start_y, end_x, end_y, swipe_time)
-                time.sleep(random.uniform(1, 2.5))
+                time.sleep(random.uniform(0.8, 2))
             else:
                 time.sleep(5)
         except Exception as e:

@@ -20,13 +20,14 @@ have_clicked = dict()
 error_count = 0
 ocr = ddddocr.DdddOcr(show_ad=False)
 finish_count = 0
-xy_task_name = ["领至高20元外卖红包", "浏览指定频道好物", "搜一搜推荐商品", "去浏览全新好物", "浏览推荐的国补商品", "去支付宝领积分", "去淘宝签到领红包", "去蚂蚁庄园逛一逛", "去逛一逛芭芭农场", "去支付宝农场领水果", "去蚂蚁森林逛一逛", "去百度逛一逛", "去饿了么果园领水果", "褥羊毛赚话费", "去天猫拿红包", "逛一逛淘宝人生", "去淘特领好礼", "上夸克天天领现金", "去淘金币赢20亿", "去快手极速版领红包", "去神奇鱼塘领能量"]
+xy_task_name = ["领至高20元外卖红包", "浏览指定频道好物", "搜一搜推荐商品", "去浏览全新好物", "浏览推荐的国补商品", "去支付宝领积分", "去淘宝签到领红包", "去蚂蚁庄园逛一逛", "去逛一逛芭芭农场", "去支付宝农场领水果", "去蚂蚁森林逛一逛", "去百度逛一逛", "去饿了么果园领水果", "薅羊毛赚话费", "去天猫拿红包", "逛一逛淘宝人生", "去淘特领好礼", "上夸克天天领现金", "去淘金币赢20亿", "去快手极速版领红包", "去神奇鱼塘领能量", "去淘宝闪购果园领水果"]
 
 
 def check_in_xy():
     home_view = d(className="android.webkit.WebView", textContains="闲鱼币首页")
     task_dialog = d(resourceId="taskWrap", className="android.view.View")
-    if home_view.exists and task_dialog.exists:
+    throw_btn1 = d(className="android.view.View", resourceId="mapDiceBtn")
+    if (home_view.exists or throw_btn1.exists) and task_dialog.exists:
         print("任务弹框存在")
         return True
     return False
@@ -44,7 +45,7 @@ def to_task():
         elif sign_btn2.exists:
             d.click(sign_btn2.center()[0], sign_btn2.center()[1])
             time.sleep(2)
-        if d(className="android.webkit.WebView", textContains="闲鱼币首页").exists:
+        if d(className="android.webkit.WebView", textContains="闲鱼币首页").exists or d(className="android.view.View", resourceId="mapDiceBtn").exists:
             print("已经进入闲鱼页面")
             break
         time.sleep(1)
