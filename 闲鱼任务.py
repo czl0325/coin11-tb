@@ -299,7 +299,18 @@ while True:
         print("报错", e)
         continue
 print(f"共自动化完成{finish_count}个任务")
-d.click(screen_width//2, 250)
+while True:
+    task_dialog = d(className="android.view.View", resourceId="taskWrap")
+    if not task_dialog.exists:
+        break
+    close_btn = d.xpath('//android.view.View[@resource-id="taskWrap"]/android.widget.TextView[1]')
+    if close_btn.exists:
+        close_btn.click()
+        print("点击关闭按钮")
+    else:
+        print("点击屏幕上部")
+        d.click(screen_width // 2, 250)
+    time.sleep(3)
 click_count = 2
 while click_count >= 0:
     receive_btn2 = d(className="android.view.View", resourceId="dailyRewardBox")
@@ -327,7 +338,7 @@ while True:
     else:
         break
     time.sleep(2)
-power_btn = d(className="android.widget.TextView", text="充能领奖")
+power_btn = d(className="android.widget.TextView", textMatches=r"充能领奖|即将下线")
 if power_btn.exists:
     print("点击充能领奖")
     power_btn.click()
