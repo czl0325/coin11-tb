@@ -3,7 +3,7 @@ import re
 
 import uiautomator2 as u2
 from uiautomator2 import Direction
-from utils import check_chars_exist, other_app, get_current_app, task_loop
+from utils import check_chars_exist, other_app, get_current_app, task_loop, start_app, TB_APP
 
 unclick_btn = []
 have_clicked = dict()
@@ -11,7 +11,7 @@ is_end = False
 in_other_app = False
 time1 = time.time()
 d = u2.connect()
-d.app_start("com.taobao.taobao", stop=True, use_monkey=True)
+start_app(d, TB_APP, init=True)
 ctx = d.watch_context()
 ctx.when("O1CN012qVB9n1tvZ8ATEQGu_!!6000000005964-2-tps-144-144").click()
 ctx.when("O1CN01sORayC1hBVsDQRZoO_!!6000000004239-2-tps-426-128.png_").click()
@@ -76,7 +76,7 @@ def check_error_page():
             break
         package, activity = get_current_app(d)
         if package != "com.taobao.taobao":
-            d.app_start("com.taobao.taobao", stop=False)
+            start_app(d, TB_APP)
         else:
             if activity == "com.taobao.tao.welcome.Welcome":
                 find_coin_btn()

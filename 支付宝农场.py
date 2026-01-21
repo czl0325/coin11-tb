@@ -2,14 +2,14 @@ import time
 
 import uiautomator2 as u2
 from uiautomator2 import Direction
-from utils import check_chars_exist, get_current_app, task_loop, ALIPAY_APP
+from utils import check_chars_exist, get_current_app, task_loop, ALIPAY_APP, start_app
 
 time1 = time.time()
 unclick_btn = []
 is_end = False
 in_other_app = False
 d = u2.connect()
-d.app_start(ALIPAY_APP, stop=True, use_monkey=True)
+start_app(d, ALIPAY_APP, init=True)
 time.sleep(5)
 screen_width, screen_height = d.window_size()
 have_clicked = {}
