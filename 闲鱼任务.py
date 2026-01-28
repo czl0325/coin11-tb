@@ -59,12 +59,7 @@ def click_earn():
         if d(className="android.view.View", resourceId="taskWrap").exists:
             print("任务弹框存在")
             break
-        screen_image = d.screenshot(format='opencv')
-        pt1 = find_button(screen_image, "./img/fish_throw.png")
-        if pt1:
-            d.click(int(pt1[0]) + 50, int(pt1[1]) + 20)
-            time.sleep(3)
-            continue
+        check_popup()
         throw_btn1 = d(className="android.view.View", resourceId="mapDiceBtn")
         if throw_btn1.exists:
             print("点击任务按钮")
@@ -214,6 +209,11 @@ def check_popup():
     pt6 = find_button(screen_image, "./img/fish_advance2.png")
     if pt6:
         d.click(int(pt6[0]) + 50, int(pt6[1]) + 20)
+        time.sleep(3)
+        return
+    pt7 = find_button(screen_image, "./img/fish_throw.png")
+    if pt7:
+        d.click(int(pt7[0]) + 50, int(pt7[1]) + 20)
         time.sleep(3)
         return
 
