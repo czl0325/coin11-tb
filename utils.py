@@ -200,7 +200,6 @@ def task_loop(d, func, origin_app=TB_APP, is_fish=False):
         if origin_app not in temp_package:
             print(f"回到原始APP,{origin_app}")
             start_app(d, origin_app)
-            time.sleep(2)
             jump_btn = d(resourceId="com.taobao.taobao:id/tv_close", text="跳过")
             if jump_btn.exists:
                 jump_btn.click()
@@ -314,19 +313,21 @@ def start_app(d, package_name, init=False):
     
     # 获取配置的activity
     activity = APP_START_CONFIG.get(package_name)
-    
+    try_count = 3
     try:
         # 优先不使用activity启动
-        print(f"启动应用: {package_name}, stop: {stop}, use_monkey: {use_monkey}, 不使用activity")
-        d.app_start(package_name, stop=stop, use_monkey=use_monkey)
-        time.sleep(2)
-        # 验证应用是否启动成功
-        current_package, _ = get_current_app(d)
-        if current_package == package_name:
-            print(f"应用 {package_name} 启动成功")
-            return
-        else:
-            print(f"应用 {package_name} 未成功启动，当前应用: {current_package}")
+        while try_count > 0:
+            print(f"启动应用: {package_name}, stop: {stop}, use_monkey: {use_monkey}, 不使用activity")
+            d.app_start(package_name, stop=stop, use_monkey=use_monkey)
+            time.sleep(5 if stop else 2)
+            # 验证应用是否启动成功
+            current_package, _ = get_current_app(d)
+            if current_package == package_name:
+                print(f"应用 {package_name} 启动成功")
+                return
+            else:
+                print(f"应用 {package_name} 未成功启动，当前应用: {current_package}")
+            try_count -= 1
     except Exception as e:
         print(f"不使用activity启动失败: {e}")
         

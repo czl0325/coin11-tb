@@ -10,7 +10,6 @@ is_end = False
 in_other_app = False
 d = u2.connect()
 start_app(d, ALIPAY_APP, init=True)
-time.sleep(5)
 screen_width, screen_height = d.window_size()
 have_clicked = {}
 
