@@ -209,6 +209,13 @@ def task_loop(d, func, origin_app=TB_APP, is_fish=False):
                 print("当前是任务列表画面，不能继续返回")
                 break
             else:
+                if is_fish:
+                    if "com.taobao.idlefish.maincontainer.activity.MainActivity" in temp_activity:
+                        print("进入到闲鱼首页，重新进入任务页。")
+                        from 闲鱼任务 import to_task, click_earn
+                        to_task()
+                        click_earn()
+                        continue
                 close_btn1 = d.xpath("//android.widget.FrameLayout[@resource-id='com.alipay.multiplatform.phone.xriver_integration:id/frameLayout_rightButton1']/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.FrameLayout[2]")
                 if close_btn1.exists:
                     print("点击关闭小程序按钮")
@@ -326,7 +333,9 @@ def start_app(d, package_name, init=False):
                 print(f"应用 {package_name} 启动成功")
                 return
             else:
-                print(f"应用 {package_name} 未成功启动，当前应用: {current_package}")
+                print(f"应用 {package_name} 未成功启动，当前应用: {current_package}，尝试后退")
+                d.press("back")
+                time.sleep(1)
             try_count -= 1
     except Exception as e:
         print(f"不使用activity启动失败: {e}")

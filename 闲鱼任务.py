@@ -75,16 +75,11 @@ def back_to_task():
             break
         else:
             package_name, activity_name = get_current_app(d)
-            if package_name != "com.taobao.idlefish":
+            if package_name != FISH_APP:
                 start_app(d, FISH_APP)
-                time.sleep(2)
-                # bt_refresh = d(resourceId="com.taobao.idlefish:id/state_action", text="刷新")
-                # if bt_refresh.exists:
-                #     print("点击刷新按钮")
-                #     bt_refresh.click()
-                #     time.sleep(2)
             else:
                 if "com.taobao.idlefish.maincontainer.activity.MainActivity" in activity_name:
+                    print("进入到闲鱼首页，重新进入任务页。")
                     to_task()
                     click_earn()
                     break
@@ -226,6 +221,7 @@ bottom_pos = screen_height
 bottom_navigator = d(className="android.widget.FrameLayout",resourceId="com.android.systemui:id/navigation_bar_frame")
 if bottom_navigator.exists:
     bottom_pos = bottom_navigator.bounds()[1]
+try_count = 0
 while True:
     try:
         print("正在查找按钮...")
@@ -266,6 +262,7 @@ while True:
             print(f"查找任务:{task_name}")
             todo_btn = task_view.child("./following-sibling::android.view.View[1]/android.widget.TextView")
             if todo_btn.exists:
+                try_count = 0
                 todo_text = todo_btn.get_text()
                 if todo_text == "已完成":
                     break
@@ -281,7 +278,9 @@ while True:
                 time.sleep(5)
                 task_loop(d, check_in_xy, origin_app=FISH_APP, is_fish=True)
             else:
-                break
+                try_count += 1
+                if try_count >= 3:
+                    break
         else:
             last_view = d.xpath('//android.view.View[@resource-id="taskWrap"]/android.view.View[last()]/android.view.View/android.widget.TextView[last()]')
             if last_view.exists and last_view.get_text() == "已完成":
