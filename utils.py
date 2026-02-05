@@ -9,11 +9,13 @@ import subprocess
 TB_APP = "com.taobao.taobao"
 ALIPAY_APP = "com.eg.android.AlipayGphone"
 FISH_APP = "com.taobao.idlefish"
+TMALL_APP = "com.tmall.wireless"
 
 # 应用启动配置，键为包名，值为activity
 APP_START_CONFIG = {
     TB_APP: "com.taobao.tao.welcome.Welcome",
     FISH_APP: "com.taobao.fleamarket.home.activity.InitActivity",
+    TMALL_APP: "com.tmall.wireless.maintab.module.TMMainTabActivity",
     ALIPAY_APP: None  # 默认配置，不指定activity
 }
 
