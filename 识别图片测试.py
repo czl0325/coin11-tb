@@ -2,6 +2,7 @@ import ddddocr
 import cv2
 from PIL import Image
 
+ocr = ddddocr.DdddOcr(det=True, show_ad=False)
 
 def practical_example():
     """
@@ -11,7 +12,7 @@ def practical_example():
     det_ocr = ddddocr.DdddOcr(det=True, show_ad=False)
     rec_ocr = ddddocr.DdddOcr(show_ad=False)
 
-    image_path = "screenshot.png"
+    image_path = "截取屏幕.jpg"
 
     with open(image_path, 'rb') as f:
         image_bytes = f.read()
@@ -50,6 +51,50 @@ def practical_example():
     return recognized_text
 
 
+def get_sorted_text_from_region():
+    # 2. 识别文字并获取坐标
+    # 返回格式：[(box, text, score), ...]
+    # box: 四个点的坐标，左上角是 box[0]
+    image_path = "截取屏幕.jpg"
+
+    with open(image_path, 'rb') as f:
+        image_bytes = f.read()
+    result = ocr.detection(image_bytes)
+
+    # 3. 按“从上到下，同行从左到右”排序
+    # 先按 y 坐标（行）分组，再按 x 坐标（列）排序
+    # 假设同一行文字的高度差在 20 像素以内
+    line_height = 20
+    lines = {}
+
+    for box, text, score in result:
+        # 取左上角坐标
+        x, y = box[0]
+        # 计算行号（向下取整，将相近高度的文字归为同一行）
+        line_key = y // line_height
+
+        # 将文字添加到对应的行
+        if line_key not in lines:
+            lines[line_key] = []
+        lines[line_key].append((x, text))
+
+    # 4. 按行号排序（从上到下），每行内按 x 坐标排序（从左到右）
+    sorted_lines = sorted(lines.items(), key=lambda item: item[0])
+    sentence_parts = []
+    for line_key, words in sorted_lines:
+        # 对当前行的文字按 x 坐标排序
+        sorted_words = sorted(words, key=lambda w: w[0])
+        # 提取文字内容
+        line_text = ' '.join([word[1] for word in sorted_words])
+        sentence_parts.append(line_text)
+    # 5. 组合成完整句子（行与行之间用换行符或空格连接）
+    # 使用换行符连接，保持原布局
+    full_sentence = '\n'.join(sentence_parts)
+    # 如果希望所有文字连成一行，可以用空格连接：
+    # full_sentence = ' '.join(sentence_parts)
+    return full_sentence
+
+
 # 运行示例
-results = practical_example()
+results = get_sorted_text_from_region()
 print(results)

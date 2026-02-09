@@ -1,0 +1,115 @@
+import random
+import time
+
+import uiautomator2 as u2
+import ddddocr
+from uiautomator2 import Direction
+from utils import check_chars_exist, get_current_app, task_loop, ALIPAY_APP, start_app
+
+time1 = time.time()
+d = u2.connect()
+start_app(d, ALIPAY_APP, init=True)
+screen_width, screen_height = d.window_size()
+d.watcher.when("O1CN012qVB9n1tvZ8ATEQGu_!!6000000005964-2-tps-144-144").click()
+d.watcher.when(xpath="//android.app.Dialog//android.widget.Button[@text='关闭']").click()
+d.watcher.start()
+ocr = ddddocr.DdddOcr(show_ad=False)
+
+
+def is_task_home():
+    task_view1 = d(className="android.widget.TextView",text="今日待办")
+    task_view2 = d(className="android.widget.TextView",text="打卡记录")
+    if task_view1.exists and task_view2.exists:
+        return True
+    return False
+
+
+def back_to_home():
+    print("开始退出")
+    while True:
+        if is_task_home():
+            print("当前在任务页面，退出循环。。。")
+            break
+        close_btn1 = d(className="android.widget.FrameLayout", description="关闭")
+        if close_btn1.exists:
+            print("点击关闭")
+            close_btn1.click()
+        else:
+            print("点击后退")
+            d.press("back")
+        time.sleep(1)
+
+
+
+video_btn = d(className="android.widget.TextView", resourceId="com.alipay.android.tablauncher:id/tab_description", text="视频")
+if video_btn.exists:
+    print("点击视频按钮。。。")
+    d.click(video_btn.center()[0], video_btn.bounds()[1] - 100)
+    time.sleep(5)
+task_btn = d(className="android.widget.FrameLayout", resourceId="com.alipay.android.living.dynamic:id/iconAndCdpContainerFl")
+if task_btn.exists:
+    print("点击视频任务按钮。。。")
+    task_btn.click()
+    time.sleep(5)
+    card_btn = d(className="android.widget.TextView", text="去打卡")
+    if card_btn.exists:
+        print("点击去打卡。。。")
+        card_btn.click()
+        time.sleep(5)
+        while True:
+            print("开始任务循环")
+            has_task = False
+            sign_btn = d(className="android.widget.TextView", text="去签到")
+            if sign_btn.exists:
+                has_task = True
+                print("点击去签到。。。")
+                sign_btn.click()
+                time.sleep(3)
+                continue
+            browse_btn = d(className="android.widget.TextView", text="去浏览")
+            if browse_btn.exists:
+                has_task = True
+                print("点击去浏览。。。")
+                browse_btn.click()
+                time.sleep(3)
+                browse_start_time = time.time()
+                while True:
+                    browse_end_time = time.time()
+                    if browse_end_time - browse_start_time > 35:
+                        break
+                    d.swipe(200, 1000, 181, 500)
+                    time.sleep(3)
+                back_to_home()
+                continue
+            play_btn = d(className="android.widget.TextView", text="去试玩")
+            if play_btn.exists:
+                has_task = True
+                print("点击去试玩。。。")
+                play_btn.click()
+                time.sleep(35)
+                back_to_home()
+                continue
+            see_btn = d(className="android.widget.TextView", text="去看看")
+            if see_btn.exists:
+                print("点击去看看")
+                see_btn.click()
+                time.sleep(5)
+                start_time = time.time()
+                while True:
+                    end_time = time.time()
+                    minutes, seconds = divmod(int(end_time - start_time), 60)
+                    if minutes > 18:
+                        break
+                    d.swipe_ext(Direction.FORWARD)
+                    # region_view = d.xpath('//android.widget.RelativeLayout[@resource-id="com.alipay.android.living.dynamic:id/cubeContainerView"]/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.LinearLayout')
+                    # if region_view.exists:
+                    #     pass
+                    time.sleep(random.randrange(10, 15))
+                back_to_home()
+                continue
+            if not has_task:
+                break
+            time.sleep(5)
+    else:
+        print("你没有打卡任务，退出任务。。。")
+d.watcher.remove()
