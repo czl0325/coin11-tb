@@ -102,13 +102,14 @@ if task_btn.exists:
                 while True:
                     end_time = time.time()
                     minutes, seconds = divmod(int(end_time - start_time), 60)
+                    print(f"播放视频：{minutes}分钟{seconds}秒")
                     if minutes > 18:
                         break
                     d.swipe_ext(Direction.FORWARD)
                     # region_view = d.xpath('//android.widget.RelativeLayout[@resource-id="com.alipay.android.living.dynamic:id/cubeContainerView"]/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.LinearLayout')
                     # if region_view.exists:
                     #     pass
-                    time.sleep(random.randrange(10, 15))
+                    time.sleep(random.randrange(25, 45))
                 back_to_home()
                 continue
             if not has_task:
