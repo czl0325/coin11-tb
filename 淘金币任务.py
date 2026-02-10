@@ -47,6 +47,44 @@ def check_in_task():
     return False
 
 
+def back_to_task():
+    print("开始返回任务页面")
+    while True:
+        temp_package, temp_activity = get_current_app(d)
+        if temp_package is None or temp_activity is None or "Ext2ContainerActivity" in temp_activity:
+            continue
+        print(f"{temp_package}--{temp_activity}")
+        if TB_APP not in temp_package:
+            print(f"回到原始APP,{TB_APP}")
+            start_app(d, TB_APP)
+            jump_btn = d(resourceId="com.taobao.taobao:id/tv_close", text="跳过")
+            if jump_btn.exists:
+                jump_btn.click()
+                time.sleep(2)
+        else:
+            if check_in_task():
+                print("当前是任务列表画面，不能继续返回")
+                break
+            else:
+                close_btn1 = d.xpath("//android.widget.FrameLayout[@resource-id='com.alipay.multiplatform.phone.xriver_integration:id/frameLayout_rightButton1']/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.FrameLayout[2]")
+                if close_btn1.exists:
+                    print("点击关闭小程序按钮")
+                    close_btn1.click()
+                    time.sleep(1)
+                    continue
+                task_view = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]')
+                if task_view.exists:
+                    close_btn2 = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]/preceding-sibling::android.view.View[1]')
+                    if close_btn2.exists:
+                        print("点击关闭限时下单任务按钮")
+                        close_btn2.click()
+                        time.sleep(1)
+                        continue
+                print("点击后退")
+                d.press("back")
+                time.sleep(0.3)
+
+
 def find_coin_btn():
     coin_btn = d(className="android.widget.FrameLayout", description="领淘金币", clickable=True)
     if coin_btn.exists:
@@ -144,7 +182,7 @@ while True:
                     in_other_app = True
                 need_click_view.click()
                 time.sleep(3.5)
-                task_loop(d, check_in_task)
+                task_loop(d, back_to_task)
             else:
                 error_count += 1
                 print("未找到可点击按钮", error_count)

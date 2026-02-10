@@ -68,31 +68,46 @@ def click_earn():
 
 
 def back_to_task():
-    print("开始返回到闲鱼币首页。")
-    try_count = 0
+    print("开始返回任务页面")
     while True:
-        if check_in_xy():
-            break
+        temp_package, temp_activity = get_current_app(d)
+        if temp_package is None or temp_activity is None or "Ext2ContainerActivity" in temp_activity:
+            continue
+        print(f"{temp_package}--{temp_activity}")
+        if FISH_APP not in temp_package:
+            print(f"回到原始APP,{FISH_APP}")
+            start_app(d, FISH_APP)
+            jump_btn = d(resourceId="com.taobao.taobao:id/tv_close", text="跳过")
+            if jump_btn.exists:
+                jump_btn.click()
+                time.sleep(2)
         else:
-            package_name, activity_name = get_current_app(d)
-            if package_name != FISH_APP:
-                start_app(d, FISH_APP)
+            if check_in_xy():
+                print("当前是任务列表画面，不能继续返回")
+                break
             else:
-                if "com.taobao.idlefish.maincontainer.activity.MainActivity" in activity_name:
+                if "com.taobao.idlefish.maincontainer.activity.MainActivity" in temp_activity:
                     print("进入到闲鱼首页，重新进入任务页。")
                     to_task()
                     click_earn()
-                    break
-                else:
-                    back_btn = d.xpath('//android.view.View[@resource-id="root"]/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.Image')
-                    if back_btn.exists and try_count % 4 == 0:
-                        print("点击后退按钮")
-                        back_btn.click()
-                        time.sleep(0.5)
-                    else:
-                        d.press("back")
-                        time.sleep(0.1)
-                    try_count += 1
+                    continue
+                close_btn1 = d.xpath("//android.widget.FrameLayout[@resource-id='com.alipay.multiplatform.phone.xriver_integration:id/frameLayout_rightButton1']/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.FrameLayout[2]")
+                if close_btn1.exists:
+                    print("点击关闭小程序按钮")
+                    close_btn1.click()
+                    time.sleep(1)
+                    continue
+                task_view1 = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]')
+                if task_view1.exists:
+                    close_btn2 = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]/preceding-sibling::android.view.View[1]')
+                    if close_btn2.exists:
+                        print("点击关闭限时下单任务按钮")
+                        close_btn2.click()
+                        time.sleep(1)
+                        continue
+                print("点击后退")
+                d.press("back")
+                time.sleep(0.3)
 
 
 def operate_task(task):
@@ -276,7 +291,7 @@ while True:
                 else:
                     have_clicked[task_name] += 1
                 time.sleep(5)
-                task_loop(d, check_in_xy, origin_app=FISH_APP, is_fish=True)
+                task_loop(d, back_to_task)
             else:
                 try_count += 1
                 if try_count >= 3:

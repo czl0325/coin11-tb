@@ -4,6 +4,7 @@ import re
 import uiautomator2 as u2
 from uiautomator2 import Direction
 from utils import check_chars_exist, other_app, get_current_app, task_loop, start_app, TB_APP
+from 闲鱼任务 import back_to_task
 
 unclick_btn = []
 have_clicked = dict()
@@ -162,7 +163,7 @@ def do_task():
                         in_other_app = True
                     need_click_view.click()
                     time.sleep(3.5)
-                    task_loop(d, check_in_task)
+                    task_loop(d, back_to_task)
                 else:
                     error_count += 1
                     print("未找到可点击按钮", error_count)
