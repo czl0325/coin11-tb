@@ -30,6 +30,10 @@ def back_to_home():
         if is_task_home():
             print("当前在任务页面，退出循环。。。")
             break
+        cancel_btn = d(className="android.widget.Button", resourceId="android:id/button2", textMatches=r"取消.*?")
+        if cancel_btn.exists:
+            cancel_btn.click()
+            time.sleep(1)
         close_btn1 = d(className="android.widget.FrameLayout", description="关闭")
         if close_btn1.exists:
             print("点击关闭")
