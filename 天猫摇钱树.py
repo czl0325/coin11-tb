@@ -24,6 +24,19 @@ def check_in_task():
     return False
 
 
+def back_to_task():
+    while True:
+        if check_in_task():
+            break
+        package_name1, _ = get_current_app(d)
+        if TMALL_APP not in package_name1:
+            start_app(d, TMALL_APP, init=False)
+            continue
+        d.press("back")
+        time.sleep(1)
+
+
+
 shake_btn = d(className="android.widget.ImageView", description="必免卡")
 if shake_btn.exists:
     shake_btn.click()
@@ -72,7 +85,7 @@ if activity_name == "com.tmall.wireless.themis.container.TMThemisActivity":
                     print(f"点击任务：{title_text}")
                     time.sleep(5)
                     has_task = True
-                    # task_loop(d, check_in_task, duration=do_time)
+                    task_loop(d, back_to_task, duration=do_time)
                     break
         if not has_task:
             break
