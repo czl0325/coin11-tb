@@ -130,6 +130,20 @@ if task_btn.exists:
             if not has_task:
                 break
             time.sleep(5)
+        d.press("back")
     else:
         print("你没有打卡任务，退出任务。。。")
+    sign_btn = d(className="android.widget.TextView", text="去签到")
+    if sign_btn.exists:
+        sign_btn.click()
+        time.sleep(3)
+        popup_view = d.xpath('//android.widget.FrameLayout[@resource-id="android:id/tabcontent"]/android.widget.RelativeLayout/android.support.v7.widget.RecyclerView/android.widget.RelativeLayout/android.widget.FrameLayout[1]/android.widget.RelativeLayout[1]/android.widget.FrameLayout/android.widget.FrameLayout[1]/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[3]/android.widget.FrameLayout')
+        if popup_view.exists:
+            x = popup_view.center()[0]
+            y = popup_view.bounds[3] + 100
+            d.click(x, y)
+            time.sleep(5)
+            d.click(x, y + 80)
+            time.sleep(35)
+            d.press("back")
 d.watcher.remove()
