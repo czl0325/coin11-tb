@@ -1,4 +1,5 @@
 import random
+import re
 import time
 
 import uiautomator2 as u2
@@ -30,9 +31,15 @@ def back_to_home():
         if is_task_home():
             print("当前在任务页面，退出循环。。。")
             break
-        cancel_btn = d(className="android.widget.Button", resourceId="android:id/button2", textMatches=r"取消.*?")
-        if cancel_btn.exists:
-            cancel_btn.click()
+        cancel_btn1 = d(className="android.widget.Button", resourceId="android:id/button2", textMatches=r"取消.*?")
+        if cancel_btn1.exists:
+            print("点击取消")
+            cancel_btn1.click()
+            time.sleep(1)
+        cancel_btn2 = d(className="android.widget.Button", resourceId="com.alipay.mobile.antui:id/btn_cancel")
+        if cancel_btn2.exists:
+            print("点击取消")
+            cancel_btn2.click()
             time.sleep(1)
         close_btn1 = d(className="android.widget.FrameLayout", description="关闭")
         if close_btn1.exists:
@@ -93,23 +100,31 @@ if task_btn.exists:
                 time.sleep(35)
                 back_to_home()
                 continue
-            see_btn = d(className="android.widget.TextView", text="去看看")
+            see_btn = d.xpath('//android.widget.TextView[@text="去看看"]')
             if see_btn.exists:
-                print("点击去看看")
-                see_btn.click()
+                name_view = d.xpath(f'(//android.widget.TextView[@text="去看看"])[1]/preceding-sibling::android.widget.TextView[2]')
+                name_text = ""
+                if name_view.exists:
+                    name_text = name_view.text
+                print(f"任务名：{name_text}")
+                (see_btn.all())[0].click()
+                has_task = True
                 time.sleep(5)
-                start_time = time.time()
-                while True:
-                    end_time = time.time()
-                    minutes, seconds = divmod(int(end_time - start_time), 60)
-                    print(f"播放视频：{minutes}分钟{seconds}秒")
-                    if minutes > 18:
-                        break
-                    d.swipe_ext(Direction.FORWARD)
-                    # region_view = d.xpath('//android.widget.RelativeLayout[@resource-id="com.alipay.android.living.dynamic:id/cubeContainerView"]/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.LinearLayout')
-                    # if region_view.exists:
-                    #     pass
-                    time.sleep(random.randrange(25, 45))
+                if bool(re.fullmatch(r"看\d+个指定视频", name_text)):
+                    time.sleep(35)
+                else:
+                    start_time = time.time()
+                    while True:
+                        end_time = time.time()
+                        minutes, seconds = divmod(int(end_time - start_time), 60)
+                        print(f"播放视频：{minutes}分钟{seconds}秒")
+                        if minutes > 18:
+                            break
+                        d.swipe_ext(Direction.FORWARD)
+                        # region_view = d.xpath('//android.widget.RelativeLayout[@resource-id="com.alipay.android.living.dynamic:id/cubeContainerView"]/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.LinearLayout')
+                        # if region_view.exists:
+                        #     pass
+                        time.sleep(random.randrange(25, 45))
                 back_to_home()
                 continue
             if not has_task:
