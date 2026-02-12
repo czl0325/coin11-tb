@@ -1,7 +1,9 @@
 import ddddocr
-import cv2
+import os
 from PIL import Image
+from paddleocr import PaddleOCR
 
+os.environ['PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK'] = 'True'
 ocr = ddddocr.DdddOcr(det=True, show_ad=False)
 
 def practical_example():
@@ -12,7 +14,7 @@ def practical_example():
     det_ocr = ddddocr.DdddOcr(det=True, show_ad=False)
     rec_ocr = ddddocr.DdddOcr(show_ad=False)
 
-    image_path = "截取屏幕.jpg"
+    image_path = "text_ocr.jpg"
 
     with open(image_path, 'rb') as f:
         image_bytes = f.read()
@@ -55,7 +57,7 @@ def get_sorted_text_from_region():
     # 2. 识别文字并获取坐标
     # 返回格式：[(box, text, score), ...]
     # box: 四个点的坐标，左上角是 box[0]
-    image_path = "截取屏幕.jpg"
+    image_path = "text_ocr.jpg"
 
     with open(image_path, 'rb') as f:
         image_bytes = f.read()
@@ -95,6 +97,23 @@ def get_sorted_text_from_region():
     return full_sentence
 
 
+def paddle_ocr_test():
+    ocr = PaddleOCR(use_angle_cls=True, lang='ch')
+    image_path = 'text_ocr.jpg'
+    result = ocr.ocr(image_path)
+    texts = []
+    for line in result[0]:  # result 是列表，result[0] 是当前图片的行信息
+        text = line[1][0]  # line[1][0] 是识别的文字，line[1][1] 是置信度
+        texts.append(text)
+    # 拼接方式：可以直接连在一起，或者加空格/换行，根据你的图片实际情况调整
+    full_sentence = ''.join(texts)  # 无空格直接拼接（适合连续文字）
+    print("提取的完整文字：")
+    print(full_sentence)
+    # 可选：打印每行的置信度，便于检查准确性
+    print("\n详细结果：")
+    for line in result[0]:
+        print(f"{line[1][0]}  (置信度: {line[1][1]:.3f})")
+
+
 # 运行示例
-results = get_sorted_text_from_region()
-print(results)
+paddle_ocr_test()

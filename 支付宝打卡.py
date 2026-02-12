@@ -124,7 +124,7 @@ if task_btn.exists:
                         # region_view = d.xpath('//android.widget.RelativeLayout[@resource-id="com.alipay.android.living.dynamic:id/cubeContainerView"]/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.LinearLayout')
                         # if region_view.exists:
                         #     pass
-                        time.sleep(random.randrange(25, 45))
+                        time.sleep(random.randrange(15, 30))
                 back_to_home()
                 continue
             if not has_task:
