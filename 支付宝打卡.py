@@ -135,10 +135,12 @@ if task_btn.exists:
         print("你没有打卡任务，退出任务。。。")
     sign_btn = d(className="android.widget.TextView", text="去签到")
     if sign_btn.exists:
+        print("点击去签到")
         sign_btn.click()
         time.sleep(3)
         popup_view = d.xpath('//android.widget.FrameLayout[@resource-id="android:id/tabcontent"]/android.widget.RelativeLayout/android.support.v7.widget.RecyclerView/android.widget.RelativeLayout/android.widget.FrameLayout[1]/android.widget.RelativeLayout[1]/android.widget.FrameLayout/android.widget.FrameLayout[1]/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[3]/android.widget.FrameLayout')
         if popup_view.exists:
+            print("点击领指定红包")
             x = popup_view.center()[0]
             y = popup_view.bounds[3] + 100
             d.click(x, y)
