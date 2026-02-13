@@ -18,7 +18,7 @@ def check_in_task():
     package_name1, _ = get_current_app(d)
     if package_name1 != TMALL_APP:
         return False
-    task_view = d(className="android.widget.TextView", textMatches=r"做任务.*?领现金值")
+    task_view = d(className="android.widget.TextView", text=r"今日已得")
     if task_view.exists:
         return True
     return False
