@@ -5,7 +5,7 @@ import time
 import uiautomator2 as u2
 import ddddocr
 from uiautomator2 import Direction
-from utils import check_chars_exist, get_current_app, task_loop, ALIPAY_APP, start_app
+from utils import paddle_ocr, ALIPAY_APP, start_app
 
 time1 = time.time()
 d = u2.connect()
@@ -114,17 +114,22 @@ if task_btn.exists:
                     time.sleep(35)
                 else:
                     start_time = time.time()
+                    last_text = ""
                     while True:
                         end_time = time.time()
                         minutes, seconds = divmod(int(end_time - start_time), 60)
-                        print(f"播放视频：{minutes}分钟{seconds}秒")
-                        if minutes > 18:
-                            break
-                        d.swipe_ext(Direction.FORWARD)
-                        # region_view = d.xpath('//android.widget.RelativeLayout[@resource-id="com.alipay.android.living.dynamic:id/cubeContainerView"]/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.LinearLayout')
-                        # if region_view.exists:
-                        #     pass
-                        time.sleep(random.randrange(15, 30))
+                        # if minutes > 35:
+                        #     break
+                        region_view = d.xpath('//android.widget.RelativeLayout[@resource-id="com.alipay.android.living.dynamic:id/cubeContainerView"]/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.LinearLayout')
+                        if region_view.exists:
+                            region_screenshot = region_view.get().screenshot(format="opencv")
+                            region_text = paddle_ocr(region_screenshot)
+                            if "已完成" in region_text:
+                                break
+                            if region_text == last_text:
+                                d.swipe_ext(Direction.FORWARD)
+                            last_text = region_text
+                        time.sleep(10)
                 back_to_home()
                 continue
             if not has_task:

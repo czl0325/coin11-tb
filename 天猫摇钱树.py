@@ -29,11 +29,8 @@ def back_to_task():
         if check_in_task():
             break
         package_name1, _ = get_current_app(d)
-        if TMALL_APP not in package_name1:
-            start_app(d, TMALL_APP, init=False)
-            continue
         d.press("back")
-        time.sleep(1)
+        time.sleep(0.5)
 
 
 

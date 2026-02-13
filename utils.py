@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 import ddddocr
 import subprocess
+from paddleocr import PaddleOCR
 
 TB_APP = "com.taobao.taobao"
 ALIPAY_APP = "com.eg.android.AlipayGphone"
@@ -101,6 +102,19 @@ def find_text_position(image, text):
             end_index = start_index + len(text)
             return start_index, end_index
     return None
+
+
+def paddle_ocr(image):
+    ocr = PaddleOCR(use_angle_cls=True, lang='ch')
+    result = ocr.ocr(image)
+    texts = []
+    for line in result[0]:  # result 是列表，result[0] 是当前图片的行信息
+        text = line[1][0]  # line[1][0] 是识别的文字，line[1][1] 是置信度
+        texts.append(text)
+    # 拼接方式：可以直接连在一起，或者加空格/换行，根据你的图片实际情况调整
+    full_sentence = ''.join(texts)  # 无空格直接拼接（适合连续文字）
+    print(f"提取的完整文字：{full_sentence}")
+    return full_sentence
 
 
 # 判断一个字符是否为中文字符
@@ -316,6 +330,7 @@ def start_app(d, package_name, init=False):
                 print(f"应用 {package_name} 未成功启动，当前应用: {current_package}")
         except Exception as e:
             print(f"使用activity启动也失败: {e}")
+
 
 def check_verify(d):
     verify_view = d(className="android.webkit.WebView", text="验证码拦截")
