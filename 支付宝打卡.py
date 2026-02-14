@@ -5,7 +5,7 @@ import time
 import uiautomator2 as u2
 import ddddocr
 from uiautomator2 import Direction
-from utils import paddle_ocr, ALIPAY_APP, start_app
+from utils import paddle_ocr, ALIPAY_APP, start_app, get_current_app
 
 time1 = time.time()
 d = u2.connect()
@@ -129,7 +129,11 @@ if task_btn.exists:
                             if region_text == last_text:
                                 d.swipe_ext(Direction.FORWARD)
                             last_text = region_text
-                        time.sleep(10)
+                        else:
+                            package_name, _ = get_current_app(d)
+                            if package_name != ALIPAY_APP:
+                                d.app_start(ALIPAY_APP, stop=False)
+                        time.sleep(8)
                 back_to_home()
                 continue
             if not has_task:
