@@ -6,6 +6,7 @@ import numpy as np
 import ddddocr
 import subprocess
 from paddleocr import PaddleOCR
+from PIL import Image
 
 TB_APP = "com.taobao.taobao"
 ALIPAY_APP = "com.eg.android.AlipayGphone"
@@ -104,8 +105,12 @@ def find_text_position(image, text):
     return None
 
 
+ocr = PaddleOCR(use_angle_cls=True, lang='ch')
+
+
 def paddle_ocr(image):
-    ocr = PaddleOCR(use_angle_cls=True, lang='ch')
+    if isinstance(image, Image.Image):
+        image = np.array(image)
     result = ocr.ocr(image)
     texts = []
     for line in result[0]:  # result 是列表，result[0] 是当前图片的行信息
