@@ -179,12 +179,14 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22):
                 time.sleep(4)
                 commodity_view1 = d.xpath("//android.widget.ListView/android.view.View[1]")
                 if commodity_view1.exists:
+                    print(f"commodity_view1，点击{commodity_view1.center()}")
                     commodity_view1.click()
                     time.sleep(18)
                     break
                 commodity_view2 = d(className="android.view.View", resourceId="feedsContainer")
                 if commodity_view2.exists:
-                    d.click(100, commodity_view2.center()[1])
+                    print(f"存在commodity_view2，点击{(100, commodity_view2.center()[1])}")
+                    d.click(300, commodity_view2.center()[1])
                     time.sleep(18)
                     break
             if package_name == origin_app or package_name == TMALL_APP:
