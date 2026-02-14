@@ -5,7 +5,7 @@ import time
 import uiautomator2 as u2
 import ddddocr
 from uiautomator2 import Direction
-from utils import paddle_ocr, ALIPAY_APP, start_app
+from utils import paddle_ocr, ALIPAY_APP, start_app, get_current_app
 
 time1 = time.time()
 d = u2.connect()
@@ -13,13 +13,14 @@ start_app(d, ALIPAY_APP, init=True)
 screen_width, screen_height = d.window_size()
 d.watcher.when("O1CN012qVB9n1tvZ8ATEQGu_!!6000000005964-2-tps-144-144").click()
 d.watcher.when(xpath="//android.app.Dialog//android.widget.Button[@text='关闭']").click()
+d.watcher.when(xpath='//android.widget.RelativeLayout[@resource-id="com.alipay.android.living.dynamic:id/cubeContainerView"]/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]').click()
 d.watcher.start()
 ocr = ddddocr.DdddOcr(show_ad=False)
 
 
 def is_task_home():
-    task_view1 = d(className="android.widget.TextView",text="今日待办")
-    task_view2 = d(className="android.widget.TextView",text="打卡记录")
+    task_view1 = d(className="android.widget.TextView", text="今日待办")
+    task_view2 = d(className="android.widget.TextView", text="打卡记录")
     if task_view1.exists and task_view2.exists:
         return True
     return False
@@ -49,7 +50,6 @@ def back_to_home():
             print("点击后退")
             d.press("back")
         time.sleep(1)
-
 
 
 video_btn = d(className="android.widget.TextView", resourceId="com.alipay.android.tablauncher:id/tab_description", text="视频")
@@ -122,14 +122,18 @@ if task_btn.exists:
                         #     break
                         region_view = d.xpath('//android.widget.RelativeLayout[@resource-id="com.alipay.android.living.dynamic:id/cubeContainerView"]/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.LinearLayout')
                         if region_view.exists:
-                            region_screenshot = region_view.get().screenshot(format="opencv")
+                            region_screenshot = region_view.get().screenshot()
                             region_text = paddle_ocr(region_screenshot)
                             if "已完成" in region_text:
                                 break
                             if region_text == last_text:
                                 d.swipe_ext(Direction.FORWARD)
                             last_text = region_text
-                        time.sleep(10)
+                        else:
+                            package_name, _ = get_current_app(d)
+                            if package_name != ALIPAY_APP:
+                                d.app_start(ALIPAY_APP, stop=False)
+                        time.sleep(8)
                 back_to_home()
                 continue
             if not has_task:
