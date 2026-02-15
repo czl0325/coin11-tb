@@ -144,6 +144,7 @@ if task_btn.exists:
         d.press("back")
     else:
         print("你没有打卡任务，退出任务。。。")
+    time.sleep(5)
     sign_btn = d(className="android.widget.TextView", text="去签到")
     if sign_btn.exists:
         print("点击去签到")
