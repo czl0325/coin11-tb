@@ -291,7 +291,7 @@ while True:
                 else:
                     have_clicked[task_name] += 1
                 time.sleep(5)
-                task_loop(d, back_to_task)
+                task_loop(d, back_to_task, is_fish=True)
             else:
                 try_count += 1
                 if try_count >= 3:

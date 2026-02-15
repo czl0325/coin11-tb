@@ -8,6 +8,12 @@ import subprocess
 from paddleocr import PaddleOCR
 from PIL import Image
 
+
+# 关闭 ppocr 的所有日志（推荐）
+# logging.getLogger('ppocr').setLevel(logging.WARNING)  # 或 logging.ERROR
+# 或者更粗暴地全局关闭 DEBUG 以下级别（会影响其他库）
+# logging.basicConfig(level=logging.WARNING)
+
 TB_APP = "com.taobao.taobao"
 ALIPAY_APP = "com.eg.android.AlipayGphone"
 FISH_APP = "com.taobao.idlefish"
