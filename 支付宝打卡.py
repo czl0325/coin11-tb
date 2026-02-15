@@ -20,7 +20,7 @@ ocr = ddddocr.DdddOcr(show_ad=False)
 
 def is_task_home():
     task_view1 = d(className="android.widget.TextView", text="今日待办")
-    task_view2 = d(className="android.widget.TextView", text="打卡记录")
+    task_view2 = d(className="android.widget.TextView", textMatches=r"打卡(记录|进度)")
     if task_view1.exists and task_view2.exists:
         return True
     return False
@@ -127,7 +127,9 @@ if task_btn.exists:
                             if "已完成" in region_text:
                                 break
                             if region_text == last_text:
-                                d.swipe_ext(Direction.FORWARD)
+                                print("倒计时停了，上滑视频。。。")
+                                # d.swipe_ext(Direction.FORWARD)
+                                d.swipe(301, screen_height - 500, 322, 500, 1)
                             last_text = region_text
                         else:
                             package_name, _ = get_current_app(d)
