@@ -68,6 +68,7 @@ if task_btn.exists:
         card_btn.click()
         time.sleep(5)
         while True:
+            time.sleep(5)
             print("开始任务循环")
             has_task = False
             sign_btn = d(className="android.widget.TextView", text="去签到")
@@ -140,7 +141,6 @@ if task_btn.exists:
                 continue
             if not has_task:
                 break
-            time.sleep(5)
         d.press("back")
     else:
         print("你没有打卡任务，退出任务。。。")
