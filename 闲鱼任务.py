@@ -297,7 +297,8 @@ while True:
                 if try_count >= 3:
                     break
         else:
-            last_view = d.xpath('//android.view.View[@resource-id="taskWrap"]/android.view.View[last()]/android.view.View/android.widget.TextView[last()]')
+            print("没有找到任务")
+            last_view = d.xpath('//android.view.View[@resource-id="taskWrap"]/android.view.View[last()]/android.view.View/android.view.View[last()]/android.widget.TextView')
             if last_view.exists and last_view.get_text() == "已完成":
                 print("已完成按钮存在，退出循环")
                 break
