@@ -7,6 +7,7 @@ import ddddocr
 import subprocess
 from paddleocr import PaddleOCR
 from PIL import Image
+import easyocr
 
 
 # 关闭 ppocr 的所有日志（推荐）
@@ -110,7 +111,10 @@ def find_text_position(image, text):
     return None
 
 
-ocr = PaddleOCR(use_angle_cls=True, lang='ch')
+ocr = PaddleOCR(use_angle_cls=True, lang='ch', show_log=True,  # 显示详细日志，看卡在哪一步
+    use_space_char=False,  # 减少不必要的计算
+    det_db_thresh=0.3,  # 降低检测阈值，加快速度
+    det_db_box_thresh=0.5)
 
 
 def paddle_ocr(image):
@@ -125,6 +129,16 @@ def paddle_ocr(image):
     full_sentence = ''.join(texts)  # 无空格直接拼接（适合连续文字）
     print(f"提取的完整文字：{full_sentence}")
     return full_sentence
+
+
+easyocr_reader = easyocr.Reader(['ch_sim', 'en'], gpu=True)  # ch_sim: 简体中文
+
+def easy_ocr(image):
+    if isinstance(image, Image.Image):
+        image = np.array(image)
+    result = easyocr_reader.readtext(image)
+    text = ' '.join([res[1] for res in result])  # 直接拼接文字
+    return text
 
 
 # 判断一个字符是否为中文字符

@@ -5,7 +5,7 @@ import time
 import uiautomator2 as u2
 import ddddocr
 from uiautomator2 import Direction
-from utils import paddle_ocr, ALIPAY_APP, start_app, get_current_app
+from utils import paddle_ocr, ALIPAY_APP, start_app, get_current_app, easy_ocr
 
 time1 = time.time()
 d = u2.connect()
@@ -123,8 +123,10 @@ if task_btn.exists:
                         #     break
                         region_view = d.xpath('//android.widget.RelativeLayout[@resource-id="com.alipay.android.living.dynamic:id/cubeContainerView"]/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.LinearLayout')
                         if region_view.exists:
+                            print("找到时间组件，开始识别时间。。。")
                             region_screenshot = region_view.get().screenshot()
-                            region_text = paddle_ocr(region_screenshot)
+                            # region_text = paddle_ocr(region_screenshot)
+                            region_text = easy_ocr(region_screenshot)
                             if "已完成" in region_text:
                                 break
                             if region_text == last_text:
@@ -133,9 +135,11 @@ if task_btn.exists:
                                 d.swipe(301, screen_height - 500, 322, 500, 1)
                             last_text = region_text
                         else:
+                            print("没有找到时间组件。。。")
                             package_name, _ = get_current_app(d)
                             if package_name != ALIPAY_APP:
                                 d.app_start(ALIPAY_APP, stop=False)
+                        # d.swipe_ext(Direction.FORWARD)
                         time.sleep(8)
                 back_to_home()
                 continue
