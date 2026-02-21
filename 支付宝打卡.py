@@ -62,7 +62,7 @@ if task_btn.exists:
     print("点击视频任务按钮。。。")
     task_btn.click()
     time.sleep(5)
-    card_btn = d(className="android.widget.TextView", text="去打卡")
+    card_btn = d(className="android.widget.TextView", textMatches=r"去(打卡|续签)")
     if card_btn.exists:
         print("点击去打卡。。。")
         card_btn.click()
@@ -127,12 +127,13 @@ if task_btn.exists:
                             region_screenshot = region_view.get().screenshot()
                             # region_text = paddle_ocr(region_screenshot)
                             region_text = easy_ocr(region_screenshot)
+                            print("识别到文字：", region_text)
                             if "已完成" in region_text:
                                 break
                             if region_text == last_text:
                                 print("倒计时停了，上滑视频。。。")
                                 # d.swipe_ext(Direction.FORWARD)
-                                d.swipe(301, screen_height - 500, 322, 500, 1)
+                                d.swipe(301, screen_height - 500, 322, 500, 0.5)
                             last_text = region_text
                         else:
                             print("没有找到时间组件。。。")
