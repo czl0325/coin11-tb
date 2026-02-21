@@ -156,7 +156,6 @@ while True:
                     have_clicked[task_name] += 1
                 need_click_view.click()
                 time.sleep(4)
-                check_can_open(d)
                 task_loop(d, back_to_task)
                 finish_count = finish_count + 1
             else:

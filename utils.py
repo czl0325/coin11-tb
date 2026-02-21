@@ -164,6 +164,7 @@ search_keys = ["华硕a豆air", "机械革命星耀14", "ipadmini7", "iphone16",
 
 
 def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22):
+    check_can_open(d)
     history_lst = d.xpath(
         '(//android.widget.TextView[@text="历史搜索"]/following-sibling::android.widget.ListView)/android.view.View[1]')
     if history_lst.exists:
