@@ -14,6 +14,7 @@ screen_width, screen_height = d.window_size()
 d.watcher.when("O1CN012qVB9n1tvZ8ATEQGu_!!6000000005964-2-tps-144-144").click()
 d.watcher.when(xpath="//android.app.Dialog//android.widget.Button[@text='关闭']").click()
 d.watcher.when(xpath='//android.widget.RelativeLayout[@resource-id="com.alipay.android.living.dynamic:id/cubeContainerView"]/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]').click()
+d.watcher.when(xpath='//android.widget.FrameLayout[@content-desc="推荐广告"]/following-sibling::android.widget.LinearLayout[1]/android.widget.ImageView').click()
 d.watcher.start()
 ocr = ddddocr.DdddOcr(show_ad=False)
 
