@@ -291,13 +291,14 @@ while True:
                 else:
                     have_clicked[task_name] += 1
                 time.sleep(5)
-                task_loop(d, back_to_task)
+                task_loop(d, back_to_task, is_fish=True)
             else:
                 try_count += 1
                 if try_count >= 3:
                     break
         else:
-            last_view = d.xpath('//android.view.View[@resource-id="taskWrap"]/android.view.View[last()]/android.view.View/android.widget.TextView[last()]')
+            print("没有找到任务")
+            last_view = d.xpath('//android.view.View[@resource-id="taskWrap"]/android.view.View[last()]/android.view.View/android.view.View[last()]/android.widget.TextView')
             if last_view.exists and last_view.get_text() == "已完成":
                 print("已完成按钮存在，退出循环")
                 break

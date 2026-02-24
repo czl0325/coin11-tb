@@ -5,7 +5,7 @@ import time
 import uiautomator2 as u2
 import ddddocr
 from uiautomator2 import Direction
-from utils import paddle_ocr, ALIPAY_APP, start_app, get_current_app
+from utils import paddle_ocr, ALIPAY_APP, start_app, get_current_app, easy_ocr
 
 time1 = time.time()
 d = u2.connect()
@@ -14,13 +14,14 @@ screen_width, screen_height = d.window_size()
 d.watcher.when("O1CN012qVB9n1tvZ8ATEQGu_!!6000000005964-2-tps-144-144").click()
 d.watcher.when(xpath="//android.app.Dialog//android.widget.Button[@text='关闭']").click()
 d.watcher.when(xpath='//android.widget.RelativeLayout[@resource-id="com.alipay.android.living.dynamic:id/cubeContainerView"]/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]').click()
+d.watcher.when(xpath='//android.widget.FrameLayout[@content-desc="推荐广告"]/following-sibling::android.widget.LinearLayout[1]/android.widget.ImageView').click()
 d.watcher.start()
 ocr = ddddocr.DdddOcr(show_ad=False)
 
 
 def is_task_home():
     task_view1 = d(className="android.widget.TextView", text="今日待办")
-    task_view2 = d(className="android.widget.TextView", text="打卡记录")
+    task_view2 = d(className="android.widget.TextView", textMatches=r"打卡(记录|进度)")
     if task_view1.exists and task_view2.exists:
         return True
     return False
@@ -62,12 +63,13 @@ if task_btn.exists:
     print("点击视频任务按钮。。。")
     task_btn.click()
     time.sleep(5)
-    card_btn = d(className="android.widget.TextView", text="去打卡")
+    card_btn = d(className="android.widget.TextView", textMatches=r"去(打卡|续签)")
     if card_btn.exists:
         print("点击去打卡。。。")
         card_btn.click()
         time.sleep(5)
         while True:
+            time.sleep(5)
             print("开始任务循环")
             has_task = False
             sign_btn = d(className="android.widget.TextView", text="去签到")
@@ -122,26 +124,33 @@ if task_btn.exists:
                         #     break
                         region_view = d.xpath('//android.widget.RelativeLayout[@resource-id="com.alipay.android.living.dynamic:id/cubeContainerView"]/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.LinearLayout')
                         if region_view.exists:
+                            print("找到时间组件，开始识别时间。。。")
                             region_screenshot = region_view.get().screenshot()
-                            region_text = paddle_ocr(region_screenshot)
+                            # region_text = paddle_ocr(region_screenshot)
+                            region_text = easy_ocr(region_screenshot)
+                            print("识别到文字：", region_text)
                             if "已完成" in region_text:
                                 break
                             if region_text == last_text:
-                                d.swipe_ext(Direction.FORWARD)
+                                print("倒计时停了，上滑视频。。。")
+                                # d.swipe_ext(Direction.FORWARD)
+                                d.swipe(301, screen_height - 500, 322, 500, 0.5)
                             last_text = region_text
                         else:
+                            print("没有找到时间组件。。。")
                             package_name, _ = get_current_app(d)
                             if package_name != ALIPAY_APP:
                                 d.app_start(ALIPAY_APP, stop=False)
+                        # d.swipe_ext(Direction.FORWARD)
                         time.sleep(8)
                 back_to_home()
                 continue
             if not has_task:
                 break
-            time.sleep(5)
         d.press("back")
     else:
         print("你没有打卡任务，退出任务。。。")
+    time.sleep(5)
     sign_btn = d(className="android.widget.TextView", text="去签到")
     if sign_btn.exists:
         print("点击去签到")

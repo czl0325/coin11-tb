@@ -7,6 +7,13 @@ import ddddocr
 import subprocess
 from paddleocr import PaddleOCR
 from PIL import Image
+import easyocr
+
+
+# 关闭 ppocr 的所有日志（推荐）
+# logging.getLogger('ppocr').setLevel(logging.WARNING)  # 或 logging.ERROR
+# 或者更粗暴地全局关闭 DEBUG 以下级别（会影响其他库）
+# logging.basicConfig(level=logging.WARNING)
 
 TB_APP = "com.taobao.taobao"
 ALIPAY_APP = "com.eg.android.AlipayGphone"
@@ -40,8 +47,7 @@ def get_current_app(d):
     return None, None
 
 
-other_app = ["蚂蚁森林", "农场", "百度", "支付宝", "芝麻信用", "蚂蚁庄园", "闲鱼", "神奇海洋", "淘宝特价版", "点淘",
-             "饿了么", "微博", "直播", "领肥料礼包", "福气提现金", "看小说", "菜鸟", "斗地主", "领肥料礼包"]
+other_app = ["蚂蚁森林", "农场", "百度", "支付宝", "芝麻信用", "蚂蚁庄园", "闲鱼", "神奇海洋", "淘宝特价版", "点淘", "饿了么", "微博", "直播", "领肥料礼包", "福气提现金", "看小说", "菜鸟", "斗地主", "领肥料礼包"]
 
 
 def fish_not_click(text, chars=None):
@@ -105,7 +111,17 @@ def find_text_position(image, text):
     return None
 
 
-ocr = PaddleOCR(use_angle_cls=True, lang='ch')
+def check_can_open(d):
+    open_btn = d(className="android.widget.Button", textMatches=r"打开|允许|始终允许")
+    if open_btn.exists:
+        open_btn.click()
+        time.sleep(2)
+
+
+ocr = PaddleOCR(use_angle_cls=True, lang='ch', show_log=True,  # 显示详细日志，看卡在哪一步
+    use_space_char=False,  # 减少不必要的计算
+    det_db_thresh=0.3,  # 降低检测阈值，加快速度
+    det_db_box_thresh=0.5)
 
 
 def paddle_ocr(image):
@@ -122,6 +138,16 @@ def paddle_ocr(image):
     return full_sentence
 
 
+easyocr_reader = easyocr.Reader(['ch_sim', 'en'], gpu=True)  # ch_sim: 简体中文
+
+def easy_ocr(image):
+    if isinstance(image, Image.Image):
+        image = np.array(image)
+    result = easyocr_reader.readtext(image)
+    text = ' '.join([res[1] for res in result])  # 直接拼接文字
+    return text
+
+
 # 判断一个字符是否为中文字符
 def is_chinese(char):
     return '\u4e00' <= char <= '\u9fff'
@@ -134,11 +160,11 @@ def majority_chinese(text):
     return chinese_count > len(text) / 2
 
 
-search_keys = ["华硕a豆air", "机械革命星耀14", "ipadmini7", "iphone16", "红米note13", "macbookairm4", "华硕灵耀14",
-               "微星星影15"]
+search_keys = ["华硕a豆air", "机械革命星耀14", "ipadmini7", "iphone16", "红米note13", "macbookairm4", "华硕灵耀14", "微星星影15"]
 
 
 def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22):
+    check_can_open(d)
     history_lst = d.xpath(
         '(//android.widget.TextView[@text="历史搜索"]/following-sibling::android.widget.ListView)/android.view.View[1]')
     if history_lst.exists:
