@@ -33,7 +33,6 @@ def back_to_task():
         time.sleep(0.5)
 
 
-
 shake_btn = d(className="android.widget.ImageView", description="必免卡")
 if shake_btn.exists:
     shake_btn.click()
@@ -73,13 +72,13 @@ if activity_name == "com.tmall.wireless.themis.container.TMThemisActivity":
                     subtitle_text = subtitle_view.get_text()
                     if "添加桌面组件" in title_text:
                         continue
-                    do_time = 30
+                    do_time = 35
                     if subtitle_text is str:
                         second = re.findall(r".*?(\d+)秒.*?", subtitle_text)
                         if len(second) > 0:
-                            do_time = int(second[0])
+                            do_time = int(second[0]) + 5
                     (task_btn.all())[index].click()
-                    print(f"点击任务：{title_text}")
+                    print(f"点击任务：{title_text}，任务执行时间：{do_time}秒")
                     time.sleep(5)
                     has_task = True
                     task_loop(d, back_to_task, duration=do_time)
