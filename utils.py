@@ -5,8 +5,22 @@ import cv2
 import numpy as np
 import ddddocr
 import subprocess
-from paddleocr import PaddleOCR
+import ssl
+import urllib.request
+
+# 正确的SSL禁用方式：赋值为「调用后的上下文对象」，而非函数本身
+original_context = ssl._create_default_https_context
+ssl._create_default_https_context = ssl._create_unverified_context()  # 关键：加()调用函数
+
+# 额外配置urllib的opener，双重确保跳过SSL验证
+opener = urllib.request.build_opener(
+    urllib.request.HTTPSHandler(context=ssl._create_unverified_context())
+)
+urllib.request.install_opener(opener)
+
+# from paddleocr import PaddleOCR
 from PIL import Image
+import easyocr
 
 
 # 关闭 ppocr 的所有日志（推荐）
@@ -26,6 +40,7 @@ APP_START_CONFIG = {
     TMALL_APP: "com.tmall.wireless.maintab.module.TMMainTabActivity",
     ALIPAY_APP: None  # 默认配置，不指定activity
 }
+
 
 def check_chars_exist(text, chars=None):
     if chars is None:
@@ -110,21 +125,42 @@ def find_text_position(image, text):
     return None
 
 
-ocr = PaddleOCR(use_angle_cls=True, lang='ch')
+def check_can_open(d):
+    open_btn = d(className="android.widget.Button", textMatches=r"打开|允许|始终允许")
+    if open_btn.exists:
+        open_btn.click()
+        time.sleep(2)
 
 
-def paddle_ocr(image):
+# ocr = PaddleOCR(use_angle_cls=True, lang='ch', show_log=True,  # 显示详细日志，看卡在哪一步
+#     use_space_char=False,  # 减少不必要的计算
+#     det_db_thresh=0.3,  # 降低检测阈值，加快速度
+#     det_db_box_thresh=0.5)
+#
+#
+# def paddle_ocr(image):
+#     if isinstance(image, Image.Image):
+#         image = np.array(image)
+#     result = ocr.ocr(image)
+#     texts = []
+#     for line in result[0]:  # result 是列表，result[0] 是当前图片的行信息
+#         text = line[1][0]  # line[1][0] 是识别的文字，line[1][1] 是置信度
+#         texts.append(text)
+#     # 拼接方式：可以直接连在一起，或者加空格/换行，根据你的图片实际情况调整
+#     full_sentence = ''.join(texts)  # 无空格直接拼接（适合连续文字）
+#     print(f"提取的完整文字：{full_sentence}")
+#     return full_sentence
+
+
+easyocr_reader = easyocr.Reader(['ch_sim', 'en'], gpu=True)  # ch_sim: 简体中文
+
+
+def easy_ocr(image):
     if isinstance(image, Image.Image):
         image = np.array(image)
-    result = ocr.ocr(image)
-    texts = []
-    for line in result[0]:  # result 是列表，result[0] 是当前图片的行信息
-        text = line[1][0]  # line[1][0] 是识别的文字，line[1][1] 是置信度
-        texts.append(text)
-    # 拼接方式：可以直接连在一起，或者加空格/换行，根据你的图片实际情况调整
-    full_sentence = ''.join(texts)  # 无空格直接拼接（适合连续文字）
-    print(f"提取的完整文字：{full_sentence}")
-    return full_sentence
+    result = easyocr_reader.readtext(image)
+    text = ' '.join([res[1] for res in result])  # 直接拼接文字
+    return text
 
 
 # 判断一个字符是否为中文字符
@@ -143,6 +179,7 @@ search_keys = ["华硕a豆air", "机械革命星耀14", "ipadmini7", "iphone16",
 
 
 def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22):
+    check_can_open(d)
     history_lst = d.xpath(
         '(//android.widget.TextView[@text="历史搜索"]/following-sibling::android.widget.ListView)/android.view.View[1]')
     if history_lst.exists:
@@ -188,12 +225,14 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22):
                 time.sleep(4)
                 commodity_view1 = d.xpath("//android.widget.ListView/android.view.View[1]")
                 if commodity_view1.exists:
+                    print(f"commodity_view1，点击{commodity_view1.center()}")
                     commodity_view1.click()
                     time.sleep(18)
                     break
                 commodity_view2 = d(className="android.view.View", resourceId="feedsContainer")
                 if commodity_view2.exists:
-                    d.click(100, commodity_view2.center()[1])
+                    print(f"存在commodity_view2，点击{(100, commodity_view2.center()[1])}")
+                    d.click(300, commodity_view2.center()[1])
                     time.sleep(18)
                     break
             if package_name == origin_app or package_name == TMALL_APP:

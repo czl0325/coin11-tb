@@ -1,14 +1,12 @@
 import time
 
 import uiautomator2 as u2
-from uiautomator2 import Direction
-from utils import check_chars_exist, other_app, get_current_app, task_loop, select_device, check_verify, start_app, TB_APP
+from utils import check_chars_exist, other_app, get_current_app, task_loop, select_device, check_verify, start_app, TB_APP, check_can_open
 
 unclick_btn = []
 have_clicked = dict()
 is_end = False
 error_count = 0
-in_other_app = False
 time1 = time.time()
 selected_device = select_device()
 d = u2.connect(selected_device)
@@ -117,6 +115,7 @@ d.watcher.when("跳过").click()
 d.watcher.when("点击刷新").click()
 d.watcher.when("刷新").click()
 d.watcher.when("点击重试").click()
+d.watcher.when("立即施肥").click()
 # d.watcher.when("关闭").click()
 d.watcher.start()
 find_farm_btn()
@@ -127,7 +126,6 @@ while True:
         print("开始查找按钮")
         check_verify(d)
         time.sleep(4)
-        in_other_app = False
         sign_btn = d(className="android.widget.Button", text="去签到")
         if sign_btn.exists:
             sign_btn.click()
@@ -157,8 +155,6 @@ while True:
                     have_clicked[task_name] = 1
                 else:
                     have_clicked[task_name] += 1
-                if check_chars_exist(task_name, other_app):
-                    in_other_app = True
                 need_click_view.click()
                 time.sleep(4)
                 task_loop(d, back_to_task)
