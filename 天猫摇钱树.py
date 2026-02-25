@@ -87,7 +87,7 @@ while True:
             if title_view.exists:
                 title_text = title_view.get_text()
                 subtitle_text = subtitle_view.get_text()
-                if "添加桌面组件" in title_text:
+                if "添加桌面组件" in title_text or "加速提现" in title_text:
                     continue
                 do_time = 30
                 if subtitle_text is str:
