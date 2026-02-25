@@ -1,11 +1,8 @@
-import random
 import re
 import time
 
 import uiautomator2 as u2
-import ddddocr
-from uiautomator2 import Direction
-from utils import paddle_ocr, ALIPAY_APP, start_app, get_current_app, easy_ocr
+from utils import ALIPAY_APP, start_app, get_current_app, easy_ocr
 
 time1 = time.time()
 d = u2.connect()
@@ -16,7 +13,6 @@ d.watcher.when(xpath="//android.app.Dialog//android.widget.Button[@text='关闭'
 d.watcher.when(xpath='//android.widget.RelativeLayout[@resource-id="com.alipay.android.living.dynamic:id/cubeContainerView"]/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]').click()
 d.watcher.when(xpath='//android.widget.FrameLayout[@content-desc="推荐广告"]/following-sibling::android.widget.LinearLayout[1]/android.widget.ImageView').click()
 d.watcher.start()
-ocr = ddddocr.DdddOcr(show_ad=False)
 
 
 def is_task_home():
