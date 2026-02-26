@@ -33,6 +33,7 @@ def back_to_task():
         time.sleep(0.5)
 
 
+
 while True:
     shake_btn = d(className="android.widget.ImageView", description="必免卡")
     if shake_btn.exists:
@@ -70,37 +71,37 @@ else:
         print("点击赚现金值")
         earn_btn.click()
         time.sleep(3)
-    while True:
-        time.sleep(5)
-        has_task = False
-        get_btn = d(className="android.widget.TextView", text="领取奖励")
-        if get_btn.exists:
-            print("点击领取奖励")
-            get_btn.click()
-            continue
-        task_btn = d.xpath('//android.widget.TextView[@text="领取任务"]')
-        if task_btn.exists:
-            for index in range(len(task_btn.all())):
-                title_view = d.xpath(f'(//android.widget.TextView[@text="领取任务"])[{index+1}]/../../android.widget.TextView[1]')
-                subtitle_view = d.xpath(f'(//android.widget.TextView[@text="领取任务"])[{index+1}]/../../android.widget.TextView[2]')
-                if title_view.exists:
-                    title_text = title_view.get_text()
-                    subtitle_text = subtitle_view.get_text()
-                    if "添加桌面组件" in title_text:
-                        continue
-                    do_time = 35
-                    if subtitle_text is str:
-                        second = re.findall(r".*?(\d+)秒.*?", subtitle_text)
-                        if len(second) > 0:
-                            do_time = int(second[0]) + 5
-                    (task_btn.all())[index].click()
-                    print(f"点击任务：{title_text}，任务执行时间：{do_time}秒")
-                    time.sleep(5)
-                    has_task = True
-                    task_loop(d, back_to_task, duration=do_time)
-                    break
-        if not has_task:
-            break
+while True:
+    time.sleep(5)
+    has_task = False
+    get_btn = d(className="android.widget.TextView", text="领取奖励")
+    if get_btn.exists:
+        print("点击领取奖励")
+        get_btn.click()
+        continue
+    task_btn = d.xpath('//android.widget.TextView[@text="领取任务"]')
+    if task_btn.exists:
+        for index in range(len(task_btn.all())):
+            title_view = d.xpath(f'(//android.widget.TextView[@text="领取任务"])[{index+1}]/../../android.widget.TextView[1]')
+            subtitle_view = d.xpath(f'(//android.widget.TextView[@text="领取任务"])[{index+1}]/../../android.widget.TextView[2]')
+            if title_view.exists:
+                title_text = title_view.get_text()
+                subtitle_text = subtitle_view.get_text()
+                if "添加桌面组件" in title_text or "加速提现" in title_text:
+                    continue
+                do_time = 30
+                if subtitle_text is str:
+                    second = re.findall(r".*?(\d+)秒.*?", subtitle_text)
+                    if len(second) > 0:
+                        do_time = int(second[0])
+                (task_btn.all())[index].click()
+                print(f"点击任务：{title_text}，浏览时间：{do_time}秒")
+                time.sleep(5)
+                has_task = True
+                task_loop(d, back_to_task, duration=do_time)
+                break
+    if not has_task:
+        break
 ctx.close()
 d.shell("settings put system accelerometer_rotation 0")
 print("关闭手机自动旋转")
