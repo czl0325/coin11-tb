@@ -74,10 +74,17 @@ else:
 while True:
     time.sleep(5)
     has_task = False
-    get_btn = d(className="android.widget.TextView", text="领取奖励")
+    get_btn = d(className="android.widget.TextView", textMatches=r"领(取)?奖励")
     if get_btn.exists:
         print("点击领取奖励")
         get_btn.click()
+        continue
+    cash_btn = d(className="android.widget.TextView", text="领现金")
+    if cash_btn.exists:
+        print("点击领现金")
+        cash_btn.click()
+        time.sleep(5)
+        back_to_task()
         continue
     task_btn = d.xpath('//android.widget.TextView[@text="领取任务"]')
     if task_btn.exists:

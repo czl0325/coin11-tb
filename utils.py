@@ -163,6 +163,11 @@ def easy_ocr(image):
     return text
 
 
+import torch
+print("PyTorch 版本:", torch.version)
+print("CUDA 是否可用:", torch.cuda.is_available())
+
+
 # 判断一个字符是否为中文字符
 def is_chinese(char):
     return '\u4e00' <= char <= '\u9fff'
