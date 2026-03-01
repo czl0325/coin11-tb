@@ -93,21 +93,60 @@ def find_button(image, btn_path, region=None):
     return None
 
 
-def find_button2(image, btn_path):
-    template = cv2.imread(btn_path)
-    # 创建 ORB 检测器
-    orb = cv2.ORB_create()
-    # 检测关键点和描述符
-    kp1, des1 = orb.detectAndCompute(image, None)
-    kp2, des2 = orb.detectAndCompute(template, None)
-    # 创建匹配器
-    bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
-    matches = bf.match(des1, des2)
-    # 按距离排序
-    matches = sorted(matches, key=lambda x: x.distance)
-    for match in matches:
-        x, y = kp2[match.trainIdx].pt
-        print(f"匹配距离: {match.distance},x = {x:.2f}, y = {y:.2f}")
+# 基于特征查找图片 threshold:匹配阈值（越高质量要求越高） scales:搜索的尺度范围 60%~140%
+def find_button_multiscale(screen_shot, template_path, scales=np.linspace(0.6, 1.4, 20), threshold=0.78, method=cv2.TM_CCOEFF_NORMED):
+    # 读取图片（建议都转成RGB或灰度，视情况）
+    template = cv2.imread(template_path)
+    if screen_shot is None or template is None:
+        return None, None, None
+    # 建议都转灰度（速度快很多，且很多按钮是单色/对比度强的）
+    large_gray = cv2.cvtColor(screen_shot, cv2.COLOR_BGR2GRAY)
+    tpl_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
+    h, w = tpl_gray.shape[:2]
+    best_val = -1
+    best_loc = None
+    best_scale = 1.0
+    best_rect = None
+    for scale in scales:
+        # 缩放模板（注意：也可以反过来缩放大图，但通常缩放小图更快）
+        resize_w = int(w * scale)
+        resize_h = int(h * scale)
+        if resize_w < 5 or resize_h < 5:
+            continue
+        resized_tpl = cv2.resize(tpl_gray, (resize_w, resize_h), interpolation=cv2.INTER_AREA if scale < 1 else cv2.INTER_CUBIC)
+        # 检查是否还能匹配（防止模板比大图还大）
+        if resized_tpl.shape[0] > large_gray.shape[0] or resized_tpl.shape[1] > large_gray.shape[1]:
+            continue
+        # 模板匹配
+        result = cv2.matchTemplate(large_gray, resized_tpl, method)
+        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
+        if method in [cv2.TM_SQDIFF, cv2.TM_SQDIFF_NORMED]:
+            val = min_val
+            loc = min_loc
+        else:
+            val = max_val
+            loc = max_loc
+        if val > best_val:  # 对于相关系数类方法，越大越好
+            best_val = val
+            best_loc = loc
+            best_scale = scale
+            best_rect = (loc[0], loc[1], resize_w, resize_h)
+    if best_val >= threshold:
+        x, y, bw, bh = best_rect
+        center_x = x + bw // 2
+        center_y = y + bh // 2
+        print(f"找到匹配！置信度: {best_val:.3f}")
+        print(f"左上角: ({x}, {y})")
+        print(f"中心点: ({center_x}, {center_y})")
+        print(f"按钮大小: {bw}×{bh}  (缩放比例 {best_scale:.2f})")
+        # 可视化（可选）
+        cv2.rectangle(screen_shot, (x, y), (x + bw, y + bh), (0, 255, 0), 2)
+        cv2.circle(screen_shot, (center_x, center_y), 5, (0, 0, 255), -1)
+        cv2.imwrite("result.jpg", screen_shot)
+        return (center_x, center_y), best_val, best_scale
+    else:
+        print(f"未找到足够匹配，最高置信度仅: {best_val:.3f}")
+        return None, best_val, None
 
 
 def find_text_position(image, text):
