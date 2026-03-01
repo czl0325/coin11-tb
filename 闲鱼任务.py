@@ -156,6 +156,10 @@ def check_popup():
     draw_btn = d(className="android.widget.TextView", text="开始抽奖")
     if draw_btn.exists:
         d.click(draw_btn.center()[0], draw_btn.center()[1])
+        time.sleep(3)
+        confirm_btn = d.xpath('//android.widget.TextView[@text="我的闲鱼币: "]/following-sibling::android.widget.TextView[3]')
+        if confirm_btn.exists:
+            confirm_btn.click()
         time.sleep(10)
         return
     receive_btn3 = d(className="android.widget.TextView", text="领取奖励")
@@ -190,6 +194,11 @@ def check_popup():
             throw_btn2.click()
             time.sleep(3)
             return
+    close_btn1 = d.xpath('//android.webkit.WebView[@text="闲鱼币首页SSR"]/android.view.View/android.view.View[3]/android.view.View/android.view.View/android.widget.TextView')
+    if close_btn1.exists:
+        close_btn1.click()
+        time.sleep(3)
+        return
     screen_image = d.screenshot(format='opencv')
     pt1 = find_button(screen_image, "./img/fish_advance.png")
     if pt1:
