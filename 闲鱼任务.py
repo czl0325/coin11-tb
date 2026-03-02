@@ -20,7 +20,7 @@ have_clicked = dict()
 error_count = 0
 ocr = ddddocr.DdddOcr(show_ad=False)
 finish_count = 0
-xy_task_name = ["领至高20元外卖红包", "浏览指定频道好物", "搜一搜推荐商品", "去浏览全新好物", "浏览推荐的国补商品", "去支付宝领积分", "去淘宝签到领红包", "去蚂蚁庄园逛一逛", "去逛一逛芭芭农场", "去支付宝农场领水果", "去蚂蚁森林逛一逛", "去百度逛一逛", "去饿了么果园领水果", "薅羊毛赚话费", "去天猫拿红包", "逛一逛淘宝人生", "去淘特领好礼", "上夸克天天领现金", "去淘金币赢20亿", "去快手极速版领红包", "去神奇鱼塘领能量", "去淘宝闪购果园领水果"]
+xy_task_name = ["领至高20元外卖红包", "浏览指定频道好物", "搜一搜推荐商品", "去浏览全新好物", "浏览推荐的国补商品", "去支付宝领积分", "去淘宝签到领红包", "去蚂蚁庄园逛一逛", "去逛一逛芭芭农场", "去支付宝农场领水果", "去蚂蚁森林逛一逛", "去百度逛一逛", "去百度极速版逛一逛", "去饿了么果园领水果", "薅羊毛赚话费", "去天猫拿红包", "逛一逛淘宝人生", "去淘特领好礼", "上夸克天天领现金", "去淘金币赢20亿", "去快手极速版领红包", "去神奇鱼塘领能量", "去淘宝闪购果园领水果"]
 
 
 def check_in_xy():
@@ -156,10 +156,12 @@ def check_popup():
     draw_btn = d(className="android.widget.TextView", text="开始抽奖")
     if draw_btn.exists:
         d.click(draw_btn.center()[0], draw_btn.center()[1])
-        time.sleep(3)
-        confirm_btn = d.xpath('//android.widget.TextView[@text="我的闲鱼币: "]/following-sibling::android.widget.TextView[3]')
-        if confirm_btn.exists:
-            confirm_btn.click()
+        time.sleep(5)
+        return
+    confirm_btn = d.xpath('//android.widget.TextView[@text="我的闲鱼币: "]/following-sibling::android.widget.TextView[3]')
+    if confirm_btn.exists:
+        print("点击确认消耗")
+        confirm_btn.click()
         time.sleep(10)
         return
     receive_btn3 = d(className="android.widget.TextView", text="领取奖励")
