@@ -1,5 +1,6 @@
 import time
 import random
+import io
 import re
 import cv2
 import numpy as np
@@ -99,6 +100,11 @@ def find_button_multiscale(screen_shot, template_path, scales=np.linspace(0.6, 1
     template = cv2.imread(template_path)
     if screen_shot is None or template is None:
         return None, None, None
+    if isinstance(screen_shot, Image.Image):
+        screen_shot = cv2.cvtColor(np.array(screen_shot), cv2.COLOR_RGB2BGR)
+    elif isinstance(screen_shot, bytes):
+        img = Image.open(io.BytesIO(screen_shot))
+        screen_shot = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
     # 建议都转灰度（速度快很多，且很多按钮是单色/对比度强的）
     large_gray = cv2.cvtColor(screen_shot, cv2.COLOR_BGR2GRAY)
     tpl_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
