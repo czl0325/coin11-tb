@@ -164,7 +164,7 @@ if task_btn.exists:
         print("点击去签到")
         sign_btn.click()
         time.sleep(3)
-        pt, _, _ = find_button_multiscale(d.screenshot(), "./img/img_getToday.png")
+        pt, _, _ = find_button_multiscale(d.screenshot(format="opencv"), "./img/img_getToday.png")
         if pt:
             print("点击领今日红包")
             d.click(pt[0], pt[1])

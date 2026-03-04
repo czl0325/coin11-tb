@@ -100,7 +100,7 @@ while True:
                 if subtitle_text is str:
                     second = re.findall(r".*?(\d+)秒.*?", subtitle_text)
                     if len(second) > 0:
-                        do_time = int(second[0]) + 5
+                        do_time = int(second[0]) + 3
                 (task_btn.all())[index].click()
                 print(f"点击任务：{title_text}，浏览时间：{do_time}秒")
                 time.sleep(5)

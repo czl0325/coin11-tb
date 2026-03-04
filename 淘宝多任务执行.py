@@ -34,6 +34,7 @@ if __name__ == "__main__":
         "闲鱼任务.py",
         "淘宝芭芭农场.py",
         "淘金币任务.py",
+        "天猫摇钱树.py",
     ]
 
     run_scripts(scripts_to_run)
