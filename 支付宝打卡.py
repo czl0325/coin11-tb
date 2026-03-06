@@ -125,7 +125,7 @@ if task_btn.exists:
                             # region_text = paddle_ocr(region_screenshot)
                             region_text = easy_ocr(region_screenshot)
                             print("识别到文字：", region_text)
-                            if "已完成" in region_text:
+                            if "完成" in region_text:
                                 break
                             if region_text == last_text:
                                 print("倒计时停了，上滑视频。。。")
