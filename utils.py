@@ -7,6 +7,13 @@ import ddddocr
 import subprocess
 import ssl
 import urllib.request
+import torch
+print("PyTorch 版本:", torch.version)
+print("CUDA 是否可用:", torch.cuda.is_available())
+if hasattr(torch.backends, "mps"):
+    print("MPS 是否可用:", torch.backends.mps.is_available())
+else:
+    print("MPS 不受支持")
 
 # 正确的SSL禁用方式：赋值为「调用后的上下文对象」，而非函数本身
 original_context = ssl._create_default_https_context
@@ -397,3 +404,5 @@ def check_verify(d):
 
 
 # find_button2(cv2.imread("screenshot.png"), "./img/alipay_get.png")
+
+
