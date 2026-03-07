@@ -1,11 +1,8 @@
-import random
 import re
 import time
 
 import uiautomator2 as u2
-import ddddocr
-from uiautomator2 import Direction
-from utils import paddle_ocr, ALIPAY_APP, start_app, get_current_app, easy_ocr
+from utils import ALIPAY_APP, start_app, get_current_app, easy_ocr, find_button_multiscale
 
 time1 = time.time()
 d = u2.connect()
@@ -16,7 +13,6 @@ d.watcher.when(xpath="//android.app.Dialog//android.widget.Button[@text='关闭'
 d.watcher.when(xpath='//android.widget.RelativeLayout[@resource-id="com.alipay.android.living.dynamic:id/cubeContainerView"]/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]').click()
 d.watcher.when(xpath='//android.widget.FrameLayout[@content-desc="推荐广告"]/following-sibling::android.widget.LinearLayout[1]/android.widget.ImageView').click()
 d.watcher.start()
-ocr = ddddocr.DdddOcr(show_ad=False)
 
 
 def is_task_home():
@@ -129,7 +125,7 @@ if task_btn.exists:
                             # region_text = paddle_ocr(region_screenshot)
                             region_text = easy_ocr(region_screenshot)
                             print("识别到文字：", region_text)
-                            if "已完成" in region_text:
+                            if "完成" in region_text:
                                 break
                             if region_text == last_text:
                                 print("倒计时停了，上滑视频。。。")
@@ -151,19 +147,30 @@ if task_btn.exists:
     else:
         print("你没有打卡任务，退出任务。。。")
     time.sleep(5)
+    chai_btn1 = d(className="android.widget.TextView", text="拆红包")
+    if chai_btn1.exists:
+        print("点击拆红包")
+        chai_btn1.click()
+        time.sleep(5)
+        chai_btn2 = d(className="android.widget.TextView", textContains="拆惊喜红包")
+        if chai_btn2.exists:
+            print("点击拆惊喜红包")
+            chai_btn2.click()
+            time.sleep(5)
+        d.press("back")
+        time.sleep(5)
     sign_btn = d(className="android.widget.TextView", text="去签到")
     if sign_btn.exists:
         print("点击去签到")
         sign_btn.click()
         time.sleep(3)
-        popup_view = d.xpath('//android.widget.FrameLayout[@resource-id="android:id/tabcontent"]/android.widget.RelativeLayout/android.support.v7.widget.RecyclerView/android.widget.RelativeLayout/android.widget.FrameLayout[1]/android.widget.RelativeLayout[1]/android.widget.FrameLayout/android.widget.FrameLayout[1]/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[3]/android.widget.FrameLayout')
-        if popup_view.exists:
-            print("点击领指定红包")
-            x = popup_view.center()[0]
-            y = popup_view.bounds[3] + 100
-            d.click(x, y)
+        pt, _, _ = find_button_multiscale(d.screenshot(format="opencv"), "./img/img_getToday.png")
+        if pt:
+            print("点击领今日红包")
+            d.click(pt[0], pt[1])
             time.sleep(5)
-            d.click(x, y + 80)
+            print("点击看视频必得红包")
+            d.click(pt[0], pt[1] + 50)
             time.sleep(35)
             d.press("back")
 d.watcher.remove()

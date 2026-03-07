@@ -157,7 +157,11 @@ while True:
                     have_clicked[task_name] += 1
                 need_click_view.click()
                 time.sleep(4)
-                task_loop(d, back_to_task)
+                if "微博" in task_name:
+                    time.sleep(4)
+                    back_to_task()
+                else:
+                    task_loop(d, back_to_task)
                 finish_count = finish_count + 1
             else:
                 error_count += 1
