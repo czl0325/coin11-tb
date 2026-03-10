@@ -124,13 +124,16 @@ if task_btn.exists:
                             region_screenshot = region_view.get().screenshot()
                             # region_text = paddle_ocr(region_screenshot)
                             region_text = easy_ocr(region_screenshot)
+                            region_text = re.findall(r".*?看\d+分钟视频.*?(\d+.*?\d+)", region_text)
+                            if len(region_text) > 0:
+                                region_text = region_text[0]
                             print("识别到文字：", region_text)
                             if "完成" in region_text:
                                 break
                             if region_text == last_text:
                                 print("倒计时停了，上滑视频。。。")
-                                # d.swipe_ext(Direction.FORWARD)
-                                d.swipe(301, screen_height - 500, 322, 500, 0.5)
+                                d.swipe_ext(u2.Direction.FORWARD)
+                                # d.swipe(301, screen_height - 500, 322, 500, 0.5)
                             last_text = region_text
                         else:
                             print("没有找到时间组件。。。")
