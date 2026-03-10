@@ -296,7 +296,7 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22):
                         d.click(int(pt1[0]) + 50, int(pt1[1]) + 20)
                         time.sleep(1)
                 start_x = random.randint(screen_width // 6, screen_width // 2)
-                start_y = random.randint(screen_height // 2, screen_height - screen_width // 4)
+                start_y = random.randint(screen_height // 2, screen_height - screen_height // 4)
                 end_x = random.randint(start_x - 100, start_x)
                 end_y = random.randint(200, start_y - 300)
                 swipe_time = random.uniform(0.4, 1) if end_y - start_y > 500 else random.uniform(0.2, 0.5)
