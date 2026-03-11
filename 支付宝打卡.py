@@ -112,7 +112,7 @@ if task_btn.exists:
                     time.sleep(35)
                 else:
                     start_time = time.time()
-                    last_text = ""
+                    last_text = 0
                     while True:
                         end_time = time.time()
                         minutes, seconds = divmod(int(end_time - start_time), 60)
@@ -128,13 +128,14 @@ if task_btn.exists:
                             if len(region_text) > 0:
                                 region_text = region_text[0]
                             print("识别到文字：", region_text)
+                            region_text = region_text.replace("：", ".").replace(":", ".")
                             if "完成" in region_text:
                                 break
-                            if region_text == last_text:
+                            if round(last_text - float(region_text), 2) <= 0.03 and last_text != 0:
                                 print("倒计时停了，上滑视频。。。")
                                 d.swipe_ext(u2.Direction.FORWARD)
                                 # d.swipe(301, screen_height - 500, 322, 500, 0.5)
-                            last_text = region_text
+                            last_text = float(region_text)
                         else:
                             print("没有找到时间组件。。。")
                             package_name, _ = get_current_app(d)
