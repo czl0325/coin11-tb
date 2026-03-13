@@ -114,33 +114,34 @@ if task_btn.exists:
                     start_time = time.time()
                     last_text = 0
                     while True:
-                        end_time = time.time()
-                        minutes, seconds = divmod(int(end_time - start_time), 60)
-                        # if minutes > 35:
-                        #     break
-                        region_view = d.xpath('//android.widget.RelativeLayout[@resource-id="com.alipay.android.living.dynamic:id/cubeContainerView"]/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.LinearLayout')
-                        if region_view.exists:
-                            print("找到时间组件，开始识别时间。。。")
-                            region_screenshot = region_view.get().screenshot()
-                            # region_text = paddle_ocr(region_screenshot)
-                            region_text = easy_ocr(region_screenshot)
-                            region_text = re.findall(r".*?看\d+分钟视频.*?(\d+.*?\d+)", region_text)
-                            if len(region_text) > 0:
-                                region_text = region_text[0]
-                            print("识别到文字：", region_text)
-                            region_text = region_text.replace("：", ".").replace(":", ".")
-                            if "完成" in region_text:
-                                break
-                            if round(last_text - float(region_text), 2) <= 0.03 and last_text != 0:
-                                print("倒计时停了，上滑视频。。。")
-                                d.swipe_ext(u2.Direction.FORWARD)
-                                # d.swipe(301, screen_height - 500, 322, 500, 0.5)
-                            last_text = float(region_text)
-                        else:
-                            print("没有找到时间组件。。。")
-                            package_name, _ = get_current_app(d)
-                            if package_name != ALIPAY_APP:
-                                d.app_start(ALIPAY_APP, stop=False)
+                        try:
+                            end_time = time.time()
+                            minutes, seconds = divmod(int(end_time - start_time), 60)
+                            region_view = d.xpath('//android.widget.RelativeLayout[@resource-id="com.alipay.android.living.dynamic:id/cubeContainerView"]/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.LinearLayout')
+                            if region_view.exists:
+                                print("找到时间组件，开始识别时间。。。")
+                                region_screenshot = region_view.get().screenshot()
+                                # region_text = paddle_ocr(region_screenshot)
+                                region_text = easy_ocr(region_screenshot)
+                                region_text = re.findall(r".*?看\d+分钟视频.*?(\d+.*?\d+)", region_text)
+                                if len(region_text) > 0:
+                                    region_text = region_text[0]
+                                print("识别到文字：", region_text)
+                                region_text = region_text.replace("：", ".").replace(":", ".")
+                                if "完成" in region_text:
+                                    break
+                                if round(last_text - float(region_text), 2) <= 0.03 and last_text != 0:
+                                    print("倒计时停了，上滑视频。。。")
+                                    d.swipe_ext(u2.Direction.FORWARD)
+                                    # d.swipe(301, screen_height - 500, 322, 500, 0.5)
+                                last_text = float(region_text)
+                            else:
+                                print("没有找到时间组件。。。")
+                                package_name, _ = get_current_app(d)
+                                if package_name != ALIPAY_APP:
+                                    d.app_start(ALIPAY_APP, stop=False)
+                        except Exception as e:
+                            print(e)
                         # d.swipe_ext(Direction.FORWARD)
                         time.sleep(8)
                 back_to_home()
