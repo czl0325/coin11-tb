@@ -198,7 +198,14 @@ def check_popup():
             return
     close_btn1 = d.xpath('//android.webkit.WebView[@text="闲鱼币首页SSR"]/android.view.View/android.view.View[3]/android.view.View/android.view.View/android.widget.TextView')
     if close_btn1.exists:
+        print("点击关闭")
         close_btn1.click()
+        time.sleep(3)
+        return
+    close_btn2 = d.xpath('//android.webkit.WebView[@text="闲鱼币首页SSR"]/android.view.View/android.view.View[4]/android.view.View/android.view.View/android.widget.TextView')
+    if close_btn2.exists:
+        print("点击关闭")
+        close_btn2.click()
         time.sleep(3)
         return
     screen_image = d.screenshot(format='opencv')
