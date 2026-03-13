@@ -1,8 +1,9 @@
+import re
 import time
 
 import uiautomator2 as u2
 from uiautomator2 import Direction
-from utils import check_chars_exist, get_current_app, task_loop, ALIPAY_APP, start_app
+from utils import check_chars_exist, get_current_app, task_loop, ALIPAY_APP, start_app, APP_START_CONFIG
 
 time1 = time.time()
 unclick_btn = []
@@ -42,6 +43,9 @@ def back_to_task():
                 print("当前是任务列表画面，不能继续返回")
                 break
             else:
+                if APP_START_CONFIG[ALIPAY_APP] in temp_activity:
+                    to_farm()
+                    continue
                 close_btn1 = d.xpath("//android.widget.FrameLayout[@resource-id='com.alipay.multiplatform.phone.xriver_integration:id/frameLayout_rightButton1']/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.FrameLayout[2]")
                 if close_btn1.exists:
                     print("点击关闭小程序按钮")
@@ -64,24 +68,28 @@ def back_to_task():
 d.watcher.when("O1CN012qVB9n1tvZ8ATEQGu_!!6000000005964-2-tps-144-144").click()
 d.watcher.when(xpath="//android.app.Dialog//android.widget.Button[@text='关闭']").click()
 d.watcher.start()
-while True:
-    farm_btn = d(resourceId="com.alipay.android.phone.openplatform:id/app_text", className="android.widget.TextView", text="芭芭农场")
-    if farm_btn.exists:
-        print("点击芭芭农场按钮，进入芭芭农场首页")
-        farm_btn.click()
-        time.sleep(5)
-    task_btn = d(className="android.widget.Button", text="任务列表")
-    if task_btn.exists:
-        print("点击任务列表", task_btn.center()[0], task_btn.center()[1])
-        task_btn.click()
-        time.sleep(5)
-    if check_in_task():
-        break
+
+def to_farm():
+    while True:
+        farm_btn = d(resourceId="com.alipay.android.phone.openplatform:id/app_text", className="android.widget.TextView", text="芭芭农场")
+        if farm_btn.exists:
+            print("点击芭芭农场按钮，进入芭芭农场首页")
+            farm_btn.click()
+            time.sleep(5)
+        task_btn = d(className="android.widget.Button", text="任务列表")
+        if task_btn.exists:
+            print("点击任务列表", task_btn.center()[0], task_btn.center()[1])
+            task_btn.click()
+            time.sleep(5)
+        if check_in_task():
+            break
+
+to_farm()
 finish_count = 0
 error_count = 0
 while True:
     try:
-        time.sleep(3)
+        time.sleep(6)
         get_btn = d(className="android.widget.Button", text="领取")
         if get_btn.exists:
             get_btn.click()
@@ -95,7 +103,6 @@ while True:
                 name_view = d.xpath(f'(//android.widget.Button[@text="去逛逛" or @text="去完成"])[{index+1}]/parent::android.view.View/preceding-sibling::android.view.View[1]')
                 if name_view.exists:
                     name_text = name_view.text
-                    print(f"查找到任务：{name_text}")
                     if check_chars_exist(name_text):
                         continue
                     if have_clicked.get(name_text):
@@ -110,8 +117,16 @@ while True:
             if need_click_view:
                 need_click_view.click()
                 print(f"点击按钮:{need_click_name}")
+                duration = re.findall(r".*(?:浏览|逛)(\d+)s.*", need_click_name)
+                if len(duration) > 0:
+                    duration = int(duration[0]) + 3
+                else:
+                    duration = 18
+                    if "试玩" in need_click_name:
+                        duration = 33
+                print(f"共需要浏览{duration}秒")
                 time.sleep(4)
-                task_loop(d, back_to_task, origin_app=ALIPAY_APP)
+                task_loop(d, back_to_task, origin_app=ALIPAY_APP, duration=duration)
                 finish_count = finish_count + 1
             else:
                 error_count += 1
