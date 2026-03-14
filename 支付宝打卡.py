@@ -147,6 +147,17 @@ if task_btn.exists:
                 back_to_home()
                 continue
             if not has_task:
+                progress_view = d.xpath('//android.widget.TextView[@text="今日待办"]/following-sibling::android.widget.TextView[1]')
+                if progress_view.exists:
+                    progress_text = progress_view.text
+                    print(f"查看任务进度：{progress_text}")
+                    if "/" in progress_text:
+                        arr = progress_text.split("/")
+                        if len(arr) == 2:
+                            if int(arr[0]) < int(arr[1]):
+                                d.swipe(200, 1000, 181, 600)
+                                time.sleep(5)
+                                continue
                 break
         d.press("back")
     else:
