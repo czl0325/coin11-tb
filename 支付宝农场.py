@@ -76,6 +76,11 @@ def to_farm():
             print("点击芭芭农场按钮，进入芭芭农场首页")
             farm_btn.click()
             time.sleep(5)
+        close_btn = d(className="android.widget.Button", text="关闭")
+        if close_btn.exists:
+            print("点击关闭按钮")
+            close_btn.click()
+            time.sleep(2)
         task_btn = d(className="android.widget.Button", text="任务列表")
         if task_btn.exists:
             print("点击任务列表", task_btn.center()[0], task_btn.center()[1])

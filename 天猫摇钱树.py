@@ -53,6 +53,11 @@ if withdrawal_btn1.exists:
         print("点击弹出框的提现")
         withdrawal_btn2.click()
         time.sleep(3)
+    withdrawal_btn3 = d(className="android.widget.TextView", text="去提现")
+    if withdrawal_btn3.exists:
+        print("点击去提现")
+        withdrawal_btn3.click()
+        time.sleep(3)
     remind_btn = d(className="android.widget.TextView", text="提醒我每天提现")
     if remind_btn.exists:
         print("存在提醒我每天提现的弹窗")
