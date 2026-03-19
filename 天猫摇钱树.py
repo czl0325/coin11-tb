@@ -47,8 +47,8 @@ withdrawal_btn1 = d(className="android.widget.TextView", text="立即提现")
 if withdrawal_btn1.exists:
     print("点击立即提现")
     withdrawal_btn1.click()
-    time.sleep(1.5)
-    withdrawal_btn2 = d.xpath('//android.view.View[@resource-id="yqs_modalUndertake"]/android.view.View/android.view.View[last()]')
+    time.sleep(2)
+    withdrawal_btn2 = d.xpath('//android.view.View[@resource-id="yqs_modalUndertake"]//android.view.View[@text="立即提现"]')
     if withdrawal_btn2.exists:
         print("点击弹出框的提现")
         withdrawal_btn2.click()
