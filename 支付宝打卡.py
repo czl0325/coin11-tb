@@ -132,12 +132,12 @@ if task_btn.exists:
                                 if len(temp_text) > 0:
                                     region_text = temp_text[0]
                                 region_text = region_text.replace("：", ".").replace(":", ".")
-                                if round(last_text - float(region_text), 2) <= 0.03 and last_text != 0:
+                                if round(last_text - float(region_text), 2) <= 0.04 and last_text != 0:
                                     print("倒计时停了，上滑视频。。。")
                                     if direction == "UP":
-                                        d.swipe(301, screen_height - 500, 322, 500, 0.5)
+                                        d.swipe(301, screen_height - 500, 322, 500, 0.3)
                                     else:
-                                        d.swipe(301, 500, 322, screen_height - 500, 0.5)
+                                        d.swipe(301, 500, 322, screen_height - 500, 0.3)
                                 last_text = float(region_text)
                                 time_list.append(last_text)
                                 if len(time_list) > 3:
