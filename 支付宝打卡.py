@@ -114,7 +114,7 @@ if task_btn.exists:
                     start_time = time.time()
                     last_text = 0
                     time_list = []
-                    direction = u2.Direction.FORWARD
+                    direction = "UP"
                     while True:
                         try:
                             end_time = time.time()
@@ -134,14 +134,16 @@ if task_btn.exists:
                                 region_text = region_text.replace("：", ".").replace(":", ".")
                                 if round(last_text - float(region_text), 2) <= 0.03 and last_text != 0:
                                     print("倒计时停了，上滑视频。。。")
-                                    d.swipe_ext(direction)
-                                    # d.swipe(301, screen_height - 500, 322, 500, 0.5)
+                                    if direction == "UP":
+                                        d.swipe(301, screen_height - 500, 322, 500, 0.5)
+                                    else:
+                                        d.swipe(301, 500, 322, screen_height - 500, 0.5)
                                 last_text = float(region_text)
                                 time_list.append(last_text)
                                 if len(time_list) > 3:
                                     time_list.pop(0)
                                 if len(set(time_list)) == 1:
-                                    direction = u2.Direction.BACKWARD if direction == u2.Direction.FORWARD else u2.Direction.FORWARD
+                                    direction = "DOWN" if direction == "DOWN" else "UP"
                             else:
                                 print("没有找到时间组件。。。")
                                 package_name, _ = get_current_app(d)
