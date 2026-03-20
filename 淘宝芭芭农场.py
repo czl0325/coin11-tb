@@ -78,7 +78,6 @@ def back_to_task():
 # 查找芭芭农场按钮
 def find_farm_btn():
     print("开始查找芭芭农场按钮")
-    no_found_count = 0
     while True:
         farm_btn = d(className="android.widget.FrameLayout", description="芭芭农场")
         if farm_btn.exists(timeout=5):
@@ -144,7 +143,7 @@ while True:
             for index, view in enumerate(to_btn):
                 text_div = view.sibling(className="android.view.View", instance=0).child(className="android.widget.TextView", instance=0)
                 if text_div.exists:
-                    if check_chars_exist(text_div.get_text(), ["游戏", "一元抢", "开通", "搜索兴趣商品下单", "买精选商品", "1元抢", "下单", "淘宝秒杀", "消消乐", "3元3件", "中国移动", "百度地图"]):
+                    if check_chars_exist(text_div.get_text()):
                         if view not in unclick_btn:
                             unclick_btn.append(view)
                         continue
