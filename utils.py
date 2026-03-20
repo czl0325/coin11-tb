@@ -290,7 +290,7 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22):
             if package_name == origin_app or package_name == TMALL_APP:
                 if package_name == ALIPAY_APP:
                     screen_image = d.screenshot(format='opencv')
-                    pt1 = find_button(screen_image, "./img/alipay_get.png")
+                    pt1, _, _ = find_button_multiscale(screen_image, "./img/alipay_get.png")
                     if pt1:
                         print("检测到立即领取的弹框，点击立即领取")
                         d.click(int(pt1[0]) + 50, int(pt1[1]) + 20)

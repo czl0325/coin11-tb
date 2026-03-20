@@ -122,7 +122,7 @@ while True:
             if need_click_view:
                 need_click_view.click()
                 print(f"点击按钮:{need_click_name}")
-                duration = re.findall(r".*(?:浏览|逛)(\d+)s.*", need_click_name)
+                duration = re.findall(r".*(?:浏览|逛|玩)(\d+)s.*", need_click_name)
                 if len(duration) > 0:
                     duration = int(duration[0]) + 3
                 else:

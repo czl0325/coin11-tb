@@ -282,10 +282,10 @@ while True:
             if top_position and task_view.bounds[3] < top_position:
                 print(f"{task_name}超出范围了。等待后再试")
                 start_x = screen_width // 6
-                start_y = screen_height // 2 * 3
+                start_y = screen_height // 3 * 2
                 end_x = start_x + 50
                 end_y = start_y - 200
-                d.swipe(start_x, start_y, end_x, end_y, 1)
+                d.swipe(start_x, start_y, end_x, end_y, 0.5)
                 time.sleep(4)
                 continue
             if have_clicked.get(task_name) is not None and have_clicked.get(task_name) >= 2:
