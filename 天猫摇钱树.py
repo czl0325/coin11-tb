@@ -2,12 +2,13 @@ import time
 import re
 
 import uiautomator2 as u2
-from utils import select_device, start_app, TMALL_APP, get_current_app, task_loop
+from utils import select_device, start_app, TMALL_APP, get_current_app, task_loop, find_button_multiscale, find_text_by_easyocr
 
 selected_device = select_device()
 d = u2.connect(selected_device)
 print(f"已成功连接设备：{selected_device}")
 start_app(d, TMALL_APP, init=True)
+screen_width, screen_height = d.window_size()
 ctx = d.watch_context()
 ctx.when(xpath='//android.widget.FrameLayout[@resource-id="com.tmall.wireless:id/poplayer_native_state_center_layout_frame_id"]/android.widget.ImageView').click()
 ctx.when("TB1XICqw4v1gK0jSZFFXXb0sXXa-105-105").click()
@@ -43,29 +44,22 @@ while True:
     _, activity_name = get_current_app(d)
     if activity_name == "com.tmall.wireless.themis.container.TMThemisActivity":
         break
-withdrawal_btn1 = d(className="android.widget.TextView", text="立即提现")
-if withdrawal_btn1.exists:
-    print("点击立即提现")
-    withdrawal_btn1.click()
-    time.sleep(2)
-    withdrawal_btn2 = d.xpath('//android.view.View[@resource-id="yqs_modalUndertake"]//android.view.View[@text="立即提现"]')
-    if withdrawal_btn2.exists:
-        print("点击弹出框的提现")
-        withdrawal_btn2.click()
-        time.sleep(3)
-    withdrawal_btn3 = d(className="android.widget.TextView", text="去提现")
-    if withdrawal_btn3.exists:
-        print("点击去提现")
-        withdrawal_btn3.click()
-        time.sleep(3)
-    remind_btn = d(className="android.widget.TextView", text="提醒我每天提现")
-    if remind_btn.exists:
-        print("存在提醒我每天提现的弹窗")
-        close_btn = d.xpath('//android.widget.TextView[@text="提醒我每天提现"]/following-sibling::android.widget.Image[1]')
-        if close_btn.exists:
-            print("点击提醒我每天提现的关闭按钮")
-            close_btn.click()
+while True:
+    withdrawal_btn1 = d(className="android.widget.TextView", text="立即提现")
+    if withdrawal_btn1.exists:
+        print("点击立即提现")
+        withdrawal_btn1.click()
+        time.sleep(2)
+        screen_shot = d.screenshot(format="opencv")
+        pt2 = find_text_by_easyocr(screen_shot, "立即提现")
+        if pt2:
+            print("点击弹出框的提现")
+            d.click(pt2[0], pt2[1])
             time.sleep(3)
+            continue
+    else:
+        print("已经提现完毕")
+        break
 today_btn = d(className="android.widget.TextView", text="今日还可提")
 if today_btn.exists:
     today_btn.click()

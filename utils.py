@@ -29,6 +29,7 @@ urllib.request.install_opener(opener)
 # from paddleocr import PaddleOCR
 from PIL import Image
 import easyocr
+easyocr_reader = easyocr.Reader(['ch_sim', 'en'], gpu=True)
 
 
 # 关闭 ppocr 的所有日志（推荐）
@@ -177,6 +178,30 @@ def find_text_position(image, text):
     return None
 
 
+def find_text_by_easyocr(screenshot, target_text):
+    results = easyocr_reader.readtext(screenshot, detail=1)  # detail=1返回详细信息
+    for bbox, text, confidence in results:
+        if target_text in text:
+            print(f"找到文字: '{text}' (置信度: {confidence:.2f})")
+            # 获取边界框坐标
+            # bbox格式: [[x1, y1], [x2, y2], [x3, y3], [x4, y4]]
+            # 转换为(x, y, width, height)
+            x_coord = [point[0] for point in bbox]
+            y_coord = [point[1] for point in bbox]
+            x_min = int(min(x_coord))
+            x_max = int(max(x_coord))
+            y_min = int(min(y_coord))
+            y_max = int(max(y_coord))
+            width = x_max - x_min
+            height = y_max - y_min
+            x_center = x_min + width // 2
+            y_center = y_min + height // 2
+            print(f"位置: x={x_min}, y={y_min}, width={width}, height={height}")
+            print(f"中心点: ({x_center}, {y_center})")
+            return (x_center, y_center)
+    return None
+
+
 def check_can_open(d):
     open_btn = d(className="android.widget.Button", textMatches=r"打开|允许|始终允许")
     if open_btn.exists:
@@ -203,8 +228,7 @@ def check_can_open(d):
 #     print(f"提取的完整文字：{full_sentence}")
 #     return full_sentence
 
-
-easyocr_reader = easyocr.Reader(['ch_sim', 'en'], gpu=True)  # ch_sim: 简体中文
+ # ch_sim: 简体中文
 
 
 def easy_ocr(image):
