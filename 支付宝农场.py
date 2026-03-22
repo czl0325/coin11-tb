@@ -89,12 +89,22 @@ def to_farm():
         if check_in_task():
             break
 
+
+def close_dialog():
+    close_btn = d(className="android.widget.Button", text="关闭")
+    if close_btn.exists:
+        print("点击关闭弹窗")
+        close_btn.click()
+        time.sleep(2)
+
+
 to_farm()
 finish_count = 0
 error_count = 0
 while True:
     try:
         time.sleep(6)
+        close_dialog()
         get_btn = d(className="android.widget.Button", text="领取")
         if get_btn.exists:
             get_btn.click()
