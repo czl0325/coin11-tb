@@ -44,22 +44,17 @@ while True:
     _, activity_name = get_current_app(d)
     if activity_name == "com.tmall.wireless.themis.container.TMThemisActivity":
         break
-while True:
-    withdrawal_btn1 = d(className="android.widget.TextView", text="立即提现")
-    if withdrawal_btn1.exists:
-        print("点击立即提现")
-        withdrawal_btn1.click()
+time.sleep(3)
+withdrawal_btn1 = d(className="android.widget.TextView", text="立即提现")
+if withdrawal_btn1.exists:
+    print("点击立即提现")
+    withdrawal_btn1.click()
+    time.sleep(8)
+    withdrawal_btn2 = d.xpath('(//android.widget.TextView[@text="立即提现"])[2]')
+    if withdrawal_btn2.exists:
+        print("点击弹出框的提现")
+        withdrawal_btn2.click()
         time.sleep(2)
-        screen_shot = d.screenshot(format="opencv")
-        pt2 = find_text_by_easyocr(screen_shot, "立即提现")
-        if pt2:
-            print("点击弹出框的提现")
-            d.click(pt2[0], pt2[1])
-            time.sleep(3)
-            continue
-    else:
-        print("已经提现完毕")
-        break
 today_btn = d(className="android.widget.TextView", text="今日还可提")
 if today_btn.exists:
     today_btn.click()
