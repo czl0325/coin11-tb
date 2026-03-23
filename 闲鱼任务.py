@@ -196,7 +196,7 @@ def check_popup():
             throw_btn2.click()
             time.sleep(3)
             return
-    close_btn1 = d.xpath('//android.webkit.WebView[@text="闲鱼币首页SSR"]/android.view.View/android.view.View[3]/android.view.View/android.view.View/android.widget.TextView')
+    close_btn1 = d.xpath('//android.webkit.WebView[@text="闲鱼币首页SSR" or @text="首页"]/android.view.View/android.view.View[3]/android.view.View/android.view.View/android.widget.TextView')
     if close_btn1.exists:
         print("点击关闭")
         close_btn1.click()
