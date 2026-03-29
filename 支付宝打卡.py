@@ -54,6 +54,10 @@ if video_btn.exists:
     print("点击视频按钮。。。")
     d.click(video_btn.center()[0], video_btn.bounds()[1] - 100)
     time.sleep(5)
+pt1, _, _ = find_button_multiscale(d.screenshot(format="opencv"), "./img/img_getToday.png")
+if pt1:
+    d.click(pt1[0], pt1[1] + 500)
+    time.sleep(2)
 task_btn = d(className="android.widget.FrameLayout", resourceId="com.alipay.android.living.dynamic:id/iconAndCdpContainerFl")
 if task_btn.exists:
     print("点击视频任务按钮。。。")
