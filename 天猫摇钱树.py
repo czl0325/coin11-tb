@@ -2,7 +2,7 @@ import time
 import re
 
 import uiautomator2 as u2
-from utils import select_device, start_app, TMALL_APP, get_current_app, task_loop, find_button_multiscale, find_text_by_easyocr
+from utils import select_device, start_app, TMALL_APP, get_current_app, task_loop
 
 selected_device = select_device()
 d = u2.connect(selected_device)

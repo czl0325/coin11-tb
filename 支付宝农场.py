@@ -48,6 +48,11 @@ def back_to_task():
                     continue
                 close_btn1 = d.xpath("//android.widget.FrameLayout[@resource-id='com.alipay.multiplatform.phone.xriver_integration:id/frameLayout_rightButton1']/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.FrameLayout[2]")
                 if close_btn1.exists:
+                    close_btn2 = d.xpath('//android.webkit.WebView/android.view.View/android.view.View[1]/android.view.View/android.view.View/android.widget.TextView')
+                    if close_btn2.exists:
+                        print("关闭广告")
+                        close_btn2.click()
+                        time.sleep(2)
                     print("点击关闭小程序按钮")
                     close_btn1.click()
                     time.sleep(1)
