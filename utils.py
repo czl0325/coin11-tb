@@ -301,7 +301,7 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22):
                 time.sleep(4)
                 commodity_view1 = d.xpath("//android.widget.ListView/android.view.View[1]")
                 if commodity_view1.exists:
-                    print(f"commodity_view1，点击{commodity_view1.center()}")
+                    print(f"存在commodity_view1，点击{commodity_view1.center()}")
                     commodity_view1.click()
                     time.sleep(18)
                     break
@@ -332,6 +332,53 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22):
         except Exception as e:
             time.sleep(5)
     back_func()
+
+
+def back_to_video(d):
+    while True:
+        temp_package, temp_activity = get_current_app(d)
+        if temp_package is None or temp_activity is None or "Ext2ContainerActivity" in temp_activity:
+            continue
+        if FISH_APP not in temp_package:
+            start_app(d, FISH_APP)
+            continue
+
+
+
+
+def video_task(d, back_func):
+    video_type = None
+    screen_width, screen_height = d.window_size()
+    while True:
+        count_view1 = d(className="android.widget.TextView", textMatches=r"再逛\d+秒后可领奖")
+        if count_view1.exists:
+            print("属于右上角看广告类型")
+            video_type = 1
+        else:
+            if video_type == 1:
+                print("任务完成，返回任务页面")
+                back_func()
+                break
+        if video_type == 1:
+            d.swipe(301, screen_height - 500, 322, 500, 0.3)
+            time.sleep(2)
+        elif video_type == 2:
+            speed_btn = d(className="android.widget.TextView", text="我要加速")
+            if speed_btn.exists:
+                print("点击我要加速")
+                speed_btn.click()
+                time.sleep(18)
+            has_btn = d(className="android.widget.TextView", text="奖励已领取")
+            if has_btn.exists:
+                print("点击奖励已领取，退出循环")
+                has_btn.click()
+                time.sleep(2)
+                break
+        screen_shot = d.screenshot(format='opencv')
+        find_button_multiscale(screen_shot, "./img/alipay_get.png")
+
+
+
 
 
 def close_xy_dialog(d):

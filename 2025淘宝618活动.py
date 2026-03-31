@@ -4,7 +4,7 @@ import re
 import uiautomator2 as u2
 from uiautomator2 import Direction
 from utils import check_chars_exist, other_app, get_current_app, task_loop, start_app, TB_APP
-from 闲鱼任务 import back_to_task
+from 闲鱼扔骰子 import back_to_task
 
 unclick_btn = []
 have_clicked = dict()
