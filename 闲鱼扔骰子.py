@@ -203,6 +203,12 @@ def check_popup():
         close_btn2.click()
         time.sleep(3)
         return
+    close_btn3 = d.xpath('//android.widget.TextView[@text="道具可至「背包」查看使用"]/following-sibling::android.widget.TextView[1]')
+    if close_btn3.exists:
+        print("点击关闭抽奖界面")
+        close_btn3.click()
+        time.sleep(3)
+        return
     screen_image = d.screenshot(format='opencv')
     pt1 = find_button(screen_image, "./img/fish_advance.png")
     if pt1:
