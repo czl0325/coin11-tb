@@ -2,7 +2,7 @@ import sys
 import time
 import uiautomator2 as u2
 
-from utils import get_current_app, task_loop, FISH_APP, start_app, video_task
+from utils import get_current_app, task_loop, FISH_APP, start_app, video_task, print_error
 
 d = u2.connect()
 start_app(d, FISH_APP, init=True)
@@ -111,19 +111,26 @@ while True:
         to_btn = d.xpath('//android.webkit.WebView[@text="天天红包"]/android.view.View/android.view.View[5]/android.view.View/android.widget.TextView[@text="去完成"]')
         if to_btn.exists:
             name_view = d.xpath('(//android.webkit.WebView[@text="天天红包"]/android.view.View/android.view.View[5]/android.view.View/android.widget.TextView[@text="去完成"])[1]/preceding-sibling::android.view.View[1]/android.widget.TextView[1]')
+            task_name = None
             if name_view.exists:
-                print(f"点击任务：{name_view.text}")
+                task_name = name_view.text
+                print(f"点击任务：{task_name}")
             to_btn.click()
             time.sleep(3)
-            if "看视频" in name_view.text:
-                video_task(d, back_to_task)
-            else:
-                task_loop(d, back_to_task, is_fish=True)
+            if task_name:
+                if "视频" in task_name:
+                    video_task(d)
+                else:
+                    if "神奇鱼塘" in task_name or "闲鱼币" in task_name:
+                        time.sleep(5)
+                        back_to_task()
+                    else:
+                        task_loop(d, back_to_task, is_fish=True)
         else:
             print("找不到任务了，退出循环")
             break
     except Exception as e:
-        print("报错", str(e))
+        print_error()
         continue
 close_btn1 = d.xpath('//android.webkit.WebView[@text="天天红包"]/android.view.View/android.view.View[5]/android.widget.TextView')
 if close_btn1.exists:
@@ -139,7 +146,7 @@ while True:
             print(f"剩余红包{count}个")
         else:
             break
-        coin_view = d.xpath('//android.webkit.WebView[@text="天天红包"]/android.view.View/android.view.View[4]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[3]')
+        coin_view = d.xpath('//android.webkit.WebView[@text="天天红包"]/android.view.View/android.view.View[4]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.TextView[3]')
         if coin_view.exists:
             print("有现金打款，点击收下")
             coin_view.click()
@@ -149,7 +156,7 @@ while True:
             throw_btn.click()
             time.sleep(2)
     except Exception as e:
-        print("报错", str(e))
+        print_error()
         continue
 print("任务完成。。。")
 ctx.stop()

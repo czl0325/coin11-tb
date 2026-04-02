@@ -1,4 +1,5 @@
 import time
+import sys
 import random
 import io
 import re
@@ -8,6 +9,7 @@ import ddddocr
 import subprocess
 import ssl
 import urllib.request
+import traceback
 import torch
 print("PyTorch 版本:", torch.version)
 print("CUDA 是否可用:", torch.cuda.is_available())
@@ -49,6 +51,7 @@ APP_START_CONFIG = {
     TMALL_APP: "com.tmall.wireless.maintab.module.TMMainTabActivity",
     ALIPAY_APP: "com.eg.android.AlipayGphone.AlipayLogin"  # 默认配置，不指定activity
 }
+VIDEO_ACTIVITY = ["com.taobao.idlefish.ads.csj.TTAdStandardPortraitActivity"]
 
 
 def check_chars_exist(text, chars=None):
@@ -183,9 +186,6 @@ def find_text_by_easyocr(screenshot, target_text):
     for bbox, text, confidence in results:
         if target_text in text:
             print(f"找到文字: '{text}' (置信度: {confidence:.2f})")
-            # 获取边界框坐标
-            # bbox格式: [[x1, y1], [x2, y2], [x3, y3], [x4, y4]]
-            # 转换为(x, y, width, height)
             x_coord = [point[0] for point in bbox]
             y_coord = [point[1] for point in bbox]
             x_min = int(min(x_coord))
@@ -339,46 +339,80 @@ def back_to_video(d):
         temp_package, temp_activity = get_current_app(d)
         if temp_package is None or temp_activity is None or "Ext2ContainerActivity" in temp_activity:
             continue
+        if temp_activity in VIDEO_ACTIVITY:
+            break
         if FISH_APP not in temp_package:
             start_app(d, FISH_APP)
             continue
+        else:
+            d.press("back")
+            time.sleep(0.5)
 
 
+def in_video(d):
+    temp_package, temp_activity = get_current_app(d)
+    return temp_activity in VIDEO_ACTIVITY
 
 
-def video_task(d, back_func):
-    video_type = None
+def video_task(d):
     screen_width, screen_height = d.window_size()
     while True:
-        count_view1 = d(className="android.widget.TextView", textMatches=r"再逛\d+秒后可领奖")
-        if count_view1.exists:
-            print("属于右上角看广告类型")
-            video_type = 1
-        else:
-            if video_type == 1:
-                print("任务完成，返回任务页面")
-                back_func()
-                break
-        if video_type == 1:
-            d.swipe(301, screen_height - 500, 322, 500, 0.3)
+        print("开始任务循环")
+        time.sleep(4)
+        if not in_video(d):
+            break
+        speed_btn = d(className="android.widget.TextView", text="我要加速")
+        if speed_btn.exists:
+            print("点击我要加速")
+            speed_btn.click()
             time.sleep(2)
-        elif video_type == 2:
-            speed_btn = d(className="android.widget.TextView", text="我要加速")
-            if speed_btn.exists:
-                print("点击我要加速")
-                speed_btn.click()
-                time.sleep(18)
-            has_btn = d(className="android.widget.TextView", text="奖励已领取")
-            if has_btn.exists:
-                print("点击奖励已领取，退出循环")
-                has_btn.click()
+            check_can_open(d)
+            time.sleep(18)
+            back_to_video(d)
+            continue
+        immediately_btn = d(className="android.widget.TextView", text="我要立即领奖")
+        if immediately_btn.exists:
+            print("点击我要立即领奖")
+            immediately_btn.click()
+            time.sleep(2)
+            check_can_open(d)
+            time.sleep(18)
+            back_to_video(d)
+            continue
+        get_btn1 = d(className="android.widget.TextView", textMatches=r"奖励已领取|领取成功")
+        if get_btn1.exists:
+            print("点击奖励已领取")
+            jump_btn = d(className="android.widget.TextView", textContains="跳过")
+            if jump_btn.exists:
+                jump_btn.click()
+            else:
+                d.click(get_btn1.center()[0], get_btn1.bounds()[2] + 70)
                 time.sleep(2)
-                break
+            continue
+        get_btn2 = d(className="android.widget.TextView", text="恭喜获得奖励")
+        if get_btn2.exists:
+            print("恭喜获得奖励，点击关闭")
+            d.click(screen_width - 100, get_btn2.center()[1])
+            time.sleep(2)
+            continue
+        get_btn3 = d(className="android.widget.TextView", textMatches=r"立即(领取|抢购)")
+        if get_btn3.exists:
+            print("点击立即(领取|抢购)")
+            get_btn3[-1].click()
+            time.sleep(2)
+            check_can_open(d)
+            time.sleep(18)
+            back_to_video(d)
+            continue
         screen_shot = d.screenshot(format='opencv')
-        find_button_multiscale(screen_shot, "./img/alipay_get.png")
-
-
-
+        pt1, _, _ = find_button_multiscale(screen_shot, "./img/video_get.png")
+        if pt1:
+            d.click(int(pt1[0]), int(pt1[1]))
+            time.sleep(2)
+            check_can_open(d)
+            time.sleep(18)
+            back_to_video(d)
+            continue
 
 
 def close_xy_dialog(d):
@@ -518,6 +552,18 @@ def check_verify(d):
                 print("验证码滑动成功")
                 break
 
+
+def print_error():
+    exc_type, exc_value, exc_traceback = sys.exc_info()
+    print("=" * 10)
+    print(f"错误类型: {exc_type}")
+    print(f"错误信息: {exc_value}")
+    print(f"错误行号: {exc_traceback.tb_lineno}")
+    print("=" * 10)
+    tb_info = traceback.extract_tb(exc_traceback)
+    for frame in tb_info:
+        print(f"文件: {frame.filename}, 行号: {frame.lineno}, 函数: {frame.name}, 代码: {frame.line}")
+    print("=" * 10)
 
 # find_button2(cv2.imread("screenshot.png"), "./img/alipay_get.png")
 

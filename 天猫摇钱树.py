@@ -30,8 +30,11 @@ def back_to_task():
         if check_in_task():
             break
         package_name1, _ = get_current_app(d)
-        d.press("back")
-        time.sleep(0.5)
+        if package_name1 == "com.smile.gifmaker":
+            start_app(d, TMALL_APP)
+        else:
+            d.press("back")
+            time.sleep(0.5)
 
 
 
