@@ -98,6 +98,11 @@ def show_task():
 
 
 to_task()
+ling_btn = d(className="android.widget.TextView", text="领红包")
+if ling_btn.exists:
+    print("点击领红包")
+    ling_btn.click()
+    time.sleep(2)
 while True:
     try:
         time.sleep(4)
