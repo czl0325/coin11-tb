@@ -11,6 +11,7 @@ import ssl
 import urllib.request
 import traceback
 import torch
+import uiautomator2 as u2
 print("PyTorch 版本:", torch.version)
 print("CUDA 是否可用:", torch.cuda.is_available())
 if hasattr(torch.backends, "mps"):
@@ -362,19 +363,10 @@ def video_task(d):
         time.sleep(4)
         if not in_video(d):
             break
-        speed_btn = d(className="android.widget.TextView", text="我要加速")
+        speed_btn = d(className="android.widget.TextView", textMatches=r"我要加速|立即前往加速|我要减广告时长|我要立即领奖")
         if speed_btn.exists:
             print("点击我要加速")
             speed_btn.click()
-            time.sleep(2)
-            check_can_open(d)
-            time.sleep(18)
-            back_to_video(d)
-            continue
-        immediately_btn = d(className="android.widget.TextView", text="我要立即领奖")
-        if immediately_btn.exists:
-            print("点击我要立即领奖")
-            immediately_btn.click()
             time.sleep(2)
             check_can_open(d)
             time.sleep(18)
@@ -406,7 +398,7 @@ def video_task(d):
             back_to_video(d)
             continue
         screen_shot = d.screenshot(format='opencv')
-        pt1, _, _ = find_button_multiscale(screen_shot, "./img/video_get.png")
+        pt1, _, _ = find_button_multiscale(screen_shot, "./img/video_get.png", threshold=0.7)
         if pt1:
             d.click(int(pt1[0]), int(pt1[1]))
             time.sleep(2)
@@ -414,6 +406,7 @@ def video_task(d):
             time.sleep(18)
             back_to_video(d)
             continue
+        d.swipe_ext(u2.Direction.FORWARD)
 
 
 def close_xy_dialog(d):
