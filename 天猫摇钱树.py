@@ -2,7 +2,7 @@ import time
 import re
 
 import uiautomator2 as u2
-from utils import select_device, start_app, TMALL_APP, get_current_app, task_loop
+from utils import select_device, start_app, TMALL_APP, get_current_app, task_loop, TMALL_HOME
 
 selected_device = select_device()
 d = u2.connect(selected_device)
@@ -29,45 +29,51 @@ def back_to_task():
     while True:
         if check_in_task():
             break
-        package_name1, _ = get_current_app(d)
+        package_name1, activity_name1 = get_current_app(d)
         if package_name1 == "com.smile.gifmaker":
             start_app(d, TMALL_APP)
+        elif package_name1 == TMALL_APP and activity_name1 == TMALL_HOME:
+            to_task()
+            time.sleep(1)
         else:
             d.press("back")
             time.sleep(0.5)
 
 
-
-while True:
-    shake_btn = d(className="android.widget.ImageView", description="必免卡")
-    if shake_btn.exists:
-        shake_btn.click()
-        print("点击摇钱树")
-        time.sleep(3)
-    _, activity_name = get_current_app(d)
-    if activity_name == "com.tmall.wireless.themis.container.TMThemisActivity":
-        break
-time.sleep(3)
-withdrawal_btn1 = d(className="android.widget.TextView", text="立即提现")
-if withdrawal_btn1.exists:
-    print("点击立即提现")
-    withdrawal_btn1.click()
-    time.sleep(8)
-    withdrawal_btn2 = d.xpath('(//android.widget.TextView[@text="立即提现"])[2]')
-    if withdrawal_btn2.exists:
-        print("点击弹出框的提现")
-        withdrawal_btn2.click()
-        time.sleep(2)
-today_btn = d(className="android.widget.TextView", text="今日还可提")
-if today_btn.exists:
-    today_btn.click()
+def to_task():
+    while True:
+        shake_btn = d(className="android.widget.ImageView", description="必免卡")
+        if shake_btn.exists:
+            shake_btn.click()
+            print("点击摇钱树")
+            time.sleep(3)
+        _, activity_name = get_current_app(d)
+        if activity_name == "com.tmall.wireless.themis.container.TMThemisActivity":
+            break
     time.sleep(3)
-else:
-    earn_btn = d(className="android.widget.TextView", text="赚现金值")
-    if earn_btn.exists:
-        print("点击赚现金值")
-        earn_btn.click()
+    withdrawal_btn1 = d(className="android.widget.TextView", text="立即提现")
+    if withdrawal_btn1.exists:
+        print("点击立即提现")
+        withdrawal_btn1.click()
+        time.sleep(8)
+        withdrawal_btn2 = d.xpath('(//android.widget.TextView[@text="立即提现"])[2]')
+        if withdrawal_btn2.exists:
+            print("点击弹出框的提现")
+            withdrawal_btn2.click()
+            time.sleep(2)
+    today_btn = d(className="android.widget.TextView", text="今日还可提")
+    if today_btn.exists:
+        today_btn.click()
         time.sleep(3)
+    else:
+        earn_btn = d(className="android.widget.TextView", text="赚现金值")
+        if earn_btn.exists:
+            print("点击赚现金值")
+            earn_btn.click()
+            time.sleep(3)
+
+
+to_task()
 while True:
     time.sleep(5)
     has_task = False
