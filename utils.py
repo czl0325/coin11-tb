@@ -363,9 +363,9 @@ def video_task(d):
         time.sleep(4)
         if not in_video(d):
             break
-        speed_btn = d(className="android.widget.TextView", textMatches=r"我要加速|立即前往加速|我要减广告时长|我要立即领奖")
+        speed_btn = d(className="android.widget.TextView", textMatches=r"我要加速|立即前往加速|我要减广告时长|我要立即领奖|立即打开")
         if speed_btn.exists:
-            print("点击我要加速")
+            print(f"点击{speed_btn.get_text()}")
             speed_btn.click()
             time.sleep(2)
             check_can_open(d)

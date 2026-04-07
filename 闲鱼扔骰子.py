@@ -209,6 +209,12 @@ def check_popup():
         close_btn3.click()
         time.sleep(3)
         return
+    continue_btn2 = d.xpath('//android.widget.TextView[@text="本次获得"]/following-sibling::android.widget.TextView[last()]')
+    if continue_btn2.exists:
+        print("点击继续前进")
+        continue_btn2.click()
+        time.sleep(3)
+        return
     screen_image = d.screenshot(format='opencv')
     pt1 = find_button(screen_image, "./img/fish_advance.png")
     if pt1:
