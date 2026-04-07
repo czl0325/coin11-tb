@@ -15,7 +15,7 @@ d.watcher.when(xpath='//android.widget.FrameLayout[@content-desc="推荐广告"]
 d.watcher.start()
 
 
-def is_task_home():
+def is_card_home():
     task_view1 = d(className="android.widget.TextView", text="今日待办")
     task_view2 = d(className="android.widget.TextView", textMatches=r"打卡(记录|进度)")
     if task_view1.exists and task_view2.exists:
@@ -23,10 +23,10 @@ def is_task_home():
     return False
 
 
-def back_to_home():
+def back_to_card():
     print("开始退出")
     while True:
-        if is_task_home():
+        if is_card_home():
             print("当前在任务页面，退出循环。。。")
             break
         cancel_btn1 = d(className="android.widget.Button", resourceId="android:id/button2", textMatches=r"取消.*?")
@@ -92,7 +92,7 @@ if task_btn.exists:
                         break
                     d.swipe(200, 1000, 181, 500)
                     time.sleep(3)
-                back_to_home()
+                back_to_card()
                 continue
             play_btn = d(className="android.widget.TextView", text="去试玩")
             if play_btn.exists:
@@ -100,7 +100,7 @@ if task_btn.exists:
                 print("点击去试玩。。。")
                 play_btn.click()
                 time.sleep(35)
-                back_to_home()
+                back_to_card()
                 continue
             see_btn = d.xpath('//android.widget.TextView[@text="去看看"]')
             if see_btn.exists:
@@ -157,7 +157,7 @@ if task_btn.exists:
                             print(e)
                         # d.swipe_ext(Direction.FORWARD)
                         time.sleep(8)
-                back_to_home()
+                back_to_card()
                 continue
             if not has_task:
                 progress_view = d.xpath('//android.widget.TextView[@text="今日待办"]/following-sibling::android.widget.TextView[1]')
