@@ -62,6 +62,12 @@ def back_to_task():
                     close_btn2.click()
                     time.sleep(1)
                     continue
+                cancel_btn = d.xpath('//android.widget.LinearLayout[@resource-id="com.taobao.taobao:id/uik_menu_panel_rl"]/android.widget.FrameLayout[@resource-id="com.taobao.taobao:id/uik_fl_textview_container_2"]/android.widget.TextView[@text="取消"]')
+                if cancel_btn.exists:
+                    print("点击取消按钮")
+                    cancel_btn.click()
+                    time.sleep(2)
+                    continue
                 task_view = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]')
                 if task_view.exists:
                     close_btn2 = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]/preceding-sibling::android.view.View[1]')
