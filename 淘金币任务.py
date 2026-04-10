@@ -86,7 +86,7 @@ def back_to_task():
 
 
 def find_coin_btn():
-    coin_btn = d(className="android.widget.FrameLayout", description="领淘金币", clickable=True)
+    coin_btn = d(classNameMatches=r"android.widget.FrameLayout|android.view.View", description="领淘金币")
     if coin_btn.exists:
         d.double_click(coin_btn[0].center()[0], coin_btn[0].center()[1])
         time.sleep(5)
