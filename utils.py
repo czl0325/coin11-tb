@@ -12,7 +12,7 @@ import urllib.request
 import traceback
 import torch
 import uiautomator2 as u2
-print("PyTorch 版本:", torch.version)
+print("PyTorch 版本:", torch.__version__)
 print("CUDA 是否可用:", torch.cuda.is_available())
 if hasattr(torch.backends, "mps"):
     print("MPS 是否可用:", torch.backends.mps.is_available())
