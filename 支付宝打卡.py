@@ -177,7 +177,7 @@ while try_count <= 3:
                     break
             d.press("back")
         else:
-            d.swipe_ext(u2.Direction.FORWARD)
+            d.swipe(200, 1500, 181, 1000)
             time.sleep(2)
             try_count += 1
 time.sleep(5)
