@@ -60,12 +60,12 @@ if pt1:
     time.sleep(2)
 try_count = 0
 pay_task = False
-while try_count <= 3:
-    task_btn = d(className="android.widget.FrameLayout", resourceId="com.alipay.android.living.dynamic:id/iconAndCdpContainerFl")
-    if task_btn.exists:
-        print("点击视频任务按钮。。。")
-        task_btn.click()
-        time.sleep(5)
+task_btn = d(className="android.widget.FrameLayout", resourceId="com.alipay.android.living.dynamic:id/iconAndCdpContainerFl")
+if task_btn.exists:
+    print("点击视频任务按钮。。。")
+    task_btn.click()
+    time.sleep(5)
+    while try_count <= 3:
         card_btn = d(className="android.widget.TextView", textMatches=r"去(打卡|续签)")
         if card_btn.exists:
             print("点击去打卡。。。")
@@ -176,6 +176,7 @@ while try_count <= 3:
                                     continue
                     break
             d.press("back")
+            break
         else:
             d.swipe(200, 1500, 181, 1000)
             time.sleep(2)
