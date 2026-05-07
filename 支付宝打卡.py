@@ -54,18 +54,39 @@ if video_btn.exists:
     print("点击视频按钮。。。")
     d.click(video_btn.center()[0], video_btn.bounds()[1] - 100)
     time.sleep(5)
-pt1, _, _ = find_button_multiscale(d.screenshot(format="opencv"), "./img/img_getToday.png")
-if pt1:
-    d.click(pt1[0], pt1[1] + 500)
-    time.sleep(2)
 try_count = 0
 pay_task = False
 task_btn = d(className="android.widget.FrameLayout", resourceId="com.alipay.android.living.dynamic:id/iconAndCdpContainerFl")
 if task_btn.exists:
     print("点击视频任务按钮。。。")
     task_btn.click()
-    time.sleep(5)
     while try_count <= 3:
+        time.sleep(6)
+        sign_btn = d(className="android.widget.TextView", text="去签到")
+        if sign_btn.exists:
+            sign_btn.click()
+            time.sleep(3)
+            pt1, _, _ = find_button_multiscale(d.screenshot(format="opencv"), "./img/img_getToday.png")
+            if pt1:
+                d.click(pt1[0], pt1[1] + 500)
+                time.sleep(2)
+            close_btn = d.xpath('//android.widget.FrameLayout[@resource-id="android:id/content"]/android.widget.RelativeLayout[2]/android.widget.RelativeLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[3]')
+            if close_btn.exists:
+                print("关闭按钮存在，关闭他")
+                d.click(close_btn.center()[0], close_btn.bounds[3] + 150)
+                time.sleep(2)
+            continue
+        chai_btn = d(className="android.widget.TextView", text="拆红包")
+        if chai_btn.exists:
+            chai_btn.click()
+            time.sleep(3)
+            do_btn = d(className="android.widget.TextView", textContains="拆惊喜红包")
+            if do_btn.exists:
+                print("点击拆惊喜红包")
+                do_btn.click()
+                time.sleep(2)
+            d.press("back")
+            continue
         card_btn = d(className="android.widget.TextView", textMatches=r"去(打卡|续签)")
         if card_btn.exists:
             print("点击去打卡。。。")
