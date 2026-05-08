@@ -68,7 +68,7 @@ if task_btn.exists:
             time.sleep(3)
             pt1, _, _ = find_button_multiscale(d.screenshot(format="opencv"), "./img/img_getToday.png")
             if pt1:
-                d.click(pt1[0], pt1[1] + 500)
+                d.click(pt1[0], pt1[1])
                 time.sleep(2)
             close_btn = d.xpath('//android.widget.FrameLayout[@resource-id="android:id/content"]/android.widget.RelativeLayout[2]/android.widget.RelativeLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[3]')
             if close_btn.exists:
