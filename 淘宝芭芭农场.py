@@ -62,9 +62,9 @@ def back_to_task():
                     close_btn2.click()
                     time.sleep(1)
                     continue
-                cancel_btn = d.xpath('//android.widget.LinearLayout[@resource-id="com.taobao.taobao:id/uik_menu_panel_rl"]/android.widget.FrameLayout[@resource-id="com.taobao.taobao:id/uik_fl_textview_container_2"]/android.widget.TextView[@text="取消"]')
+                cancel_btn = d(className="android.widget.FrameLayout", resourceId="com.taobao.taobao:id/uik_fl_textview_container_2")
                 if cancel_btn.exists:
-                    print("点击取消按钮")
+                    print("点击下部弹窗的取消按钮")
                     cancel_btn.click()
                     time.sleep(2)
                     continue
