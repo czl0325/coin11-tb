@@ -1,4 +1,5 @@
 import time
+import re
 
 import uiautomator2 as u2
 from utils import check_chars_exist, other_app, get_current_app, select_device, task_loop, check_verify, start_app, TB_APP, APP_START_CONFIG
@@ -12,6 +13,7 @@ selected_device = select_device()
 d = u2.connect(selected_device)
 print(f"已成功连接设备：{selected_device}")
 start_app(d, TB_APP, init=True)
+screen_width, screen_height = d.window_size()
 ctx = d.watch_context()
 ctx.when("O1CN012qVB9n1tvZ8ATEQGu_!!6000000005964-2-tps-144-144").click()
 ctx.when("O1CN01sORayC1hBVsDQRZoO_!!6000000004239-2-tps-426-128.png_").click()
@@ -167,8 +169,28 @@ while True:
     except Exception as e:
         print(e)
         continue
-ctx.close()
 print(f"共自动化完成{finish_count}个任务")
+d.click(screen_width // 2, 200)
+time.sleep(2)
+print("开始跳一跳")
+while True:
+    jump_btn1 = d(className="android.widget.Button", textContains="跳一跳拿钱")
+    if jump_btn1.exists():
+        jump_text = jump_btn1.get_text()
+        match = re.search(r".*剩余\s*(\d+)\s*体力", jump_text)
+        if match:
+            phy_num = int(match.group(1))
+            if phy_num < 10:
+                break
+            print(f"当前剩余体力：{phy_num}")
+            if phy_num < 50:
+                jump_btn1.click()
+            else:
+                jump_btn1.long_click(duration=3)
+            time.sleep(7)
+    else:
+        break
+ctx.close()
 d.shell("settings put system accelerometer_rotation 0")
 print("关闭手机自动旋转")
 time2 = time.time()
