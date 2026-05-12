@@ -174,6 +174,10 @@ d.click(screen_width // 2, 200)
 time.sleep(2)
 print("开始跳一跳")
 while True:
+    close_btn = d(className="android.widget.Button", text="关闭")
+    if close_btn.exists():
+        close_btn.click()
+        time.sleep(2)
     jump_btn1 = d(className="android.widget.Button", textContains="跳一跳拿钱")
     if jump_btn1.exists():
         jump_text = jump_btn1.get_text()
