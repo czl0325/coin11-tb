@@ -42,7 +42,7 @@ def back_to_task():
 
 def to_task():
     while True:
-        shake_btn = d(className="android.widget.ImageView", description="必免卡")
+        shake_btn = d(className="android.widget.ImageView", descriptionMatches=r"必免卡|领现金")
         if shake_btn.exists:
             shake_btn.click()
             print("点击摇钱树")
