@@ -32,7 +32,7 @@ time.sleep(3)
 def find_coin_btn():
     while True:
         jump_btn = d(className="android.widget.Button", textContains="跳一跳拿钱")
-        if jump_btn.exists():
+        if jump_btn.exists:
             print("进入跳一跳页面")
             break
         coin_btn = d(classNameMatches=r"android.widget.FrameLayout|android.view.View", description="领淘金币")
@@ -44,18 +44,18 @@ def find_coin_btn():
 def to_task():
     while True:
         title_view = d(className="android.widget.TextView", text="做任务赚体力")
-        if title_view.exists():
+        if title_view.exists:
             print("进入任务页面。。。")
             break
         earn_btn = d(className="android.widget.Button", text="赚体力")
-        if earn_btn.exists():
+        if earn_btn.exists:
             earn_btn.click()
 
 
 def check_in_task():
     webview_home = d(className="android.webkit.WebView", text="淘金币首页")
     title_view = d(className="android.widget.TextView", text="做任务赚体力")
-    if title_view.exists() and webview_home.exists():
+    if title_view.exists and webview_home.exists:
         print("进入任务页面。。。")
         return True
     return False
@@ -175,11 +175,11 @@ time.sleep(2)
 print("开始跳一跳")
 while True:
     close_btn = d(className="android.widget.Button", text="关闭")
-    if close_btn.exists():
+    if close_btn.exists:
         close_btn.click()
         time.sleep(2)
     jump_btn1 = d(className="android.widget.Button", textContains="跳一跳拿钱")
-    if jump_btn1.exists():
+    if jump_btn1.exists:
         jump_text = jump_btn1.get_text()
         match = re.search(r".*剩余\s*(\d+)\s*体力", jump_text)
         if match:
