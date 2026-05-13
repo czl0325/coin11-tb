@@ -29,6 +29,7 @@ ctx.when(xpath="//android.widget.FrameLayout[@resource-id='com.taobao.taobao:id/
 ctx.start()
 time.sleep(3)
 
+
 def find_coin_btn():
     while True:
         jump_btn = d(className="android.widget.Button", textContains="跳一跳拿钱")
@@ -100,6 +101,7 @@ def back_to_task():
                 print("点击后退")
                 d.press("back")
                 time.sleep(0.3)
+
 
 find_coin_btn()
 to_task()
@@ -198,5 +200,5 @@ ctx.close()
 d.shell("settings put system accelerometer_rotation 0")
 print("关闭手机自动旋转")
 time2 = time.time()
-minutes, seconds = divmod(int(time2 - time1), 60)  # 同时计算分钟和秒
+minutes, seconds = divmod(int(time2 - time1), 60)
 print(f"共耗时: {minutes} 分钟 {seconds} 秒")
