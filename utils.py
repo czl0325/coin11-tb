@@ -501,6 +501,10 @@ def start_app(d, package_name, init=False):
             print(f"启动应用: {package_name}, stop: {stop}, use_monkey: {use_monkey}, 不使用activity")
             d.app_start(package_name, stop=stop, use_monkey=use_monkey)
             time.sleep(5 if stop else 2)
+            cancel_btn = d(className="android.widget.FrameLayout", resourceId="com.taobao.taobao:id/uik_fl_textview_container_2")
+            if cancel_btn.exists:
+                cancel_btn.click()
+                time.sleep(2)
             # 验证应用是否启动成功
             current_package, _ = get_current_app(d)
             if current_package == package_name:
