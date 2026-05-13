@@ -39,7 +39,7 @@ def find_coin_btn():
         coin_btn = d(classNameMatches=r"android.widget.FrameLayout|android.view.View", description="领淘金币")
         if coin_btn.exists:
             coin_btn.click()
-            time.sleep(5)
+        time.sleep(5)
 
 
 def to_task():
@@ -51,6 +51,11 @@ def to_task():
         earn_btn = d(className="android.widget.Button", text="赚体力")
         if earn_btn.exists:
             earn_btn.click()
+        next_btn = d(className="android.widget.TextView", text="下个任务")
+        if next_btn.exists:
+            time.sleep(16)
+            d.press("back")
+        time.sleep(4)
 
 
 def check_in_task():
@@ -84,6 +89,12 @@ def back_to_task():
                 print("当前是任务列表画面，不能继续返回")
                 break
             else:
+                webview_home = d(className="android.webkit.WebView", text="淘金币首页")
+                title_view = d(className="android.widget.TextView", text="做任务赚体力")
+                if not title_view.exists and webview_home.exists:
+                    print("在淘金币页面但是没有任务列表")
+                    to_task()
+                    continue
                 close_btn1 = d.xpath("//android.widget.FrameLayout[@resource-id='com.alipay.multiplatform.phone.xriver_integration:id/frameLayout_rightButton1']/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.FrameLayout[2]")
                 if close_btn1.exists:
                     print("点击关闭小程序按钮")
