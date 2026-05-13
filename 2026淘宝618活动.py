@@ -38,7 +38,7 @@ def find_coin_btn():
         coin_btn = d(classNameMatches=r"android.widget.FrameLayout|android.view.View", description="领淘金币")
         if coin_btn.exists:
             coin_btn.click()
-            time.sleep(5)
+        time.sleep(5)
 
 
 def to_task():
@@ -50,6 +50,11 @@ def to_task():
         earn_btn = d(className="android.widget.Button", text="赚体力")
         if earn_btn.exists:
             earn_btn.click()
+        next_btn = d(className="android.widget.TextView", text="下个任务")
+        if next_btn.exists:
+            time.sleep(16)
+            d.press("back")
+        time.sleep(4)
 
 
 def check_in_task():
