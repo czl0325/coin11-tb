@@ -1,6 +1,7 @@
 import time
 
 import uiautomator2 as u2
+
 from utils import check_chars_exist, other_app, get_current_app, select_device, task_loop, check_verify, start_app, TB_APP
 
 unclick_btn = []
@@ -13,6 +14,7 @@ selected_device = select_device()
 d = u2.connect(selected_device)
 print(f"已成功连接设备：{selected_device}")
 start_app(d, TB_APP, init=True)
+screen_width, screen_height = d.window_size()
 ctx = d.watch_context()
 ctx.when("O1CN012qVB9n1tvZ8ATEQGu_!!6000000005964-2-tps-144-144").click()
 ctx.when("O1CN01sORayC1hBVsDQRZoO_!!6000000004239-2-tps-426-128.png_").click()
@@ -42,6 +44,11 @@ def check_in_task():
                 earn_btn3 = d(className="android.widget.TextView", textContains="赚更多金币")
                 if earn_btn3.exists:
                     earn_btn3.click()
+                    time.sleep(3)
+                    return True
+                eva_canvas = d(className="android.widget.Image", resourceId="eva-canvas")
+                if eva_canvas.exists:
+                    d.click(eva_canvas.bounds()[0] + 150, eva_canvas.bounds()[3] - 150)
                     time.sleep(3)
                     return True
     return False

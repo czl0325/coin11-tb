@@ -168,7 +168,7 @@ while True:
                     in_other_app = True
                 need_click_view.click()
                 time.sleep(3.5)
-                task_loop(d, back_to_task)
+                task_loop(d, back_to_task, duration=18)
             else:
                 error_count += 1
                 print("未找到可点击按钮", error_count)
