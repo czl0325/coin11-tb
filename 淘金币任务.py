@@ -33,24 +33,29 @@ time.sleep(3)
 
 def check_in_task():
     package_name, activity_name = get_current_app(d)
-    if package_name == "com.taobao.taobao" and "com.taobao.themis.container.app.TMSActivity" in activity_name:
-        coin_view = d(className="android.webkit.WebView", text="淘金币首页")
-        if coin_view.exists:
-            earn_btn1 = d(className="android.widget.TextView", text="赚金币抵钱")
-            earn_btn2 = d(className="android.widget.TextView", text="今日累计奖励")
-            if earn_btn1.exists or earn_btn2.exists:
-                return True
-            else:
-                earn_btn3 = d(className="android.widget.TextView", textContains="赚更多金币")
-                if earn_btn3.exists:
-                    earn_btn3.click()
-                    time.sleep(3)
+    if package_name == "com.taobao.taobao":
+        if "com.taobao.tao.welcome.Welcome" in activity_name:
+            find_coin_btn()
+            find_earn_btn()
+            return True
+        if "com.taobao.themis.container.app.TMSActivity" in activity_name:
+            coin_view = d(className="android.webkit.WebView", text="淘金币首页")
+            if coin_view.exists:
+                earn_btn1 = d(className="android.widget.TextView", text="赚金币抵钱")
+                earn_btn2 = d(className="android.widget.TextView", text="今日累计奖励")
+                if earn_btn1.exists or earn_btn2.exists:
                     return True
-                eva_canvas = d(className="android.widget.Image", resourceId="eva-canvas")
-                if eva_canvas.exists:
-                    d.click(eva_canvas.bounds()[0] + 150, eva_canvas.bounds()[3] - 150)
-                    time.sleep(3)
-                    return True
+                else:
+                    earn_btn3 = d(className="android.widget.TextView", textContains="赚更多金币")
+                    if earn_btn3.exists:
+                        earn_btn3.click()
+                        time.sleep(3)
+                        return True
+                    eva_canvas = d(className="android.widget.Image", resourceId="eva-canvas")
+                    if eva_canvas.exists:
+                        d.click(eva_canvas.bounds()[0] + 150, eva_canvas.bounds()[3] - 150)
+                        time.sleep(3)
+                        return True
     return False
 
 
@@ -105,29 +110,32 @@ def find_coin_btn():
         time.sleep(5)
 
 
+def find_earn_btn():
+    # 因2025双十一活动，需要回旧版本后继续任务
+    back_btn = d(className="android.widget.Button", textContains="回日常版")
+    if back_btn.exists(timeout=4):
+        back_btn.click()
+        time.sleep(3)
+    earn_btn = d(className="android.widget.TextView", textMatches="签到领金币|点击签到")
+    if earn_btn.exists(timeout=4):
+        earn_btn.click()
+        time.sleep(5)
+    more_btn = d(className="android.widget.TextView", textContains="赚更多金币")
+    if more_btn.exists(timeout=4):
+        more_btn.click()
+        time.sleep(3)
+    else:
+        raise Exception("没有找到金币任务按钮")
+    print("点击开始做任务")
+
+
 ctx.wait_stable()
 close_btn = d(className="android.widget.ImageView", description="关闭按钮")
 if close_btn and close_btn.exists:
     close_btn.click()
     time.sleep(3)
 find_coin_btn()
-
-# 因2025双十一活动，需要回旧版本后继续任务
-earn_btn = d(className="android.widget.Button", textContains="回日常版")
-if earn_btn.exists(timeout=4):
-    earn_btn.click()
-    time.sleep(3)
-earn_btn = d(className="android.widget.TextView", textMatches="签到领金币|点击签到")
-if earn_btn.exists(timeout=4):
-    earn_btn.click()
-    time.sleep(5)
-earn_btn = d(className="android.widget.TextView", textContains="赚更多金币")
-if earn_btn.exists(timeout=4):
-    earn_btn.click()
-    time.sleep(3)
-else:
-    raise Exception("没有找到金币任务按钮")
-print("点击开始做任务")
+find_earn_btn()
 finish_count = 0
 while True:
     try:
