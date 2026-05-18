@@ -1,6 +1,7 @@
 import time
 
 import uiautomator2 as u2
+
 from utils import check_chars_exist, other_app, get_current_app, task_loop, select_device, check_verify, start_app, TB_APP, check_can_open
 
 unclick_btn = []
@@ -97,6 +98,11 @@ def find_farm_btn():
 
 # 查找集肥料按钮
 def find_fertilizer_btn():
+    get_btn1 = d(resourceId="_GXX2RN", className="android.widget.Button")
+    if get_btn1.exists:
+        print("领取肥料")
+        get_btn1.click()
+        time.sleep(3)
     print("开始查找集肥料按钮...")
     while True:
         fertilize_btn = d(className="android.widget.Button", textContains="集肥料")
@@ -122,6 +128,7 @@ d.watcher.when(xpath="//android.app.Dialog//android.widget.Button[@text='关闭'
 d.watcher.when(xpath="//android.widget.FrameLayout[@resource-id='com.taobao.taobao:id/poplayer_native_state_center_layout_frame_id']//android.widget.ImageView[@content-desc='关闭按钮']").click()
 # d.watcher.when(xpath="//android.widget.TextView[@package='com.eg.android.AlipayGphone']").click()
 d.watcher.when("O1CN01sORayC1hBVsDQRZoO_!!6000000004239-2-tps-426-128.png_").click()
+d.watcher.when(xpath='//android.widget.Button[@text="提醒我明天领"]/following-sibling::android.widget.Button[1]').click()
 d.watcher.when("跳过").click()
 d.watcher.when("点击刷新").click()
 d.watcher.when("刷新").click()

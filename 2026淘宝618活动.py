@@ -131,7 +131,6 @@ while True:
             get_btn.click()
             print("点击领取奖励")
             time.sleep(2)
-            finish_count = finish_count + 1
             continue
         de_btn = d(className="android.widget.Button", text="点击得")
         if de_btn.exists:
@@ -169,6 +168,7 @@ while True:
                 need_click_view.click()
                 time.sleep(3.5)
                 task_loop(d, back_to_task, duration=18)
+                finish_count = finish_count + 1
             else:
                 error_count += 1
                 print("未找到可点击按钮", error_count)
