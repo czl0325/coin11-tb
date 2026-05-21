@@ -2,7 +2,7 @@ import time
 import re
 
 import uiautomator2 as u2
-from utils import select_device, start_app, TMALL_APP, get_current_app, task_loop, TMALL_HOME
+from utils import select_device, start_app, TMALL_APP, get_current_app, task_loop, TMALL_HOME, tmall_no_click
 
 selected_device = select_device()
 d = u2.connect(selected_device)
@@ -97,7 +97,7 @@ while True:
             if title_view.exists:
                 title_text = title_view.get_text()
                 subtitle_text = subtitle_view.get_text()
-                if "添加桌面组件" in title_text or "加速提现" in title_text:
+                if tmall_no_click(title_text):
                     continue
                 do_time = 30
                 if subtitle_text is str:

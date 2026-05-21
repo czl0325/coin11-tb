@@ -114,6 +114,9 @@ def find_fertilizer_btn():
         else:
             new_ui = d(resourceId="game-canvas-fuguo", className="android.widget.Image")
             if new_ui.exists:
+                new_ui_height = new_ui.bounds()[3] - new_ui.bounds()[1]
+                d.click(150, new_ui.bounds()[3] - new_ui_height // 4 - 100)
+                time.sleep(3)
                 print(f"点击靠近的集肥料按钮, {screen_width * 0.7}, {new_ui.bounds()[3] - 50}")
                 d.click(screen_width * 0.7, new_ui.bounds()[3] - 50)
                 time.sleep(12)
