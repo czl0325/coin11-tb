@@ -75,43 +75,46 @@ def to_task():
 
 to_task()
 while True:
-    time.sleep(5)
-    has_task = False
-    get_btn = d(className="android.widget.TextView", textMatches=r"领(取)?奖励")
-    if get_btn.exists:
-        print("点击领取奖励")
-        get_btn.click()
-        continue
-    cash_btn = d(className="android.widget.TextView", text="领现金")
-    if cash_btn.exists:
-        print("点击领现金")
-        cash_btn.click()
+    try:
         time.sleep(5)
-        back_to_task()
-        continue
-    task_btn = d.xpath('//android.widget.TextView[@text="领取任务"]')
-    if task_btn.exists:
-        for index in range(len(task_btn.all())):
-            title_view = d.xpath(f'(//android.widget.TextView[@text="领取任务"])[{index+1}]/../../android.widget.TextView[1]')
-            subtitle_view = d.xpath(f'(//android.widget.TextView[@text="领取任务"])[{index+1}]/../../android.widget.TextView[2]')
-            if title_view.exists:
-                title_text = title_view.get_text()
-                subtitle_text = subtitle_view.get_text()
-                if tmall_no_click(title_text):
-                    continue
-                do_time = 30
-                if subtitle_text is str:
-                    second = re.findall(r".*?(\d+)秒.*?", subtitle_text)
-                    if len(second) > 0:
-                        do_time = int(second[0]) + 3
-                (task_btn.all())[index].click()
-                print(f"点击任务：{title_text}，浏览时间：{do_time}秒")
-                time.sleep(5)
-                has_task = True
-                task_loop(d, back_to_task, duration=do_time)
-                break
-    if not has_task:
-        break
+        has_task = False
+        get_btn = d(className="android.widget.TextView", textMatches=r"领(取)?奖励")
+        if get_btn.exists:
+            print("点击领取奖励")
+            get_btn.click()
+            continue
+        cash_btn = d(className="android.widget.TextView", text="领现金")
+        if cash_btn.exists:
+            print("点击领现金")
+            cash_btn.click()
+            time.sleep(5)
+            back_to_task()
+            continue
+        task_btn = d.xpath('//android.widget.TextView[@text="领取任务"]')
+        if task_btn.exists:
+            for index in range(len(task_btn.all())):
+                title_view = d.xpath(f'(//android.widget.TextView[@text="领取任务"])[{index+1}]/../../android.widget.TextView[1]')
+                subtitle_view = d.xpath(f'(//android.widget.TextView[@text="领取任务"])[{index+1}]/../../android.widget.TextView[2]')
+                if title_view.exists:
+                    title_text = title_view.get_text()
+                    subtitle_text = subtitle_view.get_text()
+                    if tmall_no_click(title_text):
+                        continue
+                    do_time = 30
+                    if subtitle_text is str:
+                        second = re.findall(r".*?(\d+)秒.*?", subtitle_text)
+                        if len(second) > 0:
+                            do_time = int(second[0]) + 3
+                    (task_btn.all())[index].click()
+                    print(f"点击任务：{title_text}，浏览时间：{do_time}秒")
+                    time.sleep(5)
+                    has_task = True
+                    task_loop(d, back_to_task, duration=do_time)
+                    break
+        if not has_task:
+            break
+    except Exception as e:
+        print(str(e))
 ctx.close()
 d.shell("settings put system accelerometer_rotation 0")
 print("关闭手机自动旋转")
