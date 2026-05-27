@@ -76,7 +76,7 @@ d.watcher.start()
 
 def to_farm():
     while True:
-        farm_btn = d(resourceId="com.alipay.android.phone.openplatform:id/app_text", className="android.widget.TextView", text="芭芭农场")
+        farm_btn = d(resourceId="com.alipay.android.phone.openplatform.app:id/app_text", className="android.widget.TextView", text="芭芭农场")
         if farm_btn.exists:
             print("点击芭芭农场按钮，进入芭芭农场首页")
             farm_btn.click()
