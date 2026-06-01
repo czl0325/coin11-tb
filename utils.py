@@ -66,7 +66,7 @@ def check_chars_exist(text, chars=None):
 
 
 def tmall_no_click(text):
-    chars = ["添加桌面组件", "加速提现", "美团视频", "618", "看视频点一点"]
+    chars = ["添加桌面组件", "加速提现", "美团视频", "618", "看视频"]
     for char in chars:
         if char in text:
             return True

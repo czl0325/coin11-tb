@@ -1,5 +1,5 @@
 uiautodev==0.14.0
-uiautomator2==3.5.0
+uiautomator2==3.5.2
 pytesseract==0.3.13
 opencv-python==4.13.0.92
 ddddocr==1.5.6
