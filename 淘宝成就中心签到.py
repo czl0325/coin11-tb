@@ -18,6 +18,7 @@ screen_width, screen_height = d.window_size()
 ctx = d.watch_context()
 ctx.when("O1CN012qVB9n1tvZ8ATEQGu_!!6000000005964-2-tps-144-144").click()
 ctx.when("O1CN01sORayC1hBVsDQRZoO_!!6000000004239-2-tps-426-128.png_").click()
+ctx.when("O1CN010MeQt21rz75RjBubN_!!6000000005701-2-gg_dtc.png_q75.jpg_").click()
 ctx.when("领取今日奖励").click()
 ctx.when("确认").click()
 ctx.when("确定").click()
@@ -66,10 +67,11 @@ while True:
             title_view = d.xpath(f'(//android.widget.TextView[@text="去完成"])[{index+1}]/../preceding-sibling::android.widget.TextView[1]')
             if title_view.exists:
                 title_text = title_view.get_text()
-                if "抽赏一次" in title_text:
+                if "抽赏一次" in title_text or "邀请好友" in title_text:
                     continue
                 print(f"点击任务：{title_text}")
-                (todo_btn.all())[index].click()
+                d.click((todo_btn.all())[index].bounds[0] + 50, (todo_btn.all())[index].center()[1])
+                # (todo_btn.all())[index].click()
                 time.sleep(3)
                 has_task = True
                 task_loop(d, back_func=back_to_achievement, duration=18)

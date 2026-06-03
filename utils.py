@@ -66,7 +66,7 @@ def check_chars_exist(text, chars=None):
 
 
 def tmall_no_click(text):
-    chars = ["添加桌面组件", "加速提现", "美团视频", "618", "看视频"]
+    chars = ["添加桌面组件", "加速提现", "美团视频", "618", "看视频", "微博"]
     for char in chars:
         if char in text:
             return True
@@ -213,7 +213,7 @@ def find_text_by_easyocr(screenshot, target_text):
 
 
 def check_can_open(d):
-    open_btn = d(className="android.widget.Button", textMatches=r"打开|允许|始终允许")
+    open_btn = d(className="android.widget.Button", textMatches=r"打开|允许|始终允许|\d+天内允许")
     if open_btn.exists:
         open_btn.click()
         time.sleep(2)
