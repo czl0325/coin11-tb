@@ -216,7 +216,7 @@ def check_can_open(d):
     open_btn = d(className="android.widget.Button", textMatches=r"打开|允许|始终允许|\d+天内允许")
     if open_btn.exists:
         open_btn.click()
-        time.sleep(2)
+        time.sleep(4)
 
 
 # ocr = PaddleOCR(use_angle_cls=True, lang='ch', show_log=True,  # 显示详细日志，看卡在哪一步
