@@ -477,6 +477,12 @@ def get_connected_devices():
         return []
 
 
+def set_terminal_title(title):
+    """设置终端标题（Windows和通用终端）"""
+    sys.stdout.write(f"\033]0;{title}\007")
+    sys.stdout.flush()
+
+
 # 从已连接的设备中，返回用户选中的设备序列号
 def select_device():
     # 获取所有连接的设备
@@ -488,6 +494,7 @@ def select_device():
         # 根据设备数量进行处理
     if len(devices) == 1:
         # 只有一个设备，直接返回
+        set_terminal_title(devices[0])
         return devices[0]
     else:
         # 多个设备，让用户选择
@@ -503,6 +510,7 @@ def select_device():
 
                 if 0 <= index < len(devices):
                     # 选中的设备
+                    set_terminal_title(devices[index])
                     return devices[index]
                 else:
                     print(f"输入错误，请重新输入序号（1-{len(devices)}）")
@@ -510,26 +518,91 @@ def select_device():
                 print(f"输入错误，请重新输入序号（1-{len(devices)}）")
 
 
+# 多用户支持：None=未检测，""=单用户/默认用户(不需要--user)，其他=用户ID
+_selected_user = None
+
+
+def _detect_and_select_user(d):
+    """检测手机是否有多个用户，如果有则让用户选择要操作的用户，结果缓存到 _selected_user"""
+    global _selected_user
+    if _selected_user is not None:
+        return _selected_user if _selected_user != "" else None
+    try:
+        output = d.shell("pm list users").output
+        # 解析输出: UserInfo{0:Owner:13} running
+        users = re.findall(r'UserInfo\{(\d+):([^:]*):', output)
+        if len(users) <= 1:
+            _selected_user = ""
+            print("仅检测到1个用户，使用默认用户")
+            return None
+        print("检测到手机有多个用户：")
+        for i, (uid, uname) in enumerate(users, 1):
+            label = f"用户{uid}" + (f" ({uname})" if uname else "")
+            print(f"  {i}: {label}")
+        while True:
+            try:
+                choice = input("请选择要操作的用户序号（直接回车默认第一个用户）：")
+                if choice.strip() == "":
+                    _selected_user = users[0][0]
+                    break
+                index = int(choice) - 1
+                if 0 <= index < len(users):
+                    _selected_user = users[index][0]
+                    break
+                print(f"输入错误，请重新输入序号（1-{len(users)}）")
+            except ValueError:
+                print(f"输入错误，请重新输入序号（1-{len(users)}）")
+        print(f"已选择用户: {_selected_user}")
+        return _selected_user
+    except Exception as e:
+        print(f"检测用户失败: {e}")
+        _selected_user = ""
+        return None
+
+
+def _am_start_with_user(d, package_name, activity=None, user_id=None):
+    """通过am start命令启动应用，支持--user参数指定用户"""
+    if user_id:
+        if activity:
+            cmd = f"am start --user {user_id} -n {package_name}/{activity}"
+        else:
+            cmd = f"am start --user {user_id} -a android.intent.action.MAIN -c android.intent.category.LAUNCHER {package_name}"
+    else:
+        if activity:
+            cmd = f"am start -n {package_name}/{activity}"
+        else:
+            cmd = f"am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER {package_name}"
+    print(f"执行命令: {cmd}")
+    d.shell(cmd)
+
+
 def start_app(d, package_name, init=False):
     """根据包名启动应用，支持特定应用的activity配置
     init参数控制启动模式：
     - True: 初始化启动，使用stop=True, use_monkey=True
     - False: 普通启动，使用stop=False, use_monkey=False
-    默认不使用activity启动，如果失败再尝试使用activity
-    activity启动时不使用use_monkey参数
+    首次调用时会检测手机多用户并询问选择，后续自动使用已选用户
     启动后验证是否成功"""
-    # 根据init参数设置stop和use_monkey
+    user_id = _detect_and_select_user(d)
     stop = init
     use_monkey = init
-    
+
     # 获取配置的activity
     activity = APP_START_CONFIG.get(package_name)
     try_count = 3
     try:
         # 优先不使用activity启动
         while try_count > 0:
-            print(f"启动应用: {package_name}, stop: {stop}, use_monkey: {use_monkey}, 不使用activity")
-            d.app_start(package_name, stop=stop, use_monkey=use_monkey)
+            print(f"启动应用: {package_name}, stop: {stop}, use_monkey: {use_monkey}, 不使用activity, user: {user_id or '默认'}")
+            if stop:
+                d.shell(f"am force-stop {package_name}")
+                time.sleep(1)
+            if user_id:
+                _am_start_with_user(d, package_name, user_id=user_id)
+            elif use_monkey:
+                d.app_start(package_name, stop=False, use_monkey=True)
+            else:
+                d.app_start(package_name, stop=False, use_monkey=False)
             time.sleep(5 if stop else 2)
             cancel_btn = d(className="android.widget.FrameLayout", resourceId="com.taobao.taobao:id/uik_fl_textview_container_2")
             if cancel_btn.exists:
@@ -547,12 +620,18 @@ def start_app(d, package_name, init=False):
             try_count -= 1
     except Exception as e:
         print(f"不使用activity启动失败: {e}")
-        
+
     # 如果失败且有配置activity，则尝试使用activity启动
     if activity:
         try:
-            print(f"使用activity启动应用: {package_name}, activity: {activity}, stop: {stop}")
-            d.app_start(package_name=package_name, activity=activity, stop=stop)
+            print(f"使用activity启动应用: {package_name}, activity: {activity}, stop: {stop}, user: {user_id or '默认'}")
+            if stop:
+                d.shell(f"am force-stop {package_name}")
+                time.sleep(1)
+            if user_id:
+                _am_start_with_user(d, package_name, activity=activity, user_id=user_id)
+            else:
+                d.app_start(package_name=package_name, activity=activity, stop=False)
             time.sleep(2)
             # 验证应用是否启动成功
             current_package, _ = get_current_app(d)
