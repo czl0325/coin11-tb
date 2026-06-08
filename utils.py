@@ -266,6 +266,11 @@ search_keys = ["华硕a豆air", "机械革命星耀14", "ipadmini7", "iphone16",
 
 def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22):
     check_can_open(d)
+    package_name, _ = get_current_app(d)
+    if "com.sina.weibo" in package_name:
+        time.sleep(3)
+        back_func()
+        return
     history_lst1 = d.xpath(
         '(//android.widget.TextView[@text="历史搜索"]/following-sibling::android.widget.ListView)/android.view.View[1]')
     history_lst2 = d.xpath('//android.widget.TextView[@text="猜你想搜"]/following-sibling::android.view.View[1]/android.view.View[1]/android.widget.TextView')
