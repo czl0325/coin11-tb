@@ -593,6 +593,15 @@ def print_error():
         print(f"文件: {frame.filename}, 行号: {frame.lineno}, 函数: {frame.name}, 代码: {frame.line}")
     print("=" * 10)
 
+
+def check_popup(d):
+    popup1 = d(className="android.widget.LinearLayout", resourceId="com.taobao.taobao:id/uik_menu_panel_rl")
+    if popup1.exists:
+        print("存在底部弹出框，关闭他")
+        cancel_btn = d(className="android.widget.TextView", resourceId="com.taobao.taobao:id/uik_tv_cancel", text="取消")
+        if cancel_btn.exists:
+            print("点击取消按钮")
+            cancel_btn.click()
 # find_button2(cv2.imread("screenshot.png"), "./img/alipay_get.png")
 
 

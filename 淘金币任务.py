@@ -2,7 +2,7 @@ import time
 
 import uiautomator2 as u2
 
-from utils import check_chars_exist, other_app, get_current_app, select_device, task_loop, check_verify, start_app, TB_APP
+from utils import check_chars_exist, other_app, get_current_app, select_device, task_loop, check_verify, start_app, TB_APP, check_popup
 
 unclick_btn = []
 have_clicked = dict()
@@ -66,6 +66,7 @@ def back_to_task():
         if temp_package is None or temp_activity is None or "Ext2ContainerActivity" in temp_activity:
             continue
         print(f"{temp_package}--{temp_activity}")
+        check_popup(d)
         if TB_APP not in temp_package:
             print(f"回到原始APP,{TB_APP}")
             start_app(d, TB_APP)
