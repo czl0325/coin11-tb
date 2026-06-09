@@ -505,7 +505,28 @@ def select_device():
         # 多个设备，让用户选择
         print("当前连接多个设备，请输入要执行的设备序号：")
         for i, device in enumerate(devices, 1):
-            print(f"  {i}: {device}")
+            # 手机品牌
+            brand = subprocess.run(
+                ["adb", "-s", device, "shell", "getprop", "ro.product.brand"],
+                capture_output=True, text=True, check=True
+            ).stdout.strip()
+            # 手机型号
+            model = subprocess.run(
+                ["adb", "-s", device, "shell", "getprop", "ro.product.model"],
+                capture_output=True, text=True, check=True
+            ).stdout.strip()
+            # 安卓版本
+            version_release = subprocess.run(
+                ["adb", "-s", device, "shell", "getprop", "ro.build.version.release"],
+                capture_output=True, text=True, check=True
+            ).stdout.strip()
+            # 定义颜色常量
+            RED = '\033[91m'   # 红
+            GREEN = '\033[92m'    # 绿
+            BLUE = '\033[94m'     # 蓝
+            CYAN = '\033[96m'     # 青
+            RESET = '\033[0m'     # 重置
+            print(f"  {BLUE}{i}{RESET}: {device}\t{GREEN}{brand} {model}{RESET}\t{CYAN}{version_release}{RESET}")
 
         # 获取用户输入并验证
         while True:
@@ -518,9 +539,9 @@ def select_device():
                     set_terminal_title(devices[index])
                     return devices[index]
                 else:
-                    print(f"输入错误，请重新输入序号（1-{len(devices)}）")
+                    print(f"{RED}输入错误，序号不存在{RESET}")
             except ValueError:
-                print(f"输入错误，请重新输入序号（1-{len(devices)}）")
+                print(f"{RED}输入错误，请输入数字{RESET}")
 
 
 # 多用户支持：None=未检测，""=单用户/默认用户(不需要--user)，其他=用户ID
