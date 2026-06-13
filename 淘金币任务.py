@@ -66,7 +66,6 @@ def back_to_task():
         if temp_package is None or temp_activity is None or "Ext2ContainerActivity" in temp_activity:
             continue
         print(f"{temp_package}--{temp_activity}")
-        check_popup(d)
         if TB_APP not in temp_package:
             print(f"回到原始APP,{TB_APP}")
             start_app(d, TB_APP)
@@ -75,6 +74,7 @@ def back_to_task():
                 jump_btn.click()
                 time.sleep(2)
         else:
+            check_popup(d)
             if check_in_task():
                 print("当前是任务列表画面，不能继续返回")
                 break
