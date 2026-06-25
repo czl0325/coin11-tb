@@ -83,6 +83,14 @@ def get_current_app(d):
     return None, None
 
 
+def check_app(d, package):
+    package_name, _ = get_current_app(d)
+    if package_name not in package:
+        time.sleep(5)
+        start_app(d, package)
+        time.sleep(3)
+
+
 other_app = ["蚂蚁森林", "农场", "百度", "支付宝", "芝麻信用", "蚂蚁庄园", "闲鱼", "神奇海洋", "淘宝特价版", "点淘", "饿了么", "微博", "直播", "领肥料礼包", "福气提现金", "看小说", "菜鸟", "斗地主", "领肥料礼包"]
 
 
@@ -274,6 +282,7 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22):
     history_lst1 = d.xpath(
         '(//android.widget.TextView[@text="历史搜索"]/following-sibling::android.widget.ListView)/android.view.View[1]')
     history_lst2 = d.xpath('//android.widget.TextView[@text="猜你想搜"]/following-sibling::android.view.View[1]/android.view.View[1]/android.widget.TextView')
+    open_btn = d(className="android.widget.TextView", text="打开淘宝")
     if history_lst1.exists:
         print("查找到搜索关键字", history_lst1)
         history_lst1.click()
@@ -282,6 +291,9 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22):
         print("查找到搜索关键字", history_lst2.get_text())
         history_lst2.click()
         time.sleep(2)
+    elif open_btn.exists:
+        open_btn.click()
+        time.sleep(3)
     else:
         search_view = d(className="android.view.View", text="搜索有福利")
         if search_view.exists:

@@ -2,7 +2,7 @@ import time
 import re
 import uiautomator2 as u2
 
-from utils import get_current_app, find_button, close_xy_dialog, task_loop, FISH_APP, start_app
+from utils import get_current_app, find_button, close_xy_dialog, task_loop, FISH_APP, start_app, check_app
 
 d = u2.connect()
 start_app(d, FISH_APP, init=True)
@@ -272,6 +272,7 @@ while True:
     try:
         print("正在查找按钮...")
         time.sleep(4)
+        check_app(d, FISH_APP)
         sign_btn = d(className="android.widget.TextView", text="签到")
         if sign_btn.exists:
             d.click(sign_btn.center()[0], sign_btn.center()[1])
