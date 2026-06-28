@@ -73,6 +73,14 @@ def tmall_no_click(text):
     return False
 
 
+def fish_no_click(text):
+    chars = ["闯", "看视频"]
+    for char in chars:
+        if char in text:
+            return True
+    return False
+
+
 def get_current_app(d):
     info = d.shell("dumpsys window | grep mCurrentFocus").output
     match = re.search(r'mCurrentFocus=Window\{.*? u0 (.*?)/(.*?)\}', info)

@@ -2,7 +2,7 @@ import sys
 import time
 import uiautomator2 as u2
 
-from utils import get_current_app, task_loop, FISH_APP, start_app, video_task, print_error
+from utils import get_current_app, task_loop, FISH_APP, start_app, video_task, print_error, fish_no_click
 
 d = u2.connect()
 start_app(d, FISH_APP, init=True)
@@ -47,6 +47,12 @@ def back_to_task():
                 if close_btn1.exists:
                     print("点击关闭小程序按钮")
                     close_btn1.click()
+                    time.sleep(1)
+                    continue
+                close_btn3 = d.xpath('//android.widget.FrameLayout[@resource-id="com.taobao.idlefish:id/h5_nav_options"]/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.FrameLayout[2]/android.widget.TextView')
+                if close_btn3.exists:
+                    print("点击关闭小程序按钮")
+                    close_btn3.click()
                     time.sleep(1)
                     continue
                 task_view1 = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]')
@@ -98,6 +104,7 @@ def show_task():
 
 
 to_task()
+time.sleep(5)
 ling_btn = d(className="android.widget.TextView", text="领红包")
 if ling_btn.exists:
     print("点击领红包")
@@ -107,7 +114,8 @@ while True:
     try:
         time.sleep(4)
         show_task()
-        get_btn = d.xpath('//android.webkit.WebView[@text="天天红包"]/android.view.View/android.view.View[5]/android.view.View/android.widget.TextView[@text="领红包"]')
+        has_task = False
+        get_btn = d.xpath('//android.webkit.WebView[@text="天天红包"]/android.view.View/android.view.View[5]/android.view.View/android.widget.TextView[@text="领红包" or @text="领取红包"]')
         if get_btn.exists:
             print("点击领红包")
             get_btn.click()
@@ -115,22 +123,27 @@ while True:
             continue
         to_btn = d.xpath('//android.webkit.WebView[@text="天天红包"]/android.view.View/android.view.View[5]/android.view.View/android.widget.TextView[@text="去完成"]')
         if to_btn.exists:
-            name_view = d.xpath('(//android.webkit.WebView[@text="天天红包"]/android.view.View/android.view.View[5]/android.view.View/android.widget.TextView[@text="去完成"])[1]/preceding-sibling::android.view.View[1]/android.widget.TextView[1]')
-            task_name = None
-            if name_view.exists:
-                task_name = name_view.text
-                print(f"点击任务：{task_name}")
-            to_btn.click()
-            time.sleep(3)
-            if task_name:
-                if "视频" in task_name:
-                    video_task(d)
-                else:
+            for index in range(len(to_btn.all())):
+                name_view = d.xpath(f'(//android.webkit.WebView[@text="天天红包"]/android.view.View/android.view.View[5]/android.view.View/android.widget.TextView[@text="去完成"])[{index+1}]/preceding-sibling::android.view.View[1]/android.widget.TextView[1]')
+                task_name = None
+                if name_view.exists:
+                    task_name = name_view.text
+                    if fish_no_click(task_name):
+                        continue
+                if task_name:
+                    print(f"点击任务：{task_name}")
+                    (to_btn.all())[index].click()
+                    has_task = True
+                    time.sleep(3)
                     if "神奇鱼塘" in task_name or "闲鱼币" in task_name:
                         time.sleep(5)
                         back_to_task()
                     else:
                         task_loop(d, back_to_task, is_fish=True)
+                break
+            if not has_task:
+                print("任务全部做完了，退出循环")
+                break
         else:
             print("找不到任务了，退出循环")
             break

@@ -30,7 +30,7 @@ def run_scripts(script_paths):
 
 if __name__ == "__main__":
     scripts_to_run = [
-        "2026淘宝618活动.py",
+        # "2026淘宝618活动.py",
         "淘宝成就中心签到.py",
         "闲鱼扔骰子.py",
         "淘宝芭芭农场.py",
