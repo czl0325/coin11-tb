@@ -48,7 +48,8 @@ TMALL_HOME = "com.tmall.wireless.maintab.module.TMMainTabActivity"
 
 # 应用启动配置，键为包名，值为activity
 APP_START_CONFIG = {
-    TB_APP: "com.taobao.tao.welcome.Welcome",
+    # TB_APP: "com.taobao.tao.welcome.Welcome",
+    TB_APP: "com.taobao.tao.TBMainActivity",
     FISH_APP: "com.taobao.fleamarket.home.activity.InitActivity",
     TMALL_APP: "com.tmall.wireless.maintab.module.TMMainTabActivity",
     ALIPAY_APP: "com.eg.android.AlipayGphone.AlipayLogin"  # 默认配置，不指定activity
