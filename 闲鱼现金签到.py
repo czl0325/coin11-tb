@@ -115,7 +115,7 @@ while True:
         time.sleep(4)
         show_task()
         has_task = False
-        get_btn = d.xpath('//android.webkit.WebView[@text="天天红包"]/android.view.View/android.view.View[5]/android.view.View/android.widget.TextView[@text="领红包" or @text="领取红包"]')
+        get_btn = d.xpath('//android.webkit.WebView[@text="天天红包"]/android.view.View/android.view.View[5]/android.view.View/android.widget.TextView[@text="领红包" or @text="领取红包" or @text="领取奖励"]')
         if get_btn.exists:
             print("点击领红包")
             get_btn.click()
@@ -169,6 +169,10 @@ while True:
             print("有现金打款，点击收下")
             coin_view.click()
             time.sleep(3)
+        get_btn = d(className="android.widget.TextView", text="领红包")
+        if get_btn.exists:
+            d.click(get_btn.center()[0], get_btn.bounds()[1] - 80)
+            time.sleep(2)
         throw_btn = d(className="android.view.View", resourceId="bigOpenBtn")
         if throw_btn.exists:
             throw_btn.click()
