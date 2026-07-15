@@ -67,7 +67,7 @@ while True:
             title_view = d.xpath(f'(//android.widget.TextView[@text="去完成"])[{index+1}]/../preceding-sibling::android.widget.TextView[1]')
             if title_view.exists:
                 title_text = title_view.get_text()
-                if "抽赏一次" in title_text or "邀请好友" in title_text:
+                if "抽赏一次" in title_text or "邀请好友" in title_text or "下一单" in title_text:
                     continue
                 print(f"点击任务：{title_text}")
                 d.click((todo_btn.all())[index].bounds[0] + 50, (todo_btn.all())[index].center()[1])

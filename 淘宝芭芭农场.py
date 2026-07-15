@@ -2,8 +2,7 @@ import time
 
 import uiautomator2 as u2
 
-from utils import check_chars_exist, other_app, get_current_app, task_loop, select_device, check_verify, start_app, \
-    TB_APP, check_popup, APP_START_CONFIG
+from utils import check_chars_exist, other_app, get_current_app, task_loop, select_device, check_verify, start_app, TB_APP, check_popup, APP_START_CONFIG
 
 unclick_btn = []
 have_clicked = dict()
