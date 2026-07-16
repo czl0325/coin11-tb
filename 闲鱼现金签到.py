@@ -81,7 +81,7 @@ def to_task():
     sign_btn = d(className="android.widget.TextView", text="现金签到")
     if sign_btn.exists:
         print("点击现金签到按钮")
-        sign_btn.click()
+        d.click(sign_btn.bounds()[2] - 50, sign_btn.bounds()[1] + 10)
         time.sleep(8)
     else:
         print("没有现金签到任务，退出程序")
