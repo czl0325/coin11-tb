@@ -2,7 +2,7 @@ import time
 
 import uiautomator2 as u2
 
-from utils import check_chars_exist, other_app, get_current_app, task_loop, select_device, check_verify, start_app, TB_APP, check_popup, APP_START_CONFIG
+from utils import check_chars_exist, other_app, get_current_app, task_loop, select_device, check_verify, start_app, TB_APP, check_popup, APP_START_CONFIG, print_error
 
 unclick_btn = []
 have_clicked = dict()
@@ -35,58 +35,62 @@ def check_in_task():
 def back_to_task():
     print("开始返回任务页面")
     while True:
-        temp_package, temp_activity = get_current_app(d)
-        if temp_package is None or temp_activity is None or "Ext2ContainerActivity" in temp_activity:
-            continue
-        print(f"{temp_package}--{temp_activity}")
-        check_popup(d)
-        if TB_APP not in temp_package:
-            print(f"回到原始APP,{TB_APP}")
-            start_app(d, TB_APP)
-            jump_btn = d(resourceId="com.taobao.taobao:id/tv_close", text="跳过")
-            if jump_btn.exists:
-                jump_btn.click()
-                time.sleep(2)
-        else:
-            if check_in_task():
-                print("当前是任务列表画面，不能继续返回")
-                break
+        try:
+            temp_package, temp_activity = get_current_app(d)
+            if temp_package is None or temp_activity is None or "Ext2ContainerActivity" in temp_activity:
+                continue
+            print(f"{temp_package}--{temp_activity}")
+            check_popup(d)
+            if TB_APP not in temp_package:
+                print(f"回到原始APP,{TB_APP}")
+                start_app(d, TB_APP)
+                jump_btn = d(resourceId="com.taobao.taobao:id/tv_close", text="跳过")
+                if jump_btn.exists:
+                    jump_btn.click()
+                    time.sleep(2)
             else:
-                if APP_START_CONFIG[TB_APP] in temp_activity:
-                    print("当前是淘宝首页，进入芭芭农场页面")
-                    find_farm_btn()
-                    find_fertilizer_btn()
+                if check_in_task():
+                    print("当前是任务列表画面，不能继续返回")
                     break
                 else:
-                    close_btn1 = d.xpath("//android.widget.FrameLayout[@resource-id='com.alipay.multiplatform.phone.xriver_integration:id/frameLayout_rightButton1']/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.FrameLayout[2]")
-                    if close_btn1.exists:
-                        print("点击关闭小程序按钮")
-                        close_btn1.click()
-                        time.sleep(1)
-                        continue
-                    close_btn2 = d(className="android.widget.TextView", resourceId="com.taobao.taobao:id/back_home_btn")
-                    if close_btn2.exists:
-                        print("点击关闭小程序按钮")
-                        close_btn2.click()
-                        time.sleep(1)
-                        continue
-                    cancel_btn = d(className="android.widget.FrameLayout", resourceId="com.taobao.taobao:id/uik_fl_textview_container_2")
-                    if cancel_btn.exists:
-                        print("点击下部弹窗的取消按钮")
-                        cancel_btn.click()
-                        time.sleep(2)
-                        continue
-                    task_view = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]')
-                    if task_view.exists:
-                        close_btn2 = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]/preceding-sibling::android.view.View[1]')
+                    if APP_START_CONFIG[TB_APP] in temp_activity:
+                        print("当前是淘宝首页，进入芭芭农场页面")
+                        find_farm_btn()
+                        find_fertilizer_btn()
+                        break
+                    else:
+                        close_btn1 = d.xpath("//android.widget.FrameLayout[@resource-id='com.alipay.multiplatform.phone.xriver_integration:id/frameLayout_rightButton1']/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.FrameLayout[2]")
+                        if close_btn1.exists:
+                            print("点击关闭小程序按钮")
+                            close_btn1.click()
+                            time.sleep(1)
+                            continue
+                        close_btn2 = d(className="android.widget.TextView", resourceId="com.taobao.taobao:id/back_home_btn")
                         if close_btn2.exists:
-                            print("点击关闭限时下单任务按钮")
+                            print("点击关闭小程序按钮")
                             close_btn2.click()
                             time.sleep(1)
                             continue
-                    print("点击后退")
-                    d.press("back")
-                    time.sleep(0.3)
+                        cancel_btn = d(className="android.widget.FrameLayout", resourceId="com.taobao.taobao:id/uik_fl_textview_container_2")
+                        if cancel_btn.exists:
+                            print("点击下部弹窗的取消按钮")
+                            cancel_btn.click()
+                            time.sleep(2)
+                            continue
+                        task_view = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]')
+                        if task_view.exists:
+                            close_btn2 = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]/preceding-sibling::android.view.View[1]')
+                            if close_btn2.exists:
+                                print("点击关闭限时下单任务按钮")
+                                close_btn2.click()
+                                time.sleep(1)
+                                continue
+                        print("点击后退")
+                        d.press("back")
+                        time.sleep(0.3)
+        except Exception:
+            print_error()
+            time.sleep(2)
 
 
 # 查找芭芭农场按钮
