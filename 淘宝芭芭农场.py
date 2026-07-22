@@ -203,6 +203,7 @@ while True:
         else:
             error_count += 1
             print("未找到可点击按钮", error_count)
+            back_to_task()
             if error_count >= 2:
                 break
     except Exception as e:
