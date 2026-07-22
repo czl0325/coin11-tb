@@ -200,8 +200,14 @@ while True:
                 print("未找到可点击按钮", error_count)
                 if error_count >= 2:
                     break
+        else:
+            error_count += 1
+            print("未找到可点击按钮", error_count)
+            if error_count >= 2:
+                break
     except Exception as e:
         print(e)
+        back_to_task()
         continue
 d.watcher.remove()
 print(f"共自动化完成{finish_count}个任务")
