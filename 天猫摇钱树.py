@@ -75,6 +75,7 @@ def to_task():
 
 
 to_task()
+has_clicked = []
 while True:
     try:
         time.sleep(5)
@@ -101,6 +102,8 @@ while True:
                     subtitle_text = subtitle_view.get_text()
                     if tmall_no_click(title_text):
                         continue
+                    if title_text in has_clicked:
+                        continue
                     do_time = 30
                     if subtitle_text is str:
                         second = re.findall(r".*?(\d+)秒.*?", subtitle_text)
@@ -108,6 +111,7 @@ while True:
                             do_time = int(second[0]) + 3
                     (task_btn.all())[index].click()
                     print(f"点击任务：{title_text}，浏览时间：{do_time}秒")
+                    has_clicked.append(title_text)
                     time.sleep(5)
                     has_task = True
                     task_loop(d, back_to_task, duration=do_time)

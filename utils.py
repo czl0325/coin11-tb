@@ -319,29 +319,33 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22):
     print("开始做任务。。。")
     browse_view = d(className="android.widget.TextView", textMatches=r"\d+/\d+")
     if browse_view.exists:
-        browse_text = browse_view.get_text()
-        browse_count = int(re.findall(r"\d+/(\d+)", browse_text)[0])
-        try_count = 0
-        while try_count < browse_count:
-            try:
-                commodity_view = next(
-                    (xv for xv in [
-                        d.xpath(f'//android.view.View[@resource-id="root"]/android.view.View[5]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[{try_count+1}]'),
-                        d.xpath(f'//android.view.View[@resource-id="root"]/android.view.View[4]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[{try_count+1}]'),
-                        d.xpath(f'//android.view.View[@resource-id="root"]/android.view.View[5]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[2]/android.view.View[{try_count-2}]'),
-                        d.xpath(f'//android.view.View[@resource-id="root"]/android.view.View[4]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[2]/android.view.View[{try_count-2}]'),
-                    ] if xv and xv.exists),
-                    None
-                )
-                if commodity_view and commodity_view.exists:
-                    print(f"点击商品{try_count}")
-                    commodity_view.click()
-                    time.sleep(2)
-                    d.press("back")
-                    time.sleep(3)
-                try_count += 1
-            except Exception as e:
-                print("遇到错误：", str(e))
+        fu_view = d(className="android.widget.TextView", textMatches=r"找\d+个福星得")
+        if fu_view.exists:
+            back_func()
+        else:
+            browse_text = browse_view.get_text()
+            browse_count = int(re.findall(r"\d+/(\d+)", browse_text)[0])
+            try_count = 0
+            while try_count < browse_count:
+                try:
+                    commodity_view = next(
+                        (xv for xv in [
+                            d.xpath(f'//android.view.View[@resource-id="root"]/android.view.View[5]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[{try_count+1}]'),
+                            d.xpath(f'//android.view.View[@resource-id="root"]/android.view.View[4]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[{try_count+1}]'),
+                            d.xpath(f'//android.view.View[@resource-id="root"]/android.view.View[5]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[2]/android.view.View[{try_count-2}]'),
+                            d.xpath(f'//android.view.View[@resource-id="root"]/android.view.View[4]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[2]/android.view.View[{try_count-2}]'),
+                        ] if xv and xv.exists),
+                        None
+                    )
+                    if commodity_view and commodity_view.exists:
+                        print(f"点击商品{try_count}")
+                        commodity_view.click()
+                        time.sleep(2)
+                        d.press("back")
+                        time.sleep(3)
+                    try_count += 1
+                except Exception as e:
+                    print("遇到错误：", str(e))
     else:
         while True:
             try:
