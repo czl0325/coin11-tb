@@ -731,3 +731,18 @@ def check_popup(d):
 # find_button2(cv2.imread("screenshot.png"), "./img/alipay_get.png")
 
 
+def start_watcher(d):
+    ctx = d.watch_context()
+    ctx.when("O1CN012qVB9n1tvZ8ATEQGu_!!6000000005964-2-tps-144-144").click()
+    ctx.when("O1CN01sORayC1hBVsDQRZoO_!!6000000004239-2-tps-426-128.png_").click()
+    ctx.when("领取今日奖励").click()
+    ctx.when("确认").click()
+    ctx.when("确定").click()
+    ctx.when("刷新").click()
+    ctx.when("点击刷新").click()
+    ctx.when(xpath="//android.app.Dialog//android.widget.Button[contains(text(), '-tps-')]").click()
+    ctx.when(xpath="//android.app.Dialog//android.widget.Button[@text='关闭']").click()
+    ctx.when(xpath="//android.widget.FrameLayout[@resource-id='com.taobao.taobao:id/poplayer_native_state_center_layout_frame_id']//android.widget.ImageView[@content-desc='关闭按钮']").click()
+    # ctx.when(xpath="//android.widget.TextView[@package='com.eg.android.AlipayGphone']").click()
+    ctx.start()
+    return ctx
