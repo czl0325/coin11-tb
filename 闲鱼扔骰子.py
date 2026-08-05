@@ -54,6 +54,7 @@ def click_earn():
         if d(className="android.view.View", resourceId="taskWrap").exists:
             print("任务弹框存在")
             break
+        check_app(d, FISH_APP)
         check_popup()
         throw_btn1 = d(className="android.view.View", resourceId="mapDiceBtn")
         if throw_btn1.exists:
@@ -344,6 +345,7 @@ while True:
                     time.sleep(4)
     except Exception as e:
         print("报错", e)
+        back_to_task()
         continue
 print(f"共自动化完成{finish_count}个任务")
 while True:

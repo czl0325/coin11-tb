@@ -2,7 +2,7 @@ import time
 
 import uiautomator2 as u2
 
-from utils import check_chars_exist, other_app, get_current_app, select_device, task_loop, check_verify, start_app, TB_APP, check_popup, print_error
+from utils import check_chars_exist, other_app, get_current_app, select_device, task_loop, check_verify, start_app, TB_APP, check_popup, print_error, start_watcher
 
 unclick_btn = []
 have_clicked = dict()
@@ -15,19 +15,7 @@ d = u2.connect(selected_device)
 print(f"已成功连接设备：{selected_device}")
 start_app(d, TB_APP, init=True)
 screen_width, screen_height = d.window_size()
-ctx = d.watch_context()
-ctx.when("O1CN012qVB9n1tvZ8ATEQGu_!!6000000005964-2-tps-144-144").click()
-ctx.when("O1CN01sORayC1hBVsDQRZoO_!!6000000004239-2-tps-426-128.png_").click()
-ctx.when("领取今日奖励").click()
-ctx.when("确认").click()
-ctx.when("确定").click()
-ctx.when("刷新").click()
-ctx.when("点击刷新").click()
-ctx.when(xpath="//android.app.Dialog//android.widget.Button[contains(text(), '-tps-')]").click()
-ctx.when(xpath="//android.app.Dialog//android.widget.Button[@text='关闭']").click()
-ctx.when(xpath="//android.widget.FrameLayout[@resource-id='com.taobao.taobao:id/poplayer_native_state_center_layout_frame_id']//android.widget.ImageView[@content-desc='关闭按钮']").click()
-# ctx.when(xpath="//android.widget.TextView[@package='com.eg.android.AlipayGphone']").click()
-ctx.start()
+ctx = start_watcher(d)
 time.sleep(3)
 
 
