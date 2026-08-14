@@ -49,6 +49,7 @@ TMALL_HOME = "com.tmall.wireless.maintab.module.TMMainTabActivity"
 # 应用启动配置，键为包名，值为activity
 APP_START_CONFIG = {
     TB_APP: "com.taobao.tao.welcome.Welcome",
+    # TB_APP: "com.taobao.tao.TBMainActivity",
     FISH_APP: "com.taobao.fleamarket.home.activity.InitActivity",
     TMALL_APP: "com.tmall.wireless.maintab.module.TMMainTabActivity",
     ALIPAY_APP: "com.eg.android.AlipayGphone.AlipayLogin"  # 默认配置，不指定activity
@@ -318,29 +319,33 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22):
     print("开始做任务。。。")
     browse_view = d(className="android.widget.TextView", textMatches=r"\d+/\d+")
     if browse_view.exists:
-        browse_text = browse_view.get_text()
-        browse_count = int(re.findall(r"\d+/(\d+)", browse_text)[0])
-        try_count = 0
-        while try_count < browse_count:
-            try:
-                commodity_view = next(
-                    (xv for xv in [
-                        d.xpath(f'//android.view.View[@resource-id="root"]/android.view.View[5]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[{try_count+1}]'),
-                        d.xpath(f'//android.view.View[@resource-id="root"]/android.view.View[4]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[{try_count+1}]'),
-                        d.xpath(f'//android.view.View[@resource-id="root"]/android.view.View[5]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[2]/android.view.View[{try_count-2}]'),
-                        d.xpath(f'//android.view.View[@resource-id="root"]/android.view.View[4]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[2]/android.view.View[{try_count-2}]'),
-                    ] if xv and xv.exists),
-                    None
-                )
-                if commodity_view and commodity_view.exists:
-                    print(f"点击商品{try_count}")
-                    commodity_view.click()
-                    time.sleep(2)
-                    d.press("back")
-                    time.sleep(3)
-                try_count += 1
-            except Exception as e:
-                print("遇到错误：", str(e))
+        fu_view = d(className="android.widget.TextView", textMatches=r"找\d+个福星得")
+        if fu_view.exists:
+            back_func()
+        else:
+            browse_text = browse_view.get_text()
+            browse_count = int(re.findall(r"\d+/(\d+)", browse_text)[0])
+            try_count = 0
+            while try_count < browse_count:
+                try:
+                    commodity_view = next(
+                        (xv for xv in [
+                            d.xpath(f'//android.view.View[@resource-id="root"]/android.view.View[5]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[{try_count+1}]'),
+                            d.xpath(f'//android.view.View[@resource-id="root"]/android.view.View[4]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[{try_count+1}]'),
+                            d.xpath(f'//android.view.View[@resource-id="root"]/android.view.View[5]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[2]/android.view.View[{try_count-2}]'),
+                            d.xpath(f'//android.view.View[@resource-id="root"]/android.view.View[4]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[2]/android.view.View[{try_count-2}]'),
+                        ] if xv and xv.exists),
+                        None
+                    )
+                    if commodity_view and commodity_view.exists:
+                        print(f"点击商品{try_count}")
+                        commodity_view.click()
+                        time.sleep(2)
+                        d.press("back")
+                        time.sleep(3)
+                    try_count += 1
+                except Exception as e:
+                    print("遇到错误：", str(e))
     else:
         while True:
             try:
@@ -525,7 +530,28 @@ def select_device():
         # 多个设备，让用户选择
         print("当前连接多个设备，请输入要执行的设备序号：")
         for i, device in enumerate(devices, 1):
-            print(f"  {i}: {device}")
+            # 手机品牌
+            brand = subprocess.run(
+                ["adb", "-s", device, "shell", "getprop", "ro.product.brand"],
+                capture_output=True, text=True, check=True
+            ).stdout.strip()
+            # 手机型号
+            model = subprocess.run(
+                ["adb", "-s", device, "shell", "getprop", "ro.product.model"],
+                capture_output=True, text=True, check=True
+            ).stdout.strip()
+            # 安卓版本
+            version_release = subprocess.run(
+                ["adb", "-s", device, "shell", "getprop", "ro.build.version.release"],
+                capture_output=True, text=True, check=True
+            ).stdout.strip()
+            # 定义颜色常量
+            RED = '\033[91m'   # 红
+            GREEN = '\033[92m'    # 绿
+            BLUE = '\033[94m'     # 蓝
+            CYAN = '\033[96m'     # 青
+            RESET = '\033[0m'     # 重置
+            print(f"  {BLUE}{i}{RESET}: {device}\t{GREEN}{brand} {model}{RESET}\t{CYAN}{version_release}{RESET}")
 
         # 获取用户输入并验证
         while True:
@@ -538,9 +564,9 @@ def select_device():
                     set_terminal_title(devices[index])
                     return devices[index]
                 else:
-                    print(f"输入错误，请重新输入序号（1-{len(devices)}）")
+                    print(f"{RED}输入错误，序号不存在{RESET}")
             except ValueError:
-                print(f"输入错误，请重新输入序号（1-{len(devices)}）")
+                print(f"{RED}输入错误，请输入数字{RESET}")
 
 
 # 多用户支持：None=未检测，""=单用户/默认用户(不需要--user)，其他=用户ID
@@ -709,3 +735,18 @@ def check_popup(d):
 # find_button2(cv2.imread("screenshot.png"), "./img/alipay_get.png")
 
 
+def start_watcher(d):
+    ctx = d.watch_context()
+    ctx.when("O1CN012qVB9n1tvZ8ATEQGu_!!6000000005964-2-tps-144-144").click()
+    ctx.when("O1CN01sORayC1hBVsDQRZoO_!!6000000004239-2-tps-426-128.png_").click()
+    ctx.when("领取今日奖励").click()
+    ctx.when("确认").click()
+    ctx.when("确定").click()
+    ctx.when("刷新").click()
+    ctx.when("点击刷新").click()
+    ctx.when(xpath="//android.app.Dialog//android.widget.Button[contains(text(), '-tps-')]").click()
+    ctx.when(xpath="//android.app.Dialog//android.widget.Button[@text='关闭']").click()
+    ctx.when(xpath="//android.widget.FrameLayout[@resource-id='com.taobao.taobao:id/poplayer_native_state_center_layout_frame_id']//android.widget.ImageView[@content-desc='关闭按钮']").click()
+    # ctx.when(xpath="//android.widget.TextView[@package='com.eg.android.AlipayGphone']").click()
+    ctx.start()
+    return ctx

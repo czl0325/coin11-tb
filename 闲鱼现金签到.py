@@ -2,7 +2,7 @@ import sys
 import time
 import uiautomator2 as u2
 
-from utils import get_current_app, task_loop, FISH_APP, start_app, video_task, print_error, fish_no_click
+from utils import get_current_app, task_loop, FISH_APP, start_app, find_button_multiscale, print_error, fish_no_click
 
 d = u2.connect()
 start_app(d, FISH_APP, init=True)
@@ -81,7 +81,7 @@ def to_task():
     sign_btn = d(className="android.widget.TextView", text="现金签到")
     if sign_btn.exists:
         print("点击现金签到按钮")
-        sign_btn.click()
+        d.click(sign_btn.bounds()[2] - 50, sign_btn.bounds()[1] + 10)
         time.sleep(8)
     else:
         print("没有现金签到任务，退出程序")
@@ -92,10 +92,10 @@ def to_task():
 def show_task():
     while True:
         web_view = d.xpath('//android.webkit.WebView[@text="天天红包"]')
-        dialog_view = d.xpath('//android.webkit.WebView[@text="天天红包"]/android.view.View/android.view.View[5]')
-        if web_view.exists and dialog_view.exists:
+        task_btn = d(className="android.widget.TextView", text="去完成")
+        if web_view.exists and task_btn.exists:
             break
-        if web_view.exists and not dialog_view.exists:
+        if web_view.exists and not task_btn.exists:
             more_btn = d(className="android.widget.TextView", text="更多红包")
             if more_btn.exists:
                 print("点击更多红包按钮")
@@ -115,16 +115,16 @@ while True:
         time.sleep(4)
         show_task()
         has_task = False
-        get_btn = d.xpath('//android.webkit.WebView[@text="天天红包"]/android.view.View/android.view.View[5]/android.view.View/android.widget.TextView[@text="领红包" or @text="领取红包"]')
+        get_btn = d.xpath('//android.webkit.WebView[@text="天天红包"]/android.view.View/android.view.View[last()]/android.view.View/android.widget.TextView[@text="领红包" or @text="领取红包" or @text="领取奖励"]')
         if get_btn.exists:
             print("点击领红包")
             get_btn.click()
             time.sleep(1)
             continue
-        to_btn = d.xpath('//android.webkit.WebView[@text="天天红包"]/android.view.View/android.view.View[5]/android.view.View/android.widget.TextView[@text="去完成"]')
+        to_btn = d.xpath('//android.webkit.WebView[@text="天天红包"]/android.view.View/android.view.View[last()]/android.view.View/android.widget.TextView[@text="去完成"]')
         if to_btn.exists:
             for index in range(len(to_btn.all())):
-                name_view = d.xpath(f'(//android.webkit.WebView[@text="天天红包"]/android.view.View/android.view.View[5]/android.view.View/android.widget.TextView[@text="去完成"])[{index+1}]/preceding-sibling::android.view.View[1]/android.widget.TextView[1]')
+                name_view = d.xpath(f'(//android.webkit.WebView[@text="天天红包"]/android.view.View/android.view.View[last()]/android.view.View/android.widget.TextView[@text="去完成"])[{index+1}]/preceding-sibling::android.view.View[1]/android.widget.TextView[1]')
                 task_name = None
                 if name_view.exists:
                     task_name = name_view.text
@@ -164,11 +164,15 @@ while True:
             print(f"剩余红包{count}个")
         else:
             break
-        coin_view = d.xpath('//android.webkit.WebView[@text="天天红包"]/android.view.View/android.view.View[4]/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View/android.widget.TextView[3]')
-        if coin_view.exists:
+        pt1, _, _ = find_button_multiscale(d.screenshot(format="opencv"), "./img/fish_get.png")
+        if pt1:
             print("有现金打款，点击收下")
-            coin_view.click()
+            d.click(pt1[0], pt1[1])
             time.sleep(3)
+        get_btn = d(className="android.widget.TextView", text="领红包")
+        if get_btn.exists:
+            d.click(get_btn.center()[0], get_btn.bounds()[1] - 80)
+            time.sleep(2)
         throw_btn = d(className="android.view.View", resourceId="bigOpenBtn")
         if throw_btn.exists:
             throw_btn.click()
