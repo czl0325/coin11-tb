@@ -157,6 +157,7 @@ while True:
     try:
         print("开始查找按钮")
         check_verify(d)
+        check_popup(d)
         time.sleep(4)
         sign_btn = d(className="android.widget.Button", text="去签到")
         if sign_btn.exists:

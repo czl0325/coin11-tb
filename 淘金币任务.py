@@ -134,6 +134,7 @@ while True:
         in_other_app = False
         time.sleep(4)
         check_verify(d)
+        check_popup(d)
         earn_btn = d(className="android.widget.TextView", text="赚更多金币")
         if earn_btn.exists and not d(className="android.widget.TextView", text="赚金币抵钱").exists:
             earn_btn.click()
