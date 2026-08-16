@@ -15,5 +15,5 @@ https://v.kuaishou.com/nGmUFX 自动化完成淘宝任务教程 该作品在快�
 
 ## 点赞历史
 
-[![Star History Chart](https://api.star-history.com/svg?repos=czl0325/coin11-tb&type=Date)](https://star-history.com/#czl0325/coin11-tbt&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=czl0325/coin11-tb&type=Date)](https://star-history.dera.page/#czl0325/coin11-tbt&Date)
 <br><br>
