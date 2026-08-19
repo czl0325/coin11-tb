@@ -53,7 +53,7 @@ def back_to_task():
                     print("当前是任务列表画面，不能继续返回")
                     break
                 else:
-                    if APP_START_CONFIG[TB_APP] in temp_activity:
+                    if APP_START_CONFIG[TB_APP] in temp_activity or "com.taobao.tao.TBMainActivity" in temp_activity:
                         print("当前是淘宝首页，进入芭芭农场页面")
                         find_farm_btn()
                         find_fertilizer_btn()
