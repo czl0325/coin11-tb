@@ -75,7 +75,7 @@ def tmall_no_click(text):
 
 
 def fish_no_click(text):
-    chars = ["闯", "看视频"]
+    chars = ["闯", "看视频", "玩1关"]
     for char in chars:
         if char in text:
             return True

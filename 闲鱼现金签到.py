@@ -78,6 +78,8 @@ def to_task():
             time.sleep(4)
         if d(className="android.widget.TextView", resourceId="com.taobao.idlefish:id/personal_user_info_nick_name").exists:
             break
+    d.swipe_ext(u2.Direction.FORWARD)
+    time.sleep(2)
     sign_btn = d(className="android.widget.TextView", text="现金签到")
     if sign_btn.exists:
         print("点击现金签到按钮")
