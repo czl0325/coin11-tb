@@ -2,13 +2,14 @@ import time
 import uiautomator2 as u2
 from utils import select_device, start_app, ALIPAY_APP, start_watcher, check_chars_exist, task_loop, get_current_app
 
-no_clicked = ["斗地主"]
+no_clicked = ["斗地主", "完成助力", "许愿星", "浏览广告"]
 selected_device = select_device()
 d = u2.connect(selected_device)
 print(f"已成功连接设备：{selected_device}")
 start_app(d, ALIPAY_APP, init=True)
 screen_width, screen_height = d.window_size()
 ctx = start_watcher(d)
+ctx.when("退出评价").click()
 ctx.when(xpath='//android.app.Dialog//android.widget.Button[@text="关闭"]').click()
 time.sleep(3)
 
@@ -61,6 +62,7 @@ if result_view.exists:
     time.sleep(2)
     while True:
         time.sleep(5)
+        has_task = False
         to_btn = d.xpath('//android.widget.Button[@text="去完成"]')
         if to_btn.exists:
             for index, view in enumerate(to_btn.all()):
@@ -71,9 +73,13 @@ if result_view.exists:
                     if check_chars_exist(title_text, no_clicked):
                         continue
                     print(f"点击任务：{title_text}")
+                    has_task = True
                     d.click(view.bounds[0] + 30, view.center()[1])
                     time.sleep(5)
-                    task_loop(d, back_to_task, origin_app=ALIPAY_APP)
+                    task_loop(d, back_to_task, origin_app=ALIPAY_APP, only_scroll=True)
                     time.sleep(2)
                     break
+        if not has_task:
+            print("任务全部做完了，退出循环")
+            break
 ctx.close()

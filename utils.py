@@ -281,7 +281,7 @@ def majority_chinese(text):
 search_keys = ["华硕a豆air", "机械革命星耀14", "ipadmini7", "iphone16", "红米note13", "macbookairm4", "华硕灵耀14", "微星星影15"]
 
 
-def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22):
+def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22, only_scroll=False):
     check_can_open(d)
     package_name, _ = get_current_app(d)
     if "com.sina.weibo" in package_name:
@@ -318,7 +318,7 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22):
     start_time = time.time()
     print("开始做任务。。。")
     browse_view = d(className="android.widget.TextView", textMatches=r"\d+/\d+")
-    if browse_view.exists:
+    if browse_view.exists and not only_scroll:
         fu_view = d(className="android.widget.TextView", textMatches=r"找\d+个福星得")
         if fu_view.exists:
             back_func()
