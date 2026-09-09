@@ -278,12 +278,15 @@ while True:
         if sign_btn.exists:
             d.click(sign_btn.center()[0], sign_btn.center()[1])
             time.sleep(4)
+        prize_btn = d(className="android.widget.TextView", textMatches=r"\+\d+领取奖励")
+        if prize_btn.exists:
+            prize_btn.click()
+            continue
         receive_btn = d(className="android.widget.TextView", text="领取奖励")
         if receive_btn.exists:
             receive_btn.click()
             print("点击领取奖励")
             finish_count += 1
-            time.sleep(2)
             continue
         # task_view = d.xpath(f"//android.view.View[@resource-id='taskWrap']/android.view.View[last()]/android.view.View/android.widget.TextView[{' or '.join([f"@text='{text}'" for text in xy_task_name])}]")
         condition = " or ".join([f'@text="{text}"' for text in xy_task_name])
