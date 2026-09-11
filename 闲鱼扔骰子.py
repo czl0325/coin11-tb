@@ -11,6 +11,7 @@ ctx = d.watch_context()
 ctx.when("暂不升级").click()
 ctx.when("放弃").click()
 ctx.when("确定").click()
+ctx.when('//android.widget.ImageView[@resource-id="com.taobao.idlefish:id/fish_layer_js_native_window_background_view"]/following-sibling::android.widget.RelativeLayout/android.widget.FrameLayout/android.widget.ImageView[2]').click()
 ctx.start()
 have_clicked = dict()
 error_count = 0
@@ -19,7 +20,7 @@ xy_task_name = ["领至高20元外卖红包", "浏览指定频道好物", "搜�
 
 
 def check_in_xy():
-    home_view = d(className="android.webkit.WebView", textContains="闲鱼币首页")
+    home_view = d(className="android.webkit.WebView", textContains="首页")
     task_dialog = d(resourceId="taskWrap", className="android.view.View")
     throw_btn1 = d(className="android.view.View", resourceId="mapDiceBtn")
     if (home_view.exists or throw_btn1.exists) and task_dialog.exists:
@@ -40,7 +41,7 @@ def to_task():
         elif sign_btn2.exists:
             d.click(sign_btn2.center()[0], sign_btn2.center()[1])
             time.sleep(2)
-        if d(className="android.webkit.WebView", textContains="闲鱼币首页").exists or d(className="android.view.View", resourceId="mapDiceBtn").exists:
+        if check_in_xy():
             print("已经进入闲鱼页面")
             break
         time.sleep(1)
