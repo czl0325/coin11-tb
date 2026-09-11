@@ -16,14 +16,15 @@ ctx.start()
 have_clicked = dict()
 error_count = 0
 finish_count = 0
-xy_task_name = ["领至高20元外卖红包", "浏览指定频道好物", "搜一搜推荐商品", "去浏览全新好物", "浏览推荐的国补商品", "去支付宝领积分", "去淘宝签到领红包", "去蚂蚁庄园逛一逛", "去逛一逛芭芭农场", "去支付宝农场领水果", "去蚂蚁森林逛一逛", "去百度逛一逛", "去百度极速版逛一逛", "去饿了么果园领水果", "薅羊毛赚话费", "去天猫拿红包", "逛一逛淘宝人生", "去淘特领好礼", "上夸克天天领现金", "去淘金币赢20亿", "去快手极速版领红包", "去神奇鱼塘领能量", "去淘宝闪购果园领水果", "去头条玩一玩", "去淘宝闪购抽免单卡", "去逛一逛淘金币", "逛花花卡翻卡赢大奖", "去百度地图逛一逛", "618去淘金币赢20亿", "去逛一逛斗地主", "去闲鱼小程序抽大奖", "去苏宁金融赚金币", "去成就中心签到拿周边", "去淘宝闪购逛一逛", "逛逛淘宝闪购天天免单", "点闪购商品领叠加红包"]
+xy_task_name = ["领至高20元外卖红包", "浏览指定频道好物", "搜一搜推荐商品", "去浏览全新好物", "浏览推荐的国补商品", "去支付宝领积分", "去淘宝签到领红包", "去蚂蚁庄园逛一逛", "去逛一逛芭芭农场", "去支付宝农场领水果", "去蚂蚁森林逛一逛", "去百度逛一逛", "去百度极速版逛一逛", "去饿了么果园领水果", "薅羊毛赚话费", "去天猫拿红包", "逛一逛淘宝人生", "去淘特领好礼", "上夸克天天领现金", "去淘金币赢20亿", "去快手极速版领红包", "去神奇鱼塘领能量", "去淘宝闪购果园领水果", "去头条玩一玩", "去淘宝闪购抽免单卡", "去逛一逛淘金币", "逛花花卡翻卡赢大奖", "去百度地图逛一逛", "618去淘金币赢20亿", "去逛一逛斗地主", "去闲鱼小程序抽大奖", "去苏宁金融赚金币", "去成就中心签到拿周边", "去淘宝闪购逛一逛", "逛逛淘宝闪购天天免单", "点闪购商品领叠加红包", "去浏览福利好物", "逛逛商城领超值优惠券"]
 
 
 def check_in_xy():
     home_view = d(className="android.webkit.WebView", textContains="首页")
-    task_dialog = d(resourceId="taskWrap", className="android.view.View")
-    throw_btn1 = d(className="android.view.View", resourceId="mapDiceBtn")
-    if (home_view.exists or throw_btn1.exists) and task_dialog.exists:
+    task_dialog1 = d(resourceId="taskWrap", className="android.view.View")
+    _throw_btn1 = d(className="android.view.View", resourceId="mapDiceBtn")
+    _throw_btn2 = d(className="android.widget.Button", resourceId="mapStepBtn")
+    if (home_view.exists or _throw_btn1.exists or _throw_btn2.exists) and task_dialog1.exists:
         print("任务弹框存在")
         return True
     return False
@@ -193,18 +194,18 @@ def check_popup():
             throw_btn2.click()
             time.sleep(3)
             return
-    close_btn1 = d.xpath('//android.webkit.WebView[@text="闲鱼币首页SSR" or @text="首页"]/android.view.View/android.view.View[3]/android.view.View/android.view.View/android.widget.TextView')
-    if close_btn1.exists:
-        print("点击关闭")
-        close_btn1.click()
-        time.sleep(3)
-        return
-    close_btn2 = d.xpath('//android.webkit.WebView[@text="闲鱼币首页SSR" or @text="首页"]/android.view.View/android.view.View[4]/android.view.View/android.view.View/android.widget.TextView')
-    if close_btn2.exists:
-        print("点击关闭")
-        close_btn2.click()
-        time.sleep(3)
-        return
+    # close_btn1 = d.xpath('//android.webkit.WebView[@text="闲鱼币首页SSR" or @text="首页"]/android.view.View/android.view.View[3]/android.view.View/android.view.View/android.widget.TextView')
+    # if close_btn1.exists:
+    #     print("点击关闭")
+    #     close_btn1.click()
+    #     time.sleep(3)
+    #     return
+    # close_btn2 = d.xpath('//android.webkit.WebView[@text="闲鱼币首页SSR" or @text="首页"]/android.view.View/android.view.View[4]/android.view.View/android.view.View/android.widget.TextView')
+    # if close_btn2.exists:
+    #     print("点击关闭")
+    #     close_btn2.click()
+    #     time.sleep(3)
+    #     return
     close_btn3 = d.xpath('//android.widget.TextView[@text="道具可至「背包」查看使用"]/following-sibling::android.widget.TextView[1]')
     if close_btn3.exists:
         print("点击关闭抽奖界面")
@@ -374,23 +375,39 @@ while click_count >= 0:
     else:
         break
     click_count -= 1
-throw_btn = d(className="android.view.View", resourceId="mapDiceBtn")
-while True:
-    print("开始摇骰子...")
-    count_btn = throw_btn.child(className="android.widget.TextView", index=0)
-    if count_btn.exists:
-        print(f"摇骰子次数：{count_btn.get_text()}")
-        numbers = re.findall(r'\d+', count_btn.get_text())
+throw_btn1 = d(className="android.view.View", resourceId="mapDiceBtn")
+if throw_btn1.exists:
+    while True:
+        print("开始摇骰子...")
+        count_btn = throw_btn1.child(className="android.widget.TextView", index=0)
+        if count_btn.exists:
+            print(f"摇骰子次数：{count_btn.get_text()}")
+            numbers = re.findall(r'\d+', count_btn.get_text())
+            if len(numbers) <= 0:
+                break
+            count = int(numbers[0])
+            if count > 0:
+                d.click(throw_btn1.center()[0], throw_btn1.center()[1])
+                time.sleep(5)
+                check_popup()
+        else:
+            break
+        time.sleep(2)
+throw_btn2 = d(className="android.widget.Button", resourceId="mapStepBtn")
+if throw_btn2.exists:
+    while True:
+        print("开始摇骰子...")
+        throw_btn2 = d(className="android.widget.Button", resourceId="mapStepBtn")
+        numbers = re.findall(r'(\d+)步$', throw_btn2.get_text())
         if len(numbers) <= 0:
             break
-        count = int(numbers[0])
-        if count > 0:
-            d.click(throw_btn.center()[0], throw_btn.center()[1])
+        count = int(numbers[-1])
+        if count >= 10:
+            throw_btn2.click()
             time.sleep(5)
             check_popup()
-    else:
-        break
-    time.sleep(2)
+        else:
+            break
 power_btn = d(className="android.widget.TextView", textMatches=r"充能领奖|即将下线")
 if power_btn.exists:
     print("点击充能领奖")

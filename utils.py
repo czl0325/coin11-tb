@@ -365,19 +365,25 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22, only_
                     if commodity_view1.exists:
                         print(f"存在commodity_view1，点击{commodity_view1.center()}")
                         commodity_view1.click()
-                        time.sleep(18)
+                        time.sleep(23)
                         break
                     commodity_view2 = d(className="android.view.View", resourceId="feedsContainer")
                     if commodity_view2.exists:
                         print(f"存在commodity_view2，点击{(100, commodity_view2.center()[1])}")
                         d.click(300, commodity_view2.center()[1])
-                        time.sleep(18)
+                        time.sleep(23)
                         break
                     commodity_view3 = d(className="android.view.View", resourceId="home-scroll-container")
                     if commodity_view3.exists:
                         print(f"commodity_view3，点击commodity_view3")
                         d.click(commodity_view3.bounds()[0] + 100, commodity_view3.bounds()[1] + 700)
-                        time.sleep(18)
+                        time.sleep(23)
+                        break
+                    commodity_view4 = d(className="android.widget.FrameLayout", resourceId="com.taobao.idlefish:id/fmfa_csj_mall_container")
+                    if commodity_view4.exists:
+                        print(f"commodity_view4，点击commodity_view4")
+                        d.click(commodity_view4.bounds()[0] + 100, commodity_view4.bounds()[1] + 1200)
+                        time.sleep(23)
                         break
                 if package_name == origin_app or package_name == TMALL_APP:
                     if package_name == ALIPAY_APP:
