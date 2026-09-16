@@ -771,3 +771,15 @@ def start_watcher(d):
     # ctx.when(xpath="//android.widget.TextView[@package='com.eg.android.AlipayGphone']").click()
     ctx.start()
     return ctx
+
+
+def random_swipe(d):
+    screen_width, screen_height = d.window_size()
+    start_x = random.randint(screen_width // 6, screen_width // 2)
+    start_y = random.randint(screen_height // 2, screen_height - screen_height // 4)
+    end_x = random.randint(start_x - 100, start_x)
+    end_y = random.randint(200, start_y - 300)
+    swipe_time = random.uniform(0.4, 1) if end_y - start_y > 500 else random.uniform(0.2, 0.5)
+    print("模拟滑动", start_x, start_y, end_x, end_y, swipe_time)
+    d.swipe(start_x, start_y, end_x, end_y, swipe_time)
+    time.sleep(random.uniform(0.8, 1.2))
