@@ -12,7 +12,7 @@ ctx.when("暂不升级").click()
 ctx.when("放弃").click()
 ctx.when("确定").click()
 ctx.start()
-have_clicked = dict()
+have_clicked = []
 
 
 def check_in_task():
@@ -112,6 +112,7 @@ if ling_btn.exists:
     print("点击领红包")
     ling_btn.click()
     time.sleep(2)
+try_count = 0
 while True:
     try:
         time.sleep(4)
@@ -132,9 +133,12 @@ while True:
                     task_name = name_view.text
                     if fish_no_click(task_name):
                         continue
+                    if task_name in have_clicked:
+                        continue
                 if task_name:
                     print(f"点击任务：{task_name}")
                     (to_btn.all())[index].click()
+                    have_clicked.append(task_name)
                     has_task = True
                     time.sleep(3)
                     if "神奇鱼塘" in task_name or "闲鱼币" in task_name:
@@ -144,8 +148,12 @@ while True:
                         task_loop(d, back_to_task, is_fish=True)
                 break
             if not has_task:
-                print("任务全部做完了，退出循环")
-                break
+                if try_count > 2:
+                    print("任务全部做完了，退出循环")
+                    break
+                else:
+                    d.swipe_ext(u2.Direction.FORWARD)
+                    try_count += 1
         else:
             print("找不到任务了，退出循环")
             break
