@@ -11,6 +11,7 @@ start_app(d, TMALL_APP, init=True)
 screen_width, screen_height = d.window_size()
 ctx = d.watch_context()
 ctx.when(xpath='//android.widget.FrameLayout[@resource-id="com.tmall.wireless:id/poplayer_native_state_center_layout_frame_id"]/android.widget.ImageView').click()
+ctx.when(xpath='//*[@resource-id="com.alipay.mobile.accountauthbiz:id/close_dialog_button"]').click()
 ctx.when("TB1XICqw4v1gK0jSZFFXXb0sXXa-105-105").click()
 ctx.when("O1CN01hlloCi1c1pRpyL9bo_!!6000000003541-2-tps-132-132.png_q50.jpg_").click()
 
