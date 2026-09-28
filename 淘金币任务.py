@@ -8,7 +8,6 @@ unclick_btn = []
 have_clicked = dict()
 is_end = False
 error_count = 0
-in_other_app = False
 time1 = time.time()
 selected_device = select_device()
 d = u2.connect(selected_device)
@@ -131,7 +130,6 @@ find_earn_btn()
 finish_count = 0
 while True:
     try:
-        in_other_app = False
         time.sleep(4)
         check_verify(d)
         check_popup(d)
@@ -186,8 +184,6 @@ while True:
                     have_clicked[task_name] = 1
                 else:
                     have_clicked[task_name] += 1
-                if check_chars_exist(task_name, other_app):
-                    in_other_app = True
                 need_click_view.click()
                 time.sleep(3.5)
                 task_loop(d, back_to_task)
