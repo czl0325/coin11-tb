@@ -385,6 +385,12 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22, only_
                         d.click(commodity_view4.bounds()[0] + 100, commodity_view4.bounds()[1] + 1200)
                         time.sleep(23)
                         break
+                    commodity_view5 = d(className="android.widget.FrameLayout", resourceId="com.taobao.idlefish:id/fmfa_csj_mall_content_root")
+                    if commodity_view5.exists:
+                        print(f"commodity_view5，commodity_view5")
+                        d.click(commodity_view5.bounds()[0] + 100, commodity_view5.bounds()[1] + 1200)
+                        time.sleep(23)
+                        break
                 if package_name == origin_app or package_name == TMALL_APP:
                     if package_name == ALIPAY_APP:
                         screen_image = d.screenshot(format='opencv')
