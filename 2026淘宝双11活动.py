@@ -174,7 +174,7 @@ def check_in_task():
 
 def back_to_task():
     print("开始返回任务页面")
-    for i in range(1, 31):
+    for _ in range(1, 31):
         try:
             temp_package, temp_activity = get_current_app(d)
             if not temp_package or not temp_activity:
@@ -214,11 +214,11 @@ def back_to_task():
             task_view = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]')
             if task_view.exists:
                 close_btn2 = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]/preceding-sibling::android.view.View[1]')
-                if close_btn2.exists:
-                    print("点击关闭限时下单任务按钮")
-                    close_btn2.click()
-                    time.sleep(1)
-                    continue
+            if close_btn2.exists:
+                print("点击关闭限时下单任务按钮")
+                close_btn2.click()
+                time.sleep(1)
+                continue
             print("点击后退")
             d.press("back")
             time.sleep(0.5)
@@ -263,6 +263,36 @@ def first_button(nodes, pattern):
         if n["cls"] == "android.widget.Button" and re.fullmatch(pattern, n["text"].strip()):
             return n
     return None
+
+
+def pick_game_btn(ns):
+    """找「跳一跳拿钱 / 升级赛车拿钱 / 加速升级」按钮；2026 版它是 Button，旧版也是，兜底不限 class"""
+    return next((n for n in ns if n["cls"] == "android.widget.Button" and GAME_BTN_RE.search(n["text"])), None) \
+        or next((n for n in ns if GAME_BTN_RE.search(n["text"])), None)
+
+
+def click_close(nodes):
+    """点掉当前弹窗的关闭按钮（含右上角 X），返回是否点到了。
+    注意别用「尾翼」判空——页面上常驻「尾翼升级 20%」这种进度文案，会误判；
+    也别加「跳过」——活动页有个常驻的跳过按钮，点了会跑到别的页面去。"""
+    for text in ("关闭", "关闭按钮", "确认选择", "我知道了", "知道了", "取消"):
+        hit = next((n for n in nodes if n["clickable"] and n["text"].strip() == text), None)
+        if hit is None:
+            hit = next((n for n in nodes if n["clickable"] and text in n.get("desc", "")), None)
+        if hit:
+            print(f"关闭弹窗：{text}")
+            tap_bounds(hit["bounds"])
+            return True
+    return False
+
+
+def reopen_coin_page():
+    """退回淘宝首页再重新进入淘金币页面。
+    页面开久了无障碍树偶尔读不到 WebView 里的内容（dump 只剩外壳节点），重开一次通常就恢复了。"""
+    print("重新打开淘金币页面")
+    d.shell(f"am start -n {TB_APP}/com.taobao.tao.welcome.Welcome")
+    time.sleep(5)
+    find_coin_btn()
 
 
 find_coin_btn()
@@ -348,40 +378,71 @@ d.click(screen_width // 2, 200)
 time.sleep(2)
 
 print("开始跳一跳/升级赛车")
-game_round = 0
-while game_round < 60:
-    game_round += 1
+last_energy = None   # 上一轮读到的能量，用来判断这一次点击到底有没有生效
+stuck = 0            # 连续「能量没变化」的次数
+reopen_times = 0     # 重新打开页面的次数，避免无限重开
+
+for game_round in range(1, 61):
     nodes = dump_nodes()
-    if not nodes:
-        time.sleep(3)
-        continue
-    close_btn = first_button(nodes, r"关闭")
-    if close_btn:
-        tap_bounds(close_btn["bounds"])
+
+    # 1) 有弹窗挡着就先点关闭（升级时会弹「解锁新尾翼」，不关掉长按不扣能量）
+    if click_close(nodes):
+        print(f"[{game_round}] 已关闭弹窗，继续升级")
         time.sleep(2)
         continue
-    game_btn = next((n for n in nodes if n["cls"] == "android.widget.Button" and GAME_BTN_RE.search(n["text"])), None)
+
+    # 2) 正常路径：直接点升级按钮
+    game_btn = pick_game_btn(nodes)
     if not game_btn:
-        print("未找到「跳一跳拿钱/升级赛车」按钮，结束")
+        # 3) 连升级按钮都找不到，说明页面读不到或卡住了，关掉页面重新打开
+        if reopen_times < 2:
+            reopen_times += 1
+            print(f"[{game_round}] 找不到升级按钮，关闭页面重新打开")
+            reopen_coin_page()
+            continue
+        print(f"[{game_round}] 无法恢复淘金币页面，结束跳一跳阶段")
         break
-    match = POWER_NUM_RE.search(game_btn["text"])
-    if not match:
-        print(f"按钮文案解析不出剩余能量: {game_btn['text'][:40]}")
+
+    m = POWER_NUM_RE.search(game_btn["text"])
+    if not m:
+        print(f"[{game_round}] 按钮文案解析不出剩余能量，结束")
         break
-    phy_num = int(match.group(1))
+    phy_num = int(m.group(1))
+    unit = "能量" if "能量" in game_btn["text"] else "体力"
     if phy_num < 10:
-        print(f"剩余能量不足({phy_num})，结束")
+        print(f"[{game_round}] 剩余{unit}不足（{phy_num}），结束")
         break
-    print(f"当前剩余{('能量' if '能量' in game_btn['text'] else '体力')}：{phy_num}")
-    bx1, by1, bx2, by2 = game_btn["bounds"]
-    center_x, center_y = (bx1 + bx2) // 2, (by1 + by2) // 2
-    if phy_num < 50:
-        d.click(center_x, center_y)
+
+    # 能量连续几轮不变说明点了没用（还是被挡着），重开页面救一次
+    if last_energy is not None and phy_num >= last_energy:
+        stuck += 1
+        print(f"[{game_round}] 剩余{unit} {phy_num}（上一次 {last_energy}，第 {stuck}/3 次没有变化）")
+        if stuck >= 3:
+            if reopen_times < 2:
+                reopen_times += 1
+                print("   连续没变化，关闭页面重新打开")
+                reopen_coin_page()
+                stuck = 0
+                continue
+            print("   连续没变化且无法恢复，结束跳一跳阶段")
+            break
     else:
-        d.long_click(center_x, center_y, 3)
+        stuck = 0
+
+    last_energy = phy_num
+    print(f"[{game_round}] 当前剩余{unit}：{phy_num}")
+    b = game_btn["bounds"]
+    cx, cy = (b[0] + b[2]) // 2, (b[1] + b[3]) // 2
+    if phy_num < 50:
+        d.click(cx, cy)
+    else:
+        d.long_click(cx, cy, 3)
     time.sleep(7)
-else:
-    print("升级赛车循环达到上限，结束")
+
+    # 点完顺手看一眼有没有弹窗跳出来
+    if click_close(dump_nodes()):
+        print(f"[{game_round}] 升级后弹窗已关闭")
+        time.sleep(2)
 
 ctx.close()
 d.shell("settings put system accelerometer_rotation 0")
