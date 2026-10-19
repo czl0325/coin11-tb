@@ -49,9 +49,9 @@ def to_task():
     while True:
         if in_task_home():
             break
-        task_btn = d(className="android.widget.Button", text="赚能量")
-        if task_btn.exists:
-            task_btn.click()
+        task_btn1 = d(className="android.widget.Button", text="赚能量")
+        if task_btn1.exists:
+            task_btn1.click()
         else:
             canvas_image = d.xpath('//android.webkit.WebView[@text="淘金币首页"]/android.view.View/android.view.View[1]/android.widget.Image')
             if canvas_image.exists:
