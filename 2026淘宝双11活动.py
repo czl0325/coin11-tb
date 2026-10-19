@@ -214,11 +214,11 @@ def back_to_task():
             task_view = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]')
             if task_view.exists:
                 close_btn2 = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]/preceding-sibling::android.view.View[1]')
-            if close_btn2.exists:
-                print("点击关闭限时下单任务按钮")
-                close_btn2.click()
-                time.sleep(1)
-                continue
+                if close_btn2.exists:
+                    print("点击关闭限时下单任务按钮")
+                    close_btn2.click()
+                    time.sleep(1)
+                    continue
             print("点击后退")
             d.press("back")
             time.sleep(0.5)
