@@ -104,6 +104,10 @@ finish_count = 0
 
 while True:
     time.sleep(4)
+    get_btn = d(className="android.widget.Button", textMatches=r".*立即领取，奖励\d+")
+    if get_btn.exists:
+        get_btn.click()
+        continue
     has_task = False
     task_btn = d.xpath('//android.widget.Button[@text="去完成"]')
     if task_btn.exists:
