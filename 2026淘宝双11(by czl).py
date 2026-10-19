@@ -113,15 +113,16 @@ while True:
         for index in range(len(task_btn.all())):
             title_view = d.xpath(f'(//android.widget.Button[@text="去完成"])[{index+1}]/preceding-sibling::android.widget.TextView[1]')
             if title_view.exists:
-                task_name = title_view.text
-                if has_clicked.get(task_name, 0) > 2:
+                temp_name = title_view.text
+                if has_clicked.get(temp_name, 0) > 2:
                     continue
-                if check_chars_exist(task_name):
+                if check_chars_exist(temp_name):
                     continue
                 click_index = index
-                find_arr = re.findall(r"浏览(\d+)秒", task_name)
+                find_arr = re.findall(r"浏览(\d+)秒", temp_name)
                 if len(find_arr) > 0:
                     do_time = int(find_arr[0]) + 3
+                task_name = temp_name
                 break
         if task_name:
             print(f"进行任务：{task_name}，需要浏览{do_time}秒。")
@@ -144,10 +145,15 @@ while True:
     if close_btn.exists:
         close_btn.click()
         time.sleep(2)
+    choice_btn = d(className="android.widget.TextView", text="确认选择")
+    if choice_btn.exists:
+        choice_btn.click()
+        continue
     racing_btn = d(className="android.widget.Button", textContains="升级赛车拿钱")
     if racing_btn.exists:
-        if energy_list := re.findall(r"剩余(\d+)能量", racing_btn.get_text()):
+        if energy_list := re.findall(r"剩余\s*(\d+)\s*能量", racing_btn.get_text()):
             energy_text = int(energy_list[0])
+            print(f"剩余{energy_text}能量")
             if energy_text < 100:
                 break
             elif energy_text < 500:
