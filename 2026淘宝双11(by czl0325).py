@@ -104,8 +104,9 @@ finish_count = 0
 
 while True:
     time.sleep(4)
-    get_btn = d(className="android.widget.Button", textMatches=r".*立即领取，奖励\d+")
+    get_btn = d(className="android.widget.Button", textMatches=r".*立即领取，奖励\d+.*")
     if get_btn.exists:
+        print("点击立即领取")
         get_btn.click()
         continue
     has_task = False
@@ -120,7 +121,7 @@ while True:
                 temp_name = title_view.text
                 if has_clicked.get(temp_name, 0) > 2:
                     continue
-                if check_chars_exist(temp_name):
+                if check_chars_exist(temp_name) and "浏览" not in temp_name:
                     continue
                 click_index = index
                 find_arr = re.findall(r"浏览(\d+)秒", temp_name)
@@ -147,10 +148,12 @@ while True:
     time.sleep(4)
     close_btn = d(className="android.widget.Button", text="关闭")
     if close_btn.exists:
+        print("点击关闭")
         close_btn.click()
         time.sleep(2)
     choice_btn = d(className="android.widget.TextView", text="确认选择")
     if choice_btn.exists:
+        print("点击确认选择")
         choice_btn.click()
         continue
     racing_btn = d(className="android.widget.Button", textContains="升级赛车拿钱")
