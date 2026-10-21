@@ -1,9 +1,8 @@
 import re
 import time
-from pydoc import describe
 
 import uiautomator2 as u2
-from utils import check_chars_exist, other_app, get_current_app, select_device, task_loop, check_verify, start_app, TB_APP, check_popup
+from utils import check_chars_exist, get_current_app, select_device, task_loop, check_verify, start_app, TB_APP, print_error
 
 selected_device = select_device()
 d = u2.connect(selected_device)
@@ -60,8 +59,10 @@ def to_task():
 
 
 def back_to_task():
+    print("开始返回任务页面")
     while True:
         if in_coin_home():
+            print("已成功返回任务页面")
             break
         temp_package, temp_activity = get_current_app(d)
         if not temp_package or not temp_activity:
@@ -97,49 +98,55 @@ def back_to_task():
         time.sleep(0.4)
 
 
-
 find_coin_btn()
 to_task()
 finish_count = 0
 
 while True:
-    time.sleep(4)
-    get_btn = d(className="android.widget.Button", textMatches=r".*立即领取，奖励\d+.*")
-    if get_btn.exists:
-        print("点击立即领取")
-        get_btn.click()
-        continue
-    has_task = False
-    task_btn = d.xpath('//android.widget.Button[@text="去完成"]')
-    if task_btn.exists:
-        task_name = None
-        click_index = 0
-        do_time = 18
-        for index in range(len(task_btn.all())):
-            title_view = d.xpath(f'(//android.widget.Button[@text="去完成"])[{index+1}]/preceding-sibling::android.widget.TextView[1]')
-            if title_view.exists:
-                temp_name = title_view.text
-                if has_clicked.get(temp_name, 0) > 2:
-                    continue
-                if check_chars_exist(temp_name) and "浏览" not in temp_name:
-                    continue
-                click_index = index
-                find_arr = re.findall(r"浏览(\d+)秒", temp_name)
-                if len(find_arr) > 0:
-                    do_time = int(find_arr[0]) + 3
-                task_name = temp_name
-                break
-        if task_name:
-            print(f"进行任务：{task_name}，需要浏览{do_time}秒。")
-            has_clicked[task_name] = has_clicked[task_name] + 1 if has_clicked.get(task_name) else 1
-            (task_btn.all())[click_index].click()
-            time.sleep(5)
-            has_task = True
-            task_loop(d, back_to_task, duration=do_time)
-            finish_count += 1
+    try:
+        time.sleep(4)
+        print("开始查找任务。。。")
+        get_btn = d(className="android.widget.Button", textMatches=r".*立即领取，奖励\d+.*")
+        if get_btn.exists:
+            print("点击立即领取")
+            get_btn.click()
             continue
-        if not has_task:
+        has_task = False
+        task_btn = d.xpath('//android.widget.Button[@text="去完成"]')
+        if task_btn.exists:
+            task_name = None
+            click_index = 0
+            do_time = 18
+            for index in range(len(task_btn.all())):
+                title_view = d.xpath(f'(//android.widget.Button[@text="去完成"])[{index + 1}]/preceding-sibling::android.widget.TextView[1]')
+                if title_view.exists:
+                    temp_name = title_view.text
+                    if has_clicked.get(temp_name, 0) > 2:
+                        continue
+                    if check_chars_exist(temp_name) and "浏览" not in temp_name:
+                        continue
+                    click_index = index
+                    find_arr = re.findall(r"浏览(\d+)秒", temp_name)
+                    if len(find_arr) > 0:
+                        do_time = int(find_arr[0]) + 3
+                    task_name = temp_name
+                    break
+            if task_name:
+                print(f"进行任务：{task_name}，需要浏览{do_time}秒。")
+                has_clicked[task_name] = has_clicked[task_name] + 1 if has_clicked.get(task_name) else 1
+                (task_btn.all())[click_index].click()
+                time.sleep(5)
+                has_task = True
+                task_loop(d, back_to_task, duration=do_time)
+                finish_count += 1
+                continue
+            if not has_task:
+                break
+        else:
+            print("没有找到任务按钮，退出循环")
             break
+    except Exception as e:
+        print_error()
 print(f"共完成{finish_count}个任务")
 d.click(screen_width // 2, 150)
 time.sleep(3)
@@ -167,4 +174,3 @@ while True:
                 racing_btn.click()
             else:
                 racing_btn.long_click(duration=5)
-
