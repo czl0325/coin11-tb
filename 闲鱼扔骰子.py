@@ -1,422 +1,561 @@
 import time
 import re
+import random
 import uiautomator2 as u2
 
-from utils import get_current_app, find_button, close_xy_dialog, task_loop, FISH_APP, start_app, check_app
+from utils import (
+    get_current_app,
+    find_button,
+    close_xy_dialog,
+    FISH_APP,
+    start_app,
+    check_app,
+    select_device,
+)
 
-d = u2.connect()
-start_app(d, FISH_APP, init=True)
+selected_device = select_device()
+d = u2.connect(selected_device)
+print(f"已成功连接设备：{selected_device}")
+
+start_app(d, FISH_APP, init=False)
 screen_width, screen_height = d.window_size()
+
 ctx = d.watch_context()
 ctx.when("暂不升级").click()
 ctx.when("放弃").click()
 ctx.when("确定").click()
+ctx.when("我知道了").click()
+ctx.when("收下礼物").click()
+ctx.when("开心收下").click()
+ctx.when("全部收下").click()
+ctx.when("残忍离开").click()
 ctx.when('//android.widget.ImageView[@resource-id="com.taobao.idlefish:id/fish_layer_js_native_window_background_view"]/following-sibling::android.widget.RelativeLayout/android.widget.FrameLayout/android.widget.ImageView[2]').click()
 ctx.start()
-have_clicked = dict()
-error_count = 0
+
 finish_count = 0
-xy_task_name = ["领至高20元外卖红包", "浏览指定频道好物", "搜一搜推荐商品", "去浏览全新好物", "浏览推荐的国补商品", "去支付宝领积分", "去淘宝签到领红包", "去蚂蚁庄园逛一逛", "去逛一逛芭芭农场", "去支付宝农场领水果", "去蚂蚁森林逛一逛", "去百度逛一逛", "去百度极速版逛一逛", "去饿了么果园领水果", "薅羊毛赚话费", "去天猫拿红包", "逛一逛淘宝人生", "去淘特领好礼", "上夸克天天领现金", "去淘金币赢20亿", "去快手极速版领红包", "去神奇鱼塘领能量", "去淘宝闪购果园领水果", "去头条玩一玩", "去淘宝闪购抽免单卡", "去逛一逛淘金币", "逛花花卡翻卡赢大奖", "去百度地图逛一逛", "618去淘金币赢20亿", "去逛一逛斗地主", "去闲鱼小程序抽大奖", "去苏宁金融赚金币", "去成就中心签到拿周边", "去淘宝闪购逛一逛", "逛逛淘宝闪购天天免单", "点闪购商品领叠加红包", "去浏览福利好物", "逛逛商城领超值优惠券"]
+
+GAME_KEYWORDS = [
+    "玩游戏", "消了还想消", "玩1关", "向往的生活", "点点消不停", "织梦森林", "赵云与阿斗", "游戏", "合成", "主线"
+]
+
+_ocr_reader = None
+
+def get_ocr():
+    global _ocr_reader
+    if _ocr_reader is None:
+        import easyocr
+        _ocr_reader = easyocr.Reader(['ch_sim', 'en'], gpu=True)
+    return _ocr_reader
+
+
+def is_game_task(task_title):
+    """严格过滤游戏类任务（按用户要求跳过）"""
+    return any(k in task_title for k in GAME_KEYWORDS)
 
 
 def check_in_xy():
-    home_view = d(className="android.webkit.WebView", textContains="首页")
-    task_dialog1 = d(resourceId="taskWrap", className="android.view.View")
-    _throw_btn1 = d(className="android.view.View", resourceId="mapDiceBtn")
-    _throw_btn2 = d(className="android.widget.Button", resourceId="mapStepBtn")
-    if (home_view.exists or _throw_btn1.exists or _throw_btn2.exists) and task_dialog1.exists:
-        print("任务弹框存在")
+    """检测当前是否已在闲鱼币/大富翁寻宝主页面"""
+    if d.xpath("//*[@resource-id='mapStepBtn' or @resource-id='mapDiceBtn']").exists:
+        return True
+    if d.xpath("//*[contains(@text, '完成1圈') or contains(@text, '圈数挑战') or contains(@text, '当前已完成')]").exists:
         return True
     return False
 
 
 def to_task():
-    while True:
-        check_popup()
-        sign_btn1 = d(resourceId="com.taobao.idlefish:id/icon_entry_lottie", className="android.widget.ImageView", clickable=True)
-        sign_btn2 = d(className="android.widget.ImageView", resourceId="com.taobao.idlefish:id/icon_entry")
-        print(f"查找签到按钮，存在:{sign_btn1.exists}, {sign_btn2.exists}")
-        if sign_btn1.exists:
-            d.click(sign_btn1.center()[0], sign_btn1.center()[1])
-            time.sleep(2)
-        elif sign_btn2.exists:
-            d.click(sign_btn2.center()[0], sign_btn2.center()[1])
-            time.sleep(2)
+    """自动导航进入闲鱼币寻宝首页"""
+    for try_i in range(12):
         if check_in_xy():
-            print("已经进入闲鱼页面")
+            print("已成功在闲鱼币寻宝页面")
+            break
+
+        check_popup()
+
+        # 1. 尝试旧版首页浮动入口
+        sign_btn1 = d(resourceId="com.taobao.idlefish:id/icon_entry_lottie")
+        sign_btn2 = d(className="android.widget.ImageView", resourceId="com.taobao.idlefish:id/icon_entry")
+        if sign_btn1.exists:
+            print("点击首页浮动签到图标 (lottie)")
+            sign_btn1.click()
+            time.sleep(3)
+        elif sign_btn2.exists:
+            print("点击首页浮动签到图标")
+            sign_btn2.click()
+            time.sleep(3)
+        else:
+            # 2. 新版：点击底栏「我的」 -> 点击「闲鱼币」
+            me_btn = d.xpath("//*[@text='我的']")
+            if me_btn.exists:
+                print("点击底栏「我的」")
+                me_btn.click()
+                time.sleep(2)
+            coin_btn = d.xpath("//*[contains(@text, '闲鱼币')]")
+            if coin_btn.exists:
+                print("点击「闲鱼币」入口")
+                coin_btn.click()
+                time.sleep(4)
+
+        if check_in_xy():
+            print("已经进入闲鱼币寻宝页面")
             break
         time.sleep(1)
-    time.sleep(10)
+
+    time.sleep(3)
     close_xy_dialog(d)
 
 
-def click_earn():
-    while True:
-        print("开始查找去赚钱按钮")
-        if d(className="android.view.View", resourceId="taskWrap").exists:
-            print("任务弹框存在")
-            break
-        check_app(d, FISH_APP)
-        check_popup()
-        throw_btn1 = d(className="android.view.View", resourceId="mapDiceBtn")
-        if throw_btn1.exists:
-            print("点击任务按钮")
-            d.click(throw_btn1.bounds()[2] + 100, throw_btn1.center()[1] + 30)
-        time.sleep(2)
-
-
-def back_to_task():
-    print("开始返回任务页面")
-    while True:
-        temp_package, temp_activity = get_current_app(d)
-        if temp_package is None or temp_activity is None or "Ext2ContainerActivity" in temp_activity:
-            continue
-        print(f"{temp_package}--{temp_activity}")
-        if FISH_APP not in temp_package:
-            print(f"回到原始APP,{FISH_APP}")
-            start_app(d, FISH_APP)
-            jump_btn = d(resourceId="com.taobao.taobao:id/tv_close", text="跳过")
-            if jump_btn.exists:
-                jump_btn.click()
-                time.sleep(2)
-        else:
-            if check_in_xy():
-                print("当前是任务列表画面，不能继续返回")
-                break
-            else:
-                if "com.taobao.idlefish.maincontainer.activity.MainActivity" in temp_activity:
-                    print("进入到闲鱼首页，重新进入任务页。")
-                    to_task()
-                    click_earn()
-                    continue
-                close_btn1 = d.xpath("//android.widget.FrameLayout[@resource-id='com.alipay.multiplatform.phone.xriver_integration:id/frameLayout_rightButton1']/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.FrameLayout[2]")
-                if close_btn1.exists:
-                    print("点击关闭小程序按钮")
-                    close_btn1.click()
-                    time.sleep(1)
-                    continue
-                task_view1 = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]')
-                if task_view1.exists:
-                    close_btn2 = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]/preceding-sibling::android.view.View[1]')
-                    if close_btn2.exists:
-                        print("点击关闭限时下单任务按钮")
-                        close_btn2.click()
-                        time.sleep(1)
-                        continue
-                print("点击后退")
-                d.press("back")
-                time.sleep(0.3)
-
-
-def operate_task(task):
-    _, activity = get_current_app(d)
-    start_time = time.time()
-    if task == "浏览指定频道好物":
-        while True:
-            if time.time() - start_time > 24:
-                break
-            d.swipe_ext("up", scale=0.3)
-            time.sleep(0.5)
-        d(scrollable=True).fling.vert.toBeginning(max_swipes=1000)
-        time.sleep(2)
-        click_earn()
-    else:
-        print("普通页面")
-        search_view = d(className="android.view.View", text="搜索有福利")
-        search_edit = d(resourceId="com.taobao.taobao:id/searchEdit")
-        search_btn = d(resourceId="com.taobao.taobao:id/searchbtn")
-        if search_view.exists and d(className="android.widget.Button", text="搜索").exists:
-            d(className="android.widget.EditText", instance=0).send_keys("笔记本电脑")
-            d(className="android.widget.Button", text="搜索").click()
-            time.sleep(2)
-        elif search_edit.exists and search_btn.exists:
-            search_edit.send_keys("笔记本电脑")
-            search_btn.click()
-            time.sleep(2)
-        time.sleep(3)
-        print("开始上下滑动")
-        start_time = time.time()
-        tap_index = 0
-        while True:
-            if tap_index % 4 == 0 and tap_index > 0:
-                d.swipe_ext("down", scale=0.4)
-            else:
-                d.swipe_ext("up", scale=0.4)
-            time.sleep(0.3)
-            tap_index += 1
-            if time.time() - start_time > 25:
-                break
-        print("滑动完毕，开始退出")
-        back_to_task()
-
-
 def check_popup():
-    draw_btn = d(className="android.widget.TextView", text="开始抽奖")
-    if draw_btn.exists:
-        d.click(draw_btn.center()[0], draw_btn.center()[1])
-        time.sleep(5)
-        return
-    confirm_btn = d.xpath('//android.widget.TextView[@text="我的闲鱼币: "]/following-sibling::android.widget.TextView[3]')
-    if confirm_btn.exists:
-        print("点击确认消耗")
-        confirm_btn.click()
-        time.sleep(10)
-        return
-    receive_btn3 = d(className="android.widget.TextView", text="领取奖励")
-    if receive_btn3.exists:
-        d.click(receive_btn3.center()[0], receive_btn3.center()[1])
-        time.sleep(3)
-        return
-    know_btn = d(className="android.widget.TextView", text="我知道了")
-    if know_btn.exists:
-        d.click(know_btn.center()[0], know_btn.center()[1])
-        time.sleep(3)
-        return
-    scratch_btn = d(className="android.widget.TextView", text="开始刮奖")
-    if scratch_btn.exists:
-        scratch_btn.click()
-        time.sleep(15)
-        return
-    in_btn = d(className="android.widget.TextView", text="收下礼物")
-    if in_btn.exists:
-        in_btn.click()
-        time.sleep(3)
-        return
-    continue_btn = d(className="android.widget.TextView", text="继续寻宝")
-    if continue_btn.exists:
-        continue_btn.click()
-        time.sleep(3)
-        return
-    throw_btn1 = d(className="android.widget.TextView", text="骰子×1")
-    if throw_btn1.exists:
-        throw_btn2 = d.xpath('//android.widget.TextView[@text="骰子×1"]/following-sibling::android.widget.TextView[1]')
-        if throw_btn2.exists:
-            throw_btn2.click()
-            time.sleep(3)
-            return
-    # close_btn1 = d.xpath('//android.webkit.WebView[@text="闲鱼币首页SSR" or @text="首页"]/android.view.View/android.view.View[3]/android.view.View/android.view.View/android.widget.TextView')
-    # if close_btn1.exists:
-    #     print("点击关闭")
-    #     close_btn1.click()
-    #     time.sleep(3)
-    #     return
-    # close_btn2 = d.xpath('//android.webkit.WebView[@text="闲鱼币首页SSR" or @text="首页"]/android.view.View/android.view.View[4]/android.view.View/android.view.View/android.widget.TextView')
-    # if close_btn2.exists:
-    #     print("点击关闭")
-    #     close_btn2.click()
-    #     time.sleep(3)
-    #     return
-    close_btn3 = d.xpath('//android.widget.TextView[@text="道具可至「背包」查看使用"]/following-sibling::android.widget.TextView[1]')
-    if close_btn3.exists:
-        print("点击关闭抽奖界面")
-        close_btn3.click()
-        time.sleep(3)
-        return
-    continue_btn2 = d.xpath('//android.widget.TextView[@text="本次获得"]/following-sibling::android.widget.TextView[last()]')
-    if continue_btn2.exists:
-        print("点击继续前进")
-        continue_btn2.click()
-        time.sleep(3)
-        return
-    continue_btn3 = d.xpath('//android.widget.TextView[@text="很遗憾没有抽中！继续加油！"]/following-sibling::android.widget.TextView[1]')
-    if continue_btn3.exists:
-        print("点击继续前进")
-        continue_btn3.click()
-        time.sleep(3)
-        return
-    screen_image = d.screenshot(format='opencv')
-    pt1 = find_button(screen_image, "./img/fish_advance.png")
-    if pt1:
-        d.click(int(pt1[0]) + 50, int(pt1[1]) + 20)
-        time.sleep(3)
-        return
-    pt2 = find_button(screen_image, "./img/fish_continue.png")
-    if pt2:
-        d.click(int(pt2[0]) + 50, int(pt2[1]) + 20)
-        time.sleep(3)
-        return
-    pt3 = find_button(screen_image, "./img/fish_continue2.png")
-    if pt3:
-        d.click(int(pt3[0]) + 50, int(pt3[1]) + 20)
-        time.sleep(3)
-        return
-    pt4 = find_button(screen_image, "./img/fish_prize.png")
-    if pt4:
-        d.click(int(pt4[0]) + 100, int(pt4[1]) + 80)
-        time.sleep(3)
-        return
-    pt5 = find_button(screen_image, "./img/fish_swing.png")
-    if pt5:
-        d.click(int(pt5[0]) + 50, int(pt5[1]) + 50)
-        time.sleep(10)
-        return
-    pt6 = find_button(screen_image, "./img/fish_advance2.png")
-    if pt6:
-        d.click(int(pt6[0]) + 50, int(pt6[1]) + 20)
-        time.sleep(3)
-        return
-    pt7 = find_button(screen_image, "./img/fish_throw.png")
-    if pt7:
-        d.click(int(pt7[0]) + 50, int(pt7[1]) + 20)
-        time.sleep(3)
+    """处理寻宝过程中弹出的各类奖励、事件与提示"""
+    w, h = d.window_size()
+
+    # 1. 真实小游戏页面误入处理（通过页面文本精准识别，避免后台 Activity 误判）
+    if d.xpath("//*[contains(@text, '游戏任务入口') or contains(@text, '再玩1关游戏')]").exists:
+        print("检测到误入小程序页面，正在点击胶囊退出...")
+        d.click(1331, 259)
+        time.sleep(1.5)
+        leave = d.xpath("//*[contains(@text, '残忍离开')]")
+        if leave.exists:
+            leave.click()
+            time.sleep(1.5)
         return
 
-
-time.sleep(5)
-ctx.wait_stable()
-to_task()
-click_earn()
-bottom_pos = screen_height
-bottom_navigator = d(className="android.widget.FrameLayout",resourceId="com.android.systemui:id/navigation_bar_frame")
-if bottom_navigator.exists:
-    bottom_pos = bottom_navigator.bounds()[1]
-try_count = 0
-while True:
-    try:
-        print("正在查找按钮...")
-        time.sleep(4)
-        check_app(d, FISH_APP)
-        sign_btn = d(className="android.widget.TextView", text="签到")
-        if sign_btn.exists:
-            d.click(sign_btn.center()[0], sign_btn.center()[1])
-            time.sleep(4)
-        prize_btn = d(className="android.widget.TextView", textMatches=r"\+\d+领取奖励")
-        if prize_btn.exists:
-            prize_btn.click()
-            continue
-        receive_btn = d(className="android.widget.TextView", text="领取奖励")
-        if receive_btn.exists:
-            receive_btn.click()
-            print("点击领取奖励")
-            finish_count += 1
-            continue
-        # task_view = d.xpath(f"//android.view.View[@resource-id='taskWrap']/android.view.View[last()]/android.view.View/android.widget.TextView[{' or '.join([f"@text='{text}'" for text in xy_task_name])}]")
-        condition = " or ".join([f'@text="{text}"' for text in xy_task_name])
-        task_view = d.xpath(f'//android.view.View[@resource-id="taskWrap"]/android.view.View[last()]//android.widget.TextView[{condition}]')
-        if task_view.exists:
-            task_container = d.xpath('//android.view.View[@resource-id="taskWrap"]/android.view.View[last()]')
-            top_position = None
-            if task_container.exists:
-                top_position = task_container.bounds[1]
-            task_name = task_view.get_text()
-            if top_position and task_view.bounds[3] < top_position:
-                print(f"{task_name}超出范围了。等待后再试")
-                start_x = screen_width // 6
-                start_y = screen_height // 3 * 2
-                end_x = start_x + 50
-                end_y = start_y - 200
-                d.swipe(start_x, start_y, end_x, end_y, 0.5)
-                time.sleep(4)
-                continue
-            if have_clicked.get(task_name) is not None and have_clicked.get(task_name) >= 2:
-                print(f"{task_name}已重试两次，移除出数组")
-                xy_task_name.remove(task_name)
-                continue
-            print(f"查找任务:{task_name}")
-            todo_btn = task_view.child("./following-sibling::android.view.View[1]/android.widget.TextView")
-            if todo_btn.exists:
-                try_count = 0
-                todo_text = todo_btn.get_text()
-                if todo_text == "已完成":
-                    break
-                if todo_text != "去完成":
-                    print(f"不是去完成按钮，是{todo_text}")
-                    continue
-                print(f"点击{todo_text},{task_name}位置:{task_view.bounds[1]},{todo_text}位置{todo_btn.bounds[1]}")
-                todo_btn.click()
-                if have_clicked.get(task_name) is None:
-                    have_clicked[task_name] = 1
-                else:
-                    have_clicked[task_name] += 1
-                time.sleep(5)
-                task_loop(d, back_to_task, is_fish=True)
-            else:
-                try_count += 1
-                if try_count >= 3:
-                    break
-        else:
-            print("没有找到任务")
-            last_view = d.xpath('//android.view.View[@resource-id="taskWrap"]/android.view.View[last()]/android.view.View/android.view.View[last()]/android.widget.TextView')
-            if last_view.exists and last_view.get_text() == "已完成":
-                print("已完成按钮存在，退出循环")
-                break
-            else:
-                if not check_in_xy():
-                    d(scrollable=True).fling.vert.toBeginning(max_swipes=1000)
-                    click_earn()
-                else:
-                    d.swipe_ext(u2.Direction.FORWARD)
-                    print("上滑查找下一页")
-                    time.sleep(4)
-    except Exception as e:
-        print("报错", e)
-        back_to_task()
-        continue
-print(f"共自动化完成{finish_count}个任务")
-while True:
-    task_dialog = d(className="android.view.View", resourceId="taskWrap")
-    if not task_dialog.exists:
-        break
-    close_btn = d.xpath('//android.view.View[@resource-id="taskWrap"]/android.widget.TextView[1]')
-    if close_btn.exists:
-        close_btn.click()
-        print("点击关闭按钮")
-    else:
-        print("点击屏幕上部")
-        d.click(screen_width // 2, 250)
-    time.sleep(3)
-click_count = 2
-while click_count >= 0:
-    receive_btn2 = d(className="android.view.View", resourceId="dailyRewardBox")
-    if receive_btn2.exists:
-        print("点击领取收益")
-        receive_btn2.click()
-        time.sleep(3)
-    else:
-        break
-    click_count -= 1
-throw_btn1 = d(className="android.view.View", resourceId="mapDiceBtn")
-if throw_btn1.exists:
-    while True:
-        print("开始摇骰子...")
-        count_btn = throw_btn1.child(className="android.widget.TextView", index=0)
-        if count_btn.exists:
-            print(f"摇骰子次数：{count_btn.get_text()}")
-            numbers = re.findall(r'\d+', count_btn.get_text())
-            if len(numbers) <= 0:
-                break
-            count = int(numbers[0])
-            if count > 0:
-                d.click(throw_btn1.center()[0], throw_btn1.center()[1])
-                time.sleep(5)
-                check_popup()
-        else:
-            break
+    # 2. 道具/宝箱获得弹窗（"道具可至「背包」查看使用"）
+    item_p = d.xpath("//*[contains(@text, '道具可至「背包」查看使用')]")
+    if item_p.exists:
+        print("检测到道具弹窗，正在关闭...")
+        d.click(w // 2, int(h * 0.795))
         time.sleep(2)
-throw_btn2 = d(className="android.widget.Button", resourceId="mapStepBtn")
-if throw_btn2.exists:
-    while True:
-        print("开始摇骰子...")
-        throw_btn2 = d(className="android.widget.Button", resourceId="mapStepBtn")
-        numbers = re.findall(r'(\d+)步$', throw_btn2.get_text())
-        if len(numbers) <= 0:
-            break
-        count = int(numbers[-1])
-        if count >= 10:
-            throw_btn2.click()
+        return
+
+    # 3. 圈数通关通报弹窗与立即领取
+    lap_claim = d.xpath("//*[@text='立即领取' or @text='开心收下' or @text='全部收下']")
+    if lap_claim.exists:
+        print("点击通关奖励:", lap_claim.attrib.get("text", ""))
+        lap_claim.click()
+        time.sleep(2)
+        close_btn = d.xpath("//*[@text='关闭']")
+        if close_btn.exists:
+            close_btn.click()
+            time.sleep(1.5)
+        return
+
+    # 4. 浏览20秒领100闲鱼币事件
+    browse_task = d.xpath("//*[contains(@text, '浏览') and contains(@text, '秒获得') and contains(@text, '闲鱼币')]")
+    if browse_task.exists:
+        print(f"触发地图事件：{browse_task.attrib.get('text', '')}，开始模拟浏览21秒...")
+        start_t = time.time()
+        while time.time() - start_t < 21:
+            d.swipe(w // 2, int(h * 0.7), w // 2, int(h * 0.4), 0.4)
+            time.sleep(2.5)
+        back_btn = d.xpath("//*[@text='返回']")
+        if back_btn.exists:
+            back_btn.click()
+        else:
+            d.press("back")
+        time.sleep(3)
+        return
+
+    # 5. 立刻前进
+    forward_btn = d.xpath("//*[@text='立刻前进']")
+    if forward_btn.exists:
+        print("点击「立刻前进」")
+        forward_btn.click()
+        time.sleep(4)
+        return
+
+    # 6. 定时收益「领」
+    gain_btn = d.xpath("//*[@text='领']")
+    if gain_btn.exists:
+        print("点击收取闲鱼币定时收益「领」")
+        gain_btn.click()
+        time.sleep(2)
+        return
+
+    # 7. 常见奖励与确认弹窗
+    claim_btn = d.xpath("//*[contains(@text, '收下') or @text='全部收下' or @text='开心收下' or @text='我知道了' or @text='确认' or @text='继续前进' or @text='继续寻宝' or @text='开始抽奖' or @text='开始刮奖']")
+    if claim_btn.exists:
+        print("点击弹窗按钮:", claim_btn.attrib.get("text", ""))
+        claim_btn.click()
+        time.sleep(2)
+        return
+
+    # 8. 图像模板匹配备用
+    try:
+        screen_image = d.screenshot(format='opencv')
+        for template_name in ["fish_advance.png", "fish_continue.png", "fish_continue2.png", "fish_advance2.png", "fish_prize.png", "fish_throw.png"]:
+            pt = find_button(screen_image, f"./img/{template_name}")
+            if pt:
+                print(f"模板匹配命中 {template_name}，点击对应区域")
+                d.click(int(pt[0]) + 50, int(pt[1]) + 20)
+                time.sleep(3)
+                return
+    except Exception:
+        pass
+
+
+def scroll_map_to_top():
+    """滑动重置闲鱼币大富翁地图到顶部，使步数按钮可见且有效"""
+    w, h = d.window_size()
+    d.swipe(w // 2, 500, w // 2, int(h * 0.8), 0.3)
+    time.sleep(1.5)
+    d.swipe(w // 2, 500, w // 2, int(h * 0.8), 0.3)
+    time.sleep(2)
+
+
+def open_task_panel():
+    """打开日常任务面板浮层（若已在面板则直接返回）"""
+    if d.xpath("//*[@text='去完成' or contains(@text, '领取奖励') or contains(@text, '提醒签到')]").exists:
+        return True
+    print("点击右侧浮动「做任务/赚步数」图标打开面板...")
+    d.click(1293, 1871)
+    time.sleep(2.5)
+    return d.xpath("//*[@text='去完成' or contains(@text, '领取奖励') or contains(@text, '提醒签到')]").exists
+
+
+def close_task_panel():
+    """通过向下滑动抽屉抽拉栏，稳定关闭任务面板浮层"""
+    w, h = d.window_size()
+    d.swipe(w // 2, 600, w // 2, 1900, 0.25)
+    time.sleep(2)
+
+
+def throw_dice_loop():
+    """循环掷骰子/走步数直至耗尽"""
+    print("准备开始自动掷骰子/走步数...")
+    close_task_panel()
+    scroll_map_to_top()
+    max_rounds = 40
+    while max_rounds > 0:
+        max_rounds -= 1
+        check_popup()
+
+        step_btn = d.xpath("//*[@resource-id='mapStepBtn']")
+        if step_btn.exists:
+            btn_text = step_btn.attrib.get("text", "").strip()
+            m = re.findall(r"(\d+)步$", btn_text)
+            if not m or int(m[-1]) <= 0:
+                print(f"当前无剩余可用步数: {btn_text}")
+                break
+
+            steps = int(m[-1])
+            print(f"当前剩余 {steps} 步，点击前进！")
+            step_btn.click()
             time.sleep(5)
             check_popup()
+            time.sleep(1.5)
+            continue
+        break
+
+
+def claim_task_rewards():
+    """收取任务面板上所有已完成的待领奖励（包括阶段奖励 +100, +300, +500 等）"""
+    claimed = 0
+    # 1. 查找“领取奖励”按钮
+    for btn in d.xpath("//*[contains(@text, '领取奖励')]").all():
+        print("点击领取奖励:", btn.attrib.get("text", ""))
+        btn.click()
+        time.sleep(2)
+        claimed += 1
+
+    # 2. 查找顶部阶段奖励 (+100已领取, +300已领取, +500可领)
+    for stage in d.xpath("//*[contains(@text, '+100') or contains(@text, '+300') or contains(@text, '+500')]").all():
+        text = stage.attrib.get("text", "")
+        if "领取" in text or "可领" in text or "完成" in text:
+            stage.click()
+            time.sleep(1.5)
+            claimed += 1
+
+    # 3. 定时收益「领」
+    gain_btn = d.xpath("//*[@text='领']")
+    if gain_btn.exists:
+        print("点击收取闲鱼币定时收益「领」")
+        gain_btn.click()
+        time.sleep(1.5)
+        claimed += 1
+
+    return claimed
+
+
+def handle_video_task(title, btn_to_click):
+    """执行视频任务：观看18秒，OCR智能识别跳过与确认退出"""
+    print(f"🎬 开始执行视频任务: [{title}]")
+    btn_to_click.click()
+    time.sleep(3)
+
+    print("正在观看视频广告 (18秒)...")
+    time.sleep(18)
+
+    w, h = d.window_size()
+    # 智能跳过广告
+    try:
+        reader = get_ocr()
+        img = d.screenshot(format='opencv')
+        results = reader.readtext(img)
+        skip_clicked = False
+        for bbox, text, prob in results:
+            if '跳过' in text and prob > 0.3:
+                cx = int((bbox[0][0] + bbox[2][0]) / 2)
+                cy = int((bbox[0][1] + bbox[2][1]) / 2)
+                print(f"OCR识别到「跳过」按钮，点击坐标 ({cx}, {cy})")
+                d.click(cx, cy)
+                skip_clicked = True
+                break
+
+        if not skip_clicked:
+            # 常见位置兜底：右上角
+            d.click(int(w * 0.916), int(h * 0.084))
+
+        time.sleep(2)
+        # 检查是否有二次确认弹窗（坚持退出 / 残忍离开 / 离开）
+        img2 = d.screenshot(format='opencv')
+        results2 = reader.readtext(img2)
+        for bbox, text, prob in results2:
+            if any(k in text for k in ['坚持退出', '残忍离开', '离开']) and prob > 0.3:
+                cx = int((bbox[0][0] + bbox[2][0]) / 2)
+                cy = int((bbox[0][1] + bbox[2][1]) / 2)
+                print(f"OCR识别到确认弹窗「{text}」，点击坐标 ({cx}, {cy})")
+                d.click(cx, cy)
+                break
+    except Exception as e:
+        print(f"OCR跳过异常，使用兜底逻辑: {e}")
+        d.click(int(w * 0.916), int(h * 0.084))
+        time.sleep(1.5)
+        d.click(int(w * 0.5), int(h * 0.69))
+
+    time.sleep(2.5)
+
+    # 确保返回闲鱼主界面
+    for _ in range(3):
+        # 检查是否误入小程序页面
+        if d.xpath("//*[contains(@text, '游戏任务入口') or contains(@text, '再玩1关游戏')]").exists:
+            d.click(1331, 259)
+            time.sleep(1.5)
+            leave = d.xpath("//*[contains(@text, '残忍离开')]")
+            if leave.exists:
+                leave.click()
+                time.sleep(1.5)
+
+        if not check_in_xy():
+            d.press("back")
+            time.sleep(2)
         else:
             break
-power_btn = d(className="android.widget.TextView", textMatches=r"充能领奖|即将下线")
+
+    open_task_panel()
+    time.sleep(1.5)
+    claim_task_rewards()
+
+
+def handle_channel_goods(title, btn_to_click):
+    """执行点击指定频道好物任务：点击商品浏览3秒后返回"""
+    print(f"🛍️ 开始执行频道好物任务: [{title}]")
+    btn_to_click.click()
+    time.sleep(3.5)
+
+    w, h = d.window_size()
+    item = d.xpath("//*[contains(@text, '抵') or contains(@text, '¥') or contains(@text, '￥')]")
+    if item.exists:
+        print("点击好物商品卡片:", item.attrib.get("text", "")[:15])
+        item.click()
+    else:
+        d.click(w // 2, int(h * 0.4))
+
+    time.sleep(3.5)
+    print("浏览好物详情完成，返回任务面板...")
+    d.press("back")
+    time.sleep(2.5)
+
+    # 如果返回到了「我的」个人主页，重新进入闲鱼币
+    if d.xpath("//*[contains(@text, '在闲鱼赚了') or contains(@text, '我的交易')]").exists:
+        coin_btn = d.xpath("//*[contains(@text, '闲鱼币')]")
+        if coin_btn.exists:
+            coin_btn.click()
+            time.sleep(3.5)
+
+    open_task_panel()
+    time.sleep(1.5)
+    claim_task_rewards()
+
+
+def handle_feed_items():
+    """执行主界面「点击10个宝贝，可获得步数+3」任务"""
+    close_task_panel()
+    time.sleep(1.5)
+    w, h = d.window_size()
+
+    # 向下滑动到瀑布流宝贝区域
+    print("滑动到主界面底部宝贝瀑布流...")
+    d.swipe(w // 2, int(h * 0.8), w // 2, int(h * 0.2), 0.3)
+    time.sleep(2)
+
+    # 检查是否还有剩余未点击的宝贝
+    xml = d.dump_hierarchy()
+    m = re.findall(r"点击(\d+)个宝贝", xml)
+    remaining = int(m[0]) if m else 0
+    if remaining <= 0:
+        print("「点击宝贝」任务已全部完成！")
+        scroll_map_to_top()
+        return
+
+    print(f"检测到剩余需点击 {remaining} 个宝贝，开始自动浏览...")
+    for round_i in range(remaining):
+        print(f"正在浏览第 {round_i + 1}/{remaining} 个宝贝...")
+        item = d.xpath("//*[contains(@text, '¥') or contains(@text, '￥') or contains(@text, '抵')]")
+        if item.exists:
+            item.click()
+        else:
+            d.click(int(w * 0.3), int(h * 0.6))
+
+        time.sleep(3)
+        d.press("back")
+        time.sleep(2)
+
+        # 稍微向下滑动查看新宝贝
+        d.swipe(w // 2, int(h * 0.65), w // 2, int(h * 0.45), 0.3)
+        time.sleep(1)
+
+    print("宝贝点击任务完成，重置地图至顶部...")
+    scroll_map_to_top()
+    time.sleep(2)
+    check_popup()
+
+
+def handle_regular_browse(title, btn_to_click):
+    """执行普通浏览类任务（浏览16秒后返回）"""
+    print(f"👀 开始执行浏览任务: [{title}]")
+    btn_to_click.click()
+    time.sleep(4)
+
+    w, h = d.window_size()
+    start_b = time.time()
+    while time.time() - start_b < 16:
+        d.swipe(w // 2, int(h * 0.7), w // 2, int(h * 0.4), 0.4)
+        time.sleep(2.5)
+
+    # 返回闲鱼
+    d.press("back")
+    time.sleep(2.5)
+
+    open_task_panel()
+    time.sleep(1.5)
+    claim_task_rewards()
+
+
+# =========================================================
+# 主运行逻辑
+# =========================================================
+print("=== 启动闲鱼币大富翁与全量任务引擎 ===")
+to_task()
+time.sleep(2)
+check_popup()
+
+# 1. 优先走完已有步数
+throw_dice_loop()
+
+# 2. 打开日常任务面板并循环处理所有可做及可重复任务
+if open_task_panel():
+    print("已成功打开任务面板！")
+
+    # 签到
+    sign_btn = d.xpath("//*[@text='签到']")
+    if sign_btn.exists:
+        print("点击每日签到")
+        sign_btn.click()
+        time.sleep(2)
+
+    claim_task_rewards()
+
+    # 循环多轮，直至没有非游戏类的去完成任务
+    max_panel_loops = 15
+    while max_panel_loops > 0:
+        max_panel_loops -= 1
+        claim_task_rewards()
+
+        # 扫描当前面板上的所有任务
+        task_rows = []
+        for node in d.xpath("//*[@bounds and @text]").all():
+            title = node.attrib.get("text", "").strip()
+            b = node.attrib.get("bounds", "")
+            m = re.match(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", b)
+            if not m:
+                continue
+            x1, y1, x2, y2 = map(int, m.groups())
+            # 任务标题位于左侧，且长度适中
+            if x1 < 800 and 600 <= y1 <= 3150 and len(title) >= 4:
+                # 严格跳过游戏类和发宝贝任务
+                if is_game_task(title) or "发布" in title:
+                    continue
+
+                cy = (y1 + y2) // 2
+                # 寻找该行右侧去完成按钮
+                btn_to_click = None
+                for btn in d.xpath("//*[@text='去完成']").all():
+                    bb = btn.attrib.get("bounds", "")
+                    bm = re.match(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", bb)
+                    if bm and int(bm.group(1)) > 950 and abs((int(bm.group(2)) + int(bm.group(4))) // 2 - cy) < 90:
+                        btn_to_click = btn
+                        break
+
+                if btn_to_click:
+                    task_rows.append((title, btn_to_click))
+
+        if not task_rows:
+            print("当前可视区域无待完成非游戏任务，尝试向下滑动扫描...")
+            d.swipe(screen_width // 2, int(screen_height * 0.7), screen_width // 2, int(screen_height * 0.4), 0.3)
+            time.sleep(2)
+            # 再查一次
+            for node in d.xpath("//*[@bounds and @text]").all():
+                title = node.attrib.get("text", "").strip()
+                b = node.attrib.get("bounds", "")
+                m = re.match(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", b)
+                if m:
+                    x1, y1, x2, y2 = map(int, m.groups())
+                    if x1 < 800 and 600 <= y1 <= 3150 and len(title) >= 4:
+                        if not is_game_task(title) and "发布" not in title:
+                            cy = (y1 + y2) // 2
+                            for btn in d.xpath("//*[@text='去完成']").all():
+                                bb = btn.attrib.get("bounds", "")
+                                bm = re.match(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", bb)
+                                if bm and int(bm.group(1)) > 950 and abs((int(bm.group(2)) + int(bm.group(4))) // 2 - cy) < 90:
+                                    task_rows.append((title, btn))
+                                    break
+            if not task_rows:
+                print("所有非游戏任务已全部扫描并完成！")
+                break
+
+        print(f"本轮检测到 {len(task_rows)} 个待处理非游戏任务")
+        for title, btn in task_rows:
+            if "视频" in title:
+                handle_video_task(title, btn)
+            elif "好物" in title or "指定频道" in title:
+                handle_channel_goods(title, btn)
+            else:
+                handle_regular_browse(title, btn)
+
+            finish_count += 1
+            claim_task_rewards()
+            time.sleep(1)
+
+    # 3. 执行主界面点击10个宝贝任务
+    handle_feed_items()
+
+# 4. 把所有新获得的步数全部走完
+throw_dice_loop()
+
+# 5. 最后收割一轮阶段奖励
+open_task_panel()
+time.sleep(1)
+claim_task_rewards()
+close_task_panel()
+
+# 6. 充能领奖（如果有）
+power_btn = d.xpath("//*[contains(@text, '充能领奖') or contains(@text, '点击充能')]")
 if power_btn.exists:
     print("点击充能领奖")
     power_btn.click()
-    time.sleep(3)
-    click_btn = d(className="android.widget.TextView", textContains="点击充能")
-    if click_btn.exists:
-        print("点击充能")
-        click_btn.click()
-        time.sleep(3)
-print("任务完成。。。")
+    time.sleep(2)
+
 ctx.stop()
+print(f"==================================================")
+print(f"🎉 闲鱼币任务全量完成！共计执行 {finish_count} 轮任务")
+print(f"==================================================")

@@ -605,14 +605,19 @@ def _detect_and_select_user(d):
         output = d.shell("pm list users").output
         # 解析输出: UserInfo{0:Owner:13} running
         users = re.findall(r'UserInfo\{(\d+):([^:]*):', output)
+        users = [u for u in users if u[0] != "999"]
         if len(users) <= 1:
-            _selected_user = ""
-            print("仅检测到1个用户，使用默认用户")
-            return None
+            _selected_user = users[0][0] if users else "0"
+            print("仅检测到1个主要用户，使用默认用户")
+            return _selected_user
         print("检测到手机有多个用户：")
         for i, (uid, uname) in enumerate(users, 1):
             label = f"用户{uid}" + (f" ({uname})" if uname else "")
             print(f"  {i}: {label}")
+        if not sys.stdin.isatty():
+            _selected_user = users[0][0]
+            print(f"非交互终端环境，自动使用默认用户: {_selected_user}")
+            return _selected_user
         while True:
             try:
                 choice = input("请选择要操作的用户序号（直接回车默认第一个用户）：")
@@ -624,8 +629,9 @@ def _detect_and_select_user(d):
                     _selected_user = users[index][0]
                     break
                 print(f"输入错误，请重新输入序号（1-{len(users)}）")
-            except ValueError:
-                print(f"输入错误，请重新输入序号（1-{len(users)}）")
+            except (ValueError, EOFError):
+                _selected_user = users[0][0]
+                break
         print(f"已选择用户: {_selected_user}")
         return _selected_user
     except Exception as e:
@@ -671,7 +677,7 @@ def start_app(d, package_name, init=False):
             if stop:
                 d.shell(f"am force-stop {package_name}")
                 time.sleep(1)
-            if user_id:
+            if user_id and str(user_id) != "0":
                 _am_start_with_user(d, package_name, user_id=user_id)
             elif use_monkey:
                 d.app_start(package_name, stop=False, use_monkey=True)

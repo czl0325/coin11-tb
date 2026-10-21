@@ -7,8 +7,7 @@ from utils import check_chars_exist, other_app, get_current_app, task_loop, star
 d = u2.connect()
 start_app(d, TB_APP, init=True)
 # d.debug = True
-screen_width = d.info['displayWidth']
-screen_height = d.info['displayHeight']
+screen_width, screen_height = d.window_size()
 time.sleep(2)
 in_search = False
 in_other_app = False
