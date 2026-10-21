@@ -291,6 +291,7 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22, only_
     history_lst1 = d.xpath(
         '(//android.widget.TextView[@text="历史搜索"]/following-sibling::android.widget.ListView)/android.view.View[1]')
     history_lst2 = d.xpath('//android.widget.TextView[@text="猜你想搜"]/following-sibling::android.view.View[1]/android.view.View[1]/android.widget.TextView')
+    history_lst3 = d.xpath('//*[@resource-id="com.taobao.taobao:id/fl_history_container"]/android.view.ViewGroup/android.widget.FrameLayout[1]')
     open_btn = d(className="android.widget.TextView", text="打开淘宝")
     if history_lst1.exists:
         print("查找到搜索关键字", history_lst1)
@@ -299,6 +300,10 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22, only_
     elif history_lst2.exists:
         print("查找到搜索关键字", history_lst2.get_text())
         history_lst2.click()
+        time.sleep(2)
+    elif history_lst3.exists:
+        print("查找到搜索关键字")
+        history_lst3.click()
         time.sleep(2)
     elif open_btn.exists:
         open_btn.click()
