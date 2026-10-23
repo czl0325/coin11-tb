@@ -794,3 +794,14 @@ def random_swipe(d):
     print("模拟滑动", start_x, start_y, end_x, end_y, swipe_time)
     d.swipe(start_x, start_y, end_x, end_y, swipe_time)
     time.sleep(random.uniform(0.8, 1.2))
+
+
+def grade_examination(d):
+    option_a = d(className="android.widget.TextView", text="A")
+    if option_a.exists:
+        option_a.click()
+        time.sleep(3)
+    choice_btn = d(className="android.widget.Button", text="我选好了")
+    if choice_btn.exists:
+        choice_btn.click()
+        time.sleep(3)

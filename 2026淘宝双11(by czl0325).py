@@ -48,6 +48,11 @@ def to_task():
     while True:
         if in_task_home():
             break
+        close_btn1 = d(className="android.widget.Button", text="关闭")
+        if close_btn1.exists:
+            close_btn1.click()
+            time.sleep(2)
+            continue
         task_btn1 = d(className="android.widget.Button", text="赚能量")
         if task_btn1.exists:
             task_btn1.click()
@@ -173,4 +178,4 @@ while True:
             elif energy_text < 500:
                 racing_btn.click()
             else:
-                racing_btn.long_click(duration=5)
+                racing_btn.long_click(duration=3)
