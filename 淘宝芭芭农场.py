@@ -79,6 +79,7 @@ def back_to_task():
                             continue
                         task_view = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]')
                         if task_view.exists:
+                            print("处于限时下单任务页面")
                             close_btn2 = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]/preceding-sibling::android.view.View[1]')
                             if close_btn2.exists:
                                 print("点击关闭限时下单任务按钮")
@@ -87,7 +88,7 @@ def back_to_task():
                                 continue
                         print("点击后退")
                         d.press("back")
-                        time.sleep(0.3)
+                        # time.sleep(0.2)
         except Exception:
             print_error()
             time.sleep(2)
@@ -109,7 +110,7 @@ def find_farm_btn():
 
 # 查找集肥料按钮
 def find_fertilizer_btn():
-    get_btn1 = d(resourceId="_GXX2RN", className="android.widget.Button")
+    get_btn1 = d(className="android.widget.Button", textContains="肥料，点击领取")
     if get_btn1.exists:
         print("领取肥料")
         get_btn1.click()

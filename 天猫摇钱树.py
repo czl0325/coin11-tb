@@ -28,18 +28,19 @@ def check_in_task():
 
 
 def back_to_task():
+    print("开始返回天猫任务页面")
     while True:
         if check_in_task():
             break
         package_name1, activity_name1 = get_current_app(d)
-        if package_name1 == "com.smile.gifmaker":
+        if package_name1 != TMALL_APP:
             start_app(d, TMALL_APP)
         elif package_name1 == TMALL_APP and activity_name1 == TMALL_HOME:
             to_task()
             time.sleep(1)
         else:
             d.press("back")
-            time.sleep(0.5)
+            time.sleep(0.2)
 
 
 def to_task():

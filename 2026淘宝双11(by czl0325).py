@@ -34,7 +34,8 @@ def in_task_home():
     return d(className="android.widget.TextView", text="做任务赚能量").exists
 
 
-def find_coin_btn(rounds=10):
+def find_coin_btn():
+    print("开始查找领金币按钮")
     while True:
         if in_coin_home():
             break
@@ -45,6 +46,7 @@ def find_coin_btn(rounds=10):
 
 
 def to_task():
+    print("开始查找赚钱按钮")
     while True:
         if in_task_home():
             break
