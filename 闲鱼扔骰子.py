@@ -271,6 +271,7 @@ bottom_navigator = d(className="android.widget.FrameLayout",resourceId="com.andr
 if bottom_navigator.exists:
     bottom_pos = bottom_navigator.bounds()[1]
 try_count = 0
+swipe_count = 0
 while True:
     try:
         print("正在查找按钮...")
@@ -289,6 +290,7 @@ while True:
             receive_btn.click()
             print("点击领取奖励")
             finish_count += 1
+            swipe_count = 0
             continue
         # task_view = d.xpath(f"//android.view.View[@resource-id='taskWrap']/android.view.View[last()]/android.view.View/android.widget.TextView[{' or '.join([f"@text='{text}'" for text in xy_task_name])}]")
         condition = " or ".join([f'@text="{text}"' for text in xy_task_name])
@@ -329,6 +331,7 @@ while True:
                 else:
                     have_clicked[task_name] += 1
                 time.sleep(5)
+                swipe_count = 0
                 task_loop(d, back_to_task, is_fish=True)
             else:
                 try_count += 1
@@ -346,8 +349,11 @@ while True:
                     click_earn()
                 else:
                     d.swipe_ext(u2.Direction.FORWARD)
+                    swipe_count += 1
                     print("上滑查找下一页")
                     time.sleep(4)
+        if swipe_count >= 6:
+            break
     except Exception as e:
         print("报错", e)
         back_to_task()
