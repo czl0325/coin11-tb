@@ -50,6 +50,12 @@ def to_task():
             shake_btn.click()
             print("点击摇钱树")
             time.sleep(3)
+        back_btn = d(className="android.widget.TextView", resourceId="com.tmall.wireless:id/search_title_bar_back")
+        if back_btn.exists:
+            print("点击后退回首页")
+            back_btn.click()
+            time.sleep(2)
+            continue
         _, activity_name = get_current_app(d)
         if activity_name == "com.tmall.wireless.themis.container.TMThemisActivity":
             break
