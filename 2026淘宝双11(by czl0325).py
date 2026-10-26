@@ -48,61 +48,67 @@ def find_coin_btn():
 def to_task():
     print("开始查找赚钱按钮")
     while True:
-        if in_task_home():
-            break
-        close_btn1 = d(className="android.widget.Button", text="关闭")
-        if close_btn1.exists:
-            close_btn1.click()
-            time.sleep(2)
-            continue
-        task_btn1 = d(className="android.widget.Button", text="赚能量")
-        if task_btn1.exists:
-            task_btn1.click()
-        else:
-            canvas_image = d.xpath('//android.webkit.WebView[@text="淘金币首页"]/android.view.View/android.view.View[1]/android.widget.Image')
-            if canvas_image.exists:
-                d.click(canvas_image.bounds[2] - 100, canvas_image.bounds[3] - 150)
-        time.sleep(3)
+        try:
+            if in_task_home():
+                break
+            close_btn1 = d(className="android.widget.Button", text="关闭")
+            if close_btn1.exists:
+                close_btn1.click()
+                time.sleep(2)
+                continue
+            task_btn1 = d(className="android.widget.Button", text="赚能量")
+            if task_btn1.exists:
+                task_btn1.click()
+            else:
+                canvas_image = d.xpath('//android.webkit.WebView[@text="淘金币首页"]/android.view.View/android.view.View[1]/android.widget.Image')
+                if canvas_image.exists:
+                    d.click(canvas_image.bounds[2] - 100, canvas_image.bounds[3] - 150)
+            time.sleep(3)
+        except Exception as e:
+            print_error()
 
 
 def back_to_task():
     print("开始返回任务页面")
     while True:
-        if in_coin_home():
-            print("已成功返回任务页面")
-            break
-        temp_package, temp_activity = get_current_app(d)
-        if not temp_package or not temp_activity:
-            time.sleep(0.5)
-            continue
-        if "Ext2ContainerActivity" in temp_activity:
-            time.sleep(0.5)
-            continue
-        if TB_APP not in temp_package:
-            print(f"回到原始APP,{TB_APP}")
-            start_app(d, TB_APP)
-            jump_btn = d(resourceId="com.taobao.taobao:id/tv_close", text="跳过")
-            if jump_btn.exists:
-                jump_btn.click()
-                time.sleep(2)
-            continue
-        else:
-            close_btn1 = d.xpath("//android.widget.FrameLayout[@resource-id='com.alipay.multiplatform.phone.xriver_integration:id/frameLayout_rightButton1']/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.FrameLayout[2]")
-            if close_btn1.exists:
-                print("点击关闭小程序按钮")
-                close_btn1.click()
-                time.sleep(1)
+        try:
+            if in_coin_home():
+                print("已成功返回任务页面")
+                break
+            temp_package, temp_activity = get_current_app(d)
+            if not temp_package or not temp_activity:
+                time.sleep(0.5)
                 continue
-            task_view = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]')
-            if task_view.exists:
-                close_btn2 = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]/preceding-sibling::android.view.View[1]')
-                if close_btn2.exists:
-                    print("点击关闭限时下单任务按钮")
-                    close_btn2.click()
+            if "Ext2ContainerActivity" in temp_activity:
+                time.sleep(0.5)
+                continue
+            if TB_APP not in temp_package:
+                print(f"回到原始APP,{TB_APP}")
+                start_app(d, TB_APP)
+                jump_btn = d(resourceId="com.taobao.taobao:id/tv_close", text="跳过")
+                if jump_btn.exists:
+                    jump_btn.click()
+                    time.sleep(2)
+                continue
+            else:
+                close_btn1 = d.xpath("//android.widget.FrameLayout[@resource-id='com.alipay.multiplatform.phone.xriver_integration:id/frameLayout_rightButton1']/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.FrameLayout[2]")
+                if close_btn1.exists:
+                    print("点击关闭小程序按钮")
+                    close_btn1.click()
                     time.sleep(1)
                     continue
-            d.press('back')
-        time.sleep(0.4)
+                task_view = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]')
+                if task_view.exists:
+                    close_btn2 = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]/preceding-sibling::android.view.View[1]')
+                    if close_btn2.exists:
+                        print("点击关闭限时下单任务按钮")
+                        close_btn2.click()
+                        time.sleep(1)
+                        continue
+                d.press('back')
+            time.sleep(0.4)
+        except Exception as e:
+            start_app(d, TB_APP)
 
 
 find_coin_btn()

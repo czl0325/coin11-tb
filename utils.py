@@ -324,6 +324,7 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22, only_
     print("开始做任务。。。")
     browse_view = d(className="android.widget.TextView", textMatches=r"\d+/\d+")
     if browse_view.exists and not only_scroll:
+        print("找福星任务")
         fu_view = d(className="android.widget.TextView", textMatches=r"找\d+个福星得")
         if fu_view.exists:
             back_func()
@@ -352,6 +353,7 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22, only_
                 except Exception as e:
                     print("遇到错误：", str(e))
     else:
+        print("常规滑动任务")
         while True:
             try:
                 bt_open = d(resourceId="android:id/button1", text="浏览器打开")
@@ -415,7 +417,7 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22, only_
                 else:
                     time.sleep(5)
             except Exception as e:
-                time.sleep(5)
+                print_error()
     back_func()
 
 
