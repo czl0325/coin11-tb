@@ -19,7 +19,7 @@ def check_in_task():
     package_name, _ = get_current_app(d)
     if package_name != ALIPAY_APP:
         return False
-    if d(className="android.widget.TextView", text="做任务集肥料").exists:
+    if d(classNameMatches=r"android.widget.TextView|android.view.View", text="做任务集肥料").exists:
         return True
     return False
 
