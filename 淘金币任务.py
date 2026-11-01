@@ -104,15 +104,17 @@ def find_coin_btn():
 def find_earn_btn():
     # 因2025双十一活动，需要回旧版本后继续任务
     back_btn = d(className="android.widget.Button", textContains="回日常版")
-    if back_btn.exists(timeout=4):
+    if back_btn.exists:
         back_btn.click()
         time.sleep(3)
     earn_btn = d(className="android.widget.TextView", textMatches="签到领金币|点击签到")
-    if earn_btn.exists(timeout=4):
+    if earn_btn.exists:
         earn_btn.click()
         time.sleep(5)
     more_btn = d(className="android.widget.TextView", textContains="赚更多金币")
-    if more_btn.exists(timeout=4):
+    if not more_btn.exists:
+        more_btn = d(className="android.widget.Button", textContains="去赚金币")
+    if more_btn.exists:
         more_btn.click()
         time.sleep(3)
     else:
