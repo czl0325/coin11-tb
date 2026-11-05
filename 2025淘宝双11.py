@@ -11,8 +11,7 @@ d = u2.connect(selected_device)
 print(f"已成功连接设备：{selected_device}")
 
 start_app(d, TB_APP, init=True)
-screen_width = d.info['displayWidth']
-screen_height = d.info['displayHeight']
+screen_width, screen_height = d.window_size()
 time.sleep(5)
 in_search = False
 in_other_app = False
