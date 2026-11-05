@@ -79,6 +79,7 @@ def back_to_task():
                             continue
                         task_view = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]')
                         if task_view.exists:
+                            print("处于限时下单任务页面")
                             close_btn2 = d.xpath('//android.widget.TextView[contains(@text, "限时下单任务")]/preceding-sibling::android.view.View[1]')
                             if close_btn2.exists:
                                 print("点击关闭限时下单任务按钮")
@@ -87,7 +88,7 @@ def back_to_task():
                                 continue
                         print("点击后退")
                         d.press("back")
-                        time.sleep(0.3)
+                        # time.sleep(0.2)
         except Exception:
             print_error()
             time.sleep(2)
@@ -109,7 +110,7 @@ def find_farm_btn():
 
 # 查找集肥料按钮
 def find_fertilizer_btn():
-    get_btn1 = d(resourceId="_GXX2RN", className="android.widget.Button")
+    get_btn1 = d(className="android.widget.Button", textContains="肥料，点击领取")
     if get_btn1.exists:
         print("领取肥料")
         get_btn1.click()
@@ -136,18 +137,18 @@ def find_fertilizer_btn():
     print("进入任务页面")
 
 
-d.watcher.when("O1CN012qVB9n1tvZ8ATEQGu_!!6000000005964-2-tps-144-144").click()
-d.watcher.when(xpath="//android.app.Dialog//android.widget.Button[contains(text(), '-tps-')]").click()
-d.watcher.when(xpath="//android.app.Dialog//android.widget.Button[@text='关闭']").click()
-d.watcher.when(xpath="//android.widget.FrameLayout[@resource-id='com.taobao.taobao:id/poplayer_native_state_center_layout_frame_id']//android.widget.ImageView[@content-desc='关闭按钮']").click()
-# d.watcher.when(xpath="//android.widget.TextView[@package='com.eg.android.AlipayGphone']").click()
-d.watcher.when("O1CN01sORayC1hBVsDQRZoO_!!6000000004239-2-tps-426-128.png_").click()
-d.watcher.when(xpath='//android.widget.Button[@text="提醒我明天领"]/following-sibling::android.widget.Button[1]').click()
-d.watcher.when("跳过").click()
+# d.watcher.when("O1CN012qVB9n1tvZ8ATEQGu_!!6000000005964-2-tps-144-144").click()
+# d.watcher.when(xpath="//android.app.Dialog//android.widget.Button[contains(text(), '-tps-')]").click()
+# d.watcher.when(xpath="//android.app.Dialog//android.widget.Button[@text='关闭']").click()
+# d.watcher.when(xpath="//android.widget.FrameLayout[@resource-id='com.taobao.taobao:id/poplayer_native_state_center_layout_frame_id']//android.widget.ImageView[@content-desc='关闭按钮']").click()
+# # d.watcher.when(xpath="//android.widget.TextView[@package='com.eg.android.AlipayGphone']").click()
+# d.watcher.when("O1CN01sORayC1hBVsDQRZoO_!!6000000004239-2-tps-426-128.png_").click()
+# d.watcher.when(xpath='//android.widget.Button[@text="提醒我明天领"]/following-sibling::android.widget.Button[1]').click()
+# d.watcher.when("跳过").click()
 d.watcher.when("点击刷新").click()
 d.watcher.when("刷新").click()
 d.watcher.when("点击重试").click()
-d.watcher.when("立即施肥").click()
+# d.watcher.when("立即施肥").click()
 # d.watcher.when("关闭").click()
 d.watcher.start()
 find_farm_btn()

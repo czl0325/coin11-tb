@@ -59,7 +59,7 @@ VIDEO_ACTIVITY = ["com.taobao.idlefish.ads.csj.TTAdStandardPortraitActivity"]
 
 def check_chars_exist(text, chars=None):
     if chars is None:
-        chars = ["拉好友", "抢红包", "搜索兴趣商品下单", "买精选商品", "全场3元3件", "固定入口", "农场小游戏", "砸蛋","大众点评", "蚂蚁新村", "消消乐", "3元抢3件包邮到家", "拍一拍", "1元抢爆款好货", "拉1人助力","玩消消乐", "下单即得", "添加签到神器", "下单得肥料", "88VIP", "邀请好友", "好货限时直降", "连连消","下单即得", "拍立淘", "玩任意游戏", "首页回访", "百亿外卖", "玩趣味游戏得大额体力", "天猫积分换体力", "头条刷热点", "一淘签到", "每拉", "闪购拿大额补贴", "开心消消乐过1关", "通关", "购买商品", "去闪购领红包点外卖", "冒险大作战", "斗地主", "买限时折扣好物", "趣头条", "(1000/3500)", "任意下单", "农场对对碰匹配", "任意充值", "闯关", "消一消", "点击商品领优惠红包", "发评价得金币", "去天猫领现金", "试玩", "芝麻信用"]
+        chars = ["拉好友", "抢红包", "搜索兴趣商品下单", "买精选商品", "全场3元3件", "固定入口", "农场小游戏", "砸蛋","大众点评", "蚂蚁新村", "消消乐", "3元抢3件包邮到家", "拍一拍", "1元抢爆款好货", "拉1人助力","玩消消乐", "下单即得", "添加签到神器", "下单得肥料", "88VIP", "邀请好友", "好货限时直降", "连连消","下单即得", "拍立淘", "玩任意游戏", "首页回访", "百亿外卖", "玩趣味游戏得大额体力", "天猫积分换体力", "头条刷热点", "一淘签到", "每拉", "闪购拿大额补贴", "开心消消乐过1关", "通关", "购买商品", "去闪购领红包点外卖", "冒险大作战", "斗地主", "买限时折扣好物", "趣头条", "(1000/3500)", "任意下单", "农场对对碰匹配", "任意充值", "闯关", "消一消", "点击商品领优惠红包", "发评价得金币", "去天猫领现金", "试玩", "芝麻信用", "省钱等级考试", "去玩趣味小游戏"]
     for char in chars:
         if char in text:
             return True
@@ -291,6 +291,8 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22, only_
     history_lst1 = d.xpath(
         '(//android.widget.TextView[@text="历史搜索"]/following-sibling::android.widget.ListView)/android.view.View[1]')
     history_lst2 = d.xpath('//android.widget.TextView[@text="猜你想搜"]/following-sibling::android.view.View[1]/android.view.View[1]/android.widget.TextView')
+    history_lst3 = d.xpath('//*[@resource-id="com.taobao.taobao:id/fl_history_container"]/android.view.ViewGroup/android.widget.FrameLayout[1]')
+    history_lst4 = d.xpath('//android.widget.FrameLayout[@resource-id="com.taobao.taobao:id/dynamic_container"]/android.view.ViewGroup/android.view.View[9]')
     open_btn = d(className="android.widget.TextView", text="打开淘宝")
     if history_lst1.exists:
         print("查找到搜索关键字", history_lst1)
@@ -299,6 +301,14 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22, only_
     elif history_lst2.exists:
         print("查找到搜索关键字", history_lst2.get_text())
         history_lst2.click()
+        time.sleep(2)
+    elif history_lst3.exists:
+        print("查找到搜索关键字")
+        history_lst3.click()
+        time.sleep(2)
+    elif history_lst4.exists:
+        print("查找到搜索关键字")
+        d.click(history_lst4.bounds[0] + 100, history_lst4.bounds[1] + 150)
         time.sleep(2)
     elif open_btn.exists:
         open_btn.click()
@@ -319,6 +329,7 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22, only_
     print("开始做任务。。。")
     browse_view = d(className="android.widget.TextView", textMatches=r"\d+/\d+")
     if browse_view.exists and not only_scroll:
+        print("找福星任务")
         fu_view = d(className="android.widget.TextView", textMatches=r"找\d+个福星得")
         if fu_view.exists:
             back_func()
@@ -347,6 +358,7 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22, only_
                 except Exception as e:
                     print("遇到错误：", str(e))
     else:
+        print("常规滑动任务")
         while True:
             try:
                 bt_open = d(resourceId="android:id/button1", text="浏览器打开")
@@ -410,7 +422,7 @@ def task_loop(d, back_func, origin_app=TB_APP, is_fish=False, duration=22, only_
                 else:
                     time.sleep(5)
             except Exception as e:
-                time.sleep(5)
+                print_error()
     back_func()
 
 
@@ -795,3 +807,14 @@ def random_swipe(d):
     print("模拟滑动", start_x, start_y, end_x, end_y, swipe_time)
     d.swipe(start_x, start_y, end_x, end_y, swipe_time)
     time.sleep(random.uniform(0.8, 1.2))
+
+
+def grade_examination(d):
+    option_a = d(className="android.widget.TextView", text="A")
+    if option_a.exists:
+        option_a.click()
+        time.sleep(3)
+    choice_btn = d(className="android.widget.Button", text="我选好了")
+    if choice_btn.exists:
+        choice_btn.click()
+        time.sleep(3)

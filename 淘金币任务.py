@@ -167,7 +167,7 @@ def find_earn_btn():
     time.sleep(3)
     # 检查是否有回日常版按钮
     back_btn = d(className="android.widget.Button", textContains="回日常版")
-    if back_btn.exists(timeout=3):
+    if back_btn.exists:
         back_btn.click()
         time.sleep(2)
 
@@ -184,8 +184,10 @@ def find_earn_btn():
         claim_bubble.click()
         time.sleep(2)
 
-    # 点击赚更多金币
+    # 点击赚更多金币（新版页面可能显示为「去赚金币」）
     more_btn = d.xpath("//*[contains(@text, '赚更多金币')]")
+    if not more_btn.exists:
+        more_btn = d.xpath("//*[contains(@text, '去赚金币')]")
     if more_btn.exists:
         print("点击「赚更多金币」打开任务面板")
         more_btn.click()

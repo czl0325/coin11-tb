@@ -28,18 +28,19 @@ def check_in_task():
 
 
 def back_to_task():
+    print("开始返回天猫任务页面")
     while True:
         if check_in_task():
             break
         package_name1, activity_name1 = get_current_app(d)
-        if package_name1 == "com.smile.gifmaker":
+        if package_name1 != TMALL_APP:
             start_app(d, TMALL_APP)
         elif package_name1 == TMALL_APP and activity_name1 == TMALL_HOME:
             to_task()
             time.sleep(1)
         else:
             d.press("back")
-            time.sleep(0.5)
+            time.sleep(0.2)
 
 
 def to_task():
@@ -49,6 +50,12 @@ def to_task():
             shake_btn.click()
             print("点击摇钱树")
             time.sleep(3)
+        back_btn = d(className="android.widget.TextView", resourceId="com.tmall.wireless:id/search_title_bar_back")
+        if back_btn.exists:
+            print("点击后退回首页")
+            back_btn.click()
+            time.sleep(2)
+            continue
         _, activity_name = get_current_app(d)
         if activity_name == "com.tmall.wireless.themis.container.TMThemisActivity":
             break
