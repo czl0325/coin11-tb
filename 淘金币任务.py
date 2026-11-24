@@ -89,16 +89,16 @@ def back_to_task():
 
 
 def find_coin_btn():
-    coin_btn = d(classNameMatches=r"android.widget.FrameLayout|android.view.View", description="领淘金币")
-    if coin_btn.exists:
-        d.double_click(coin_btn[0].center()[0], coin_btn[0].center()[1])
-        time.sleep(5)
-    else:
-        d(className="android.view.View", description="搜索栏").click()
-        d(resourceId="com.taobao.taobao:id/searchEdit").send_keys("淘金币")
+    while True:
+        coin_view = d(className="android.webkit.WebView", text="淘金币首页")
+        if coin_view.exists:
+            break
+        coin_btn = d(classNameMatches=r"android.widget.FrameLayout|android.view.View", description="领淘金币")
+        if coin_btn.exists:
+            coin_btn.click()
+        else:
+            print("没有找到淘金币入口")
         time.sleep(3)
-        d(className="android.view.View", descriptionContains="淘金币").click()
-        time.sleep(5)
 
 
 def find_earn_btn():
@@ -107,9 +107,9 @@ def find_earn_btn():
     if back_btn.exists:
         back_btn.click()
         time.sleep(3)
-    earn_btn = d(className="android.widget.TextView", textMatches="签到领金币|点击签到")
-    if earn_btn.exists:
-        earn_btn.click()
+    earn_btn1 = d(className="android.widget.TextView", textMatches="签到领金币|点击签到")
+    if earn_btn1.exists:
+        earn_btn1.click()
         time.sleep(5)
     more_btn = d(className="android.widget.TextView", textContains="赚更多金币")
     if not more_btn.exists:
@@ -201,6 +201,7 @@ while True:
                 break
     except Exception as e:
         print(e)
+        back_to_task()
         continue
 ctx.close()
 print(f"共自动化完成{finish_count}个任务")

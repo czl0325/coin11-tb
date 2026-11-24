@@ -31,11 +31,13 @@ def run_scripts(script_paths):
 if __name__ == "__main__":
     scripts_to_run = [
         # "2026淘宝618活动.py",
-        "淘宝成就中心签到.py",
+        # "淘宝成就中心签到.py",
         "闲鱼扔骰子.py",
+        "闲鱼现金签到.py",
         "淘宝芭芭农场.py",
         "淘金币任务.py",
         "天猫摇钱树.py",
+        "玻弦打卡.py",
         "支付宝农场.py",
     ]
 
