@@ -100,11 +100,11 @@ while True:
             time.sleep(5)
             back_to_task()
             continue
-        task_btn = d.xpath('//android.widget.TextView[@text="领取任务"]')
+        task_btn = d.xpath('//android.widget.TextView[@text="领取任务" or @text="去逛逛" or @text="去看看"]')
         if task_btn.exists:
             for index in range(len(task_btn.all())):
-                title_view = d.xpath(f'(//android.widget.TextView[@text="领取任务"])[{index+1}]/../../android.widget.TextView[1]')
-                subtitle_view = d.xpath(f'(//android.widget.TextView[@text="领取任务"])[{index+1}]/../../android.widget.TextView[2]')
+                title_view = d.xpath(f'(//android.widget.TextView[@text="领取任务" or @text="去逛逛" or @text="去看看"])[{index+1}]/../../android.widget.TextView[1]')
+                subtitle_view = d.xpath(f'(//android.widget.TextView[@text="领取任务" or @text="去逛逛" or @text="去看看"])[{index+1}]/../../android.widget.TextView[2]')
                 if title_view.exists:
                     title_text = title_view.get_text()
                     subtitle_text = subtitle_view.get_text()
@@ -117,6 +117,9 @@ while True:
                         second = re.findall(r".*?(\d+)秒.*?", subtitle_text)
                         if len(second) > 0:
                             do_time = int(second[0]) + 3
+                    if title_text is str:
+                        if "淘宝农场" in title_text or "头条" in title_text or "闲鱼" in title_text:
+                            do_time = 8
                     (task_btn.all())[index].click()
                     print(f"点击任务：{title_text}，浏览时间：{do_time}秒")
                     has_clicked.append(title_text)
